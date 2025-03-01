@@ -29,6 +29,13 @@ function Game.keyInput(game, key)
 	end
 end
 
+function Game.mouseInput(game, screenx, screeny, button)
+	local tilex, tiley = Camera.screenToTileCoords(game.mainCamera, screenx, screeny)
+	if Player.clickInput(game.player, tilex, tiley, button) then
+		TurnCalculator.pass(game.turnCalculator)
+	end
+end
+
 function Game.draw(game)
 	World.draw(game.world, game.mainCamera)
 	Player.drawMovementPrediction(game.player, game.mainCamera)

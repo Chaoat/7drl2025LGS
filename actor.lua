@@ -5,17 +5,21 @@ local Misc = require "misc"
 local Actor = {}
 
 local latestID = 0
-function Actor.new(letter)
-	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, velX = 3, velY = 1, letter = letter, id = latestID}
+function Actor.new(letter, solidity)
+	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, velX = 3, velY = 1, solidity = solidity, letter = letter, id = latestID}
 	latestID = latestID + 1
 	return actor
+end
+
+function Actor.kill(actor)
+	actor.dead = true
 end
 
 function Actor.update(actor, dt)
 	if actor.drawX ~= actor.x or actor.drawY ~= actor.y then
 		local angle = math.atan2(actor.y - actor.drawY, actor.x - actor.drawX)
 		local dist = math.sqrt((actor.y - actor.drawY)^2 + (actor.x - actor.drawX)^2)
-		local speed = math.sqrt(actor.velX^2 + actor.velY^2)
+		local speed = math.max(math.sqrt(actor.velX^2 + actor.velY^2), dist)
 		
 		if dist > dt*speed then
 			actor.drawX = actor.drawX + dt*speed*math.cos(angle)
@@ -29,6 +33,12 @@ end
 
 function Actor.getSpeed(actor)
 	return Misc.orthogDistance(0, 0, actor.velX, actor.velY)
+end
+
+function Actor.changeSpeed(actor, val)
+	local currentSpeed = Actor.getSpeed(actor)
+	local newSpeed = math.max(currentSpeed + val, 0)
+	actor.velX, actor.velY = Misc.orthogPointFrom(0, 0, newSpeed, math.atan2(actor.velY, actor.velX))
 end
 
 function Actor.draw(actor, camera)

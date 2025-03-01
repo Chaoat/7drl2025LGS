@@ -21,7 +21,7 @@ function World.placeActor(world, actor, x, y)
 end
 
 function World.update(world, dt)
-	for i = 1, #world.actors do
+	for i = #world.actors, 1, -1 do
 		local actor = world.actors[i]
 		Actor.update(actor, 4*dt)
 	end

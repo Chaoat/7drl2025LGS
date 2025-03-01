@@ -21,11 +21,11 @@ function Camera.resize(camera, width, height)
 	camera.canvas = love.graphics.newCanvas(camera.cameraWidth, camera.cameraHeight)
 end
 
-function Camera.screenToTileCoords(camera, x, y)
+function Camera.screenToTileCoords(camera, screenx, screeny)
 	local centerX = camera.screenX + camera.cameraWidth/2
 	local centerY = camera.screenY + camera.cameraHeight/2
 	
-	return Misc.round(camera.worldX + (x - centerX)/camera.tileWidth), Misc.round(camera.worldY + (y - centerY)/camera.tileHeight)
+	return Misc.round(camera.worldX + (screenx - centerX)/camera.tileWidth), Misc.round(camera.worldY + (screeny - centerY)/camera.tileHeight)
 end
 
 function Camera.drawTo(object, worldX, worldY, camera, drawFunc)

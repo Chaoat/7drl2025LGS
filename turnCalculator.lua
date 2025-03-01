@@ -1,6 +1,8 @@
 local Tile = require "tile"
 local Map = require "map"
 local Misc = require "misc"
+local Actor = require "actor"
+local Player = require "player"
 
 local TurnCalculator = {}
 
@@ -38,9 +40,25 @@ function TurnCalculator.pass(turnCalculator)
 		--print(newX .. " : " .. newY)
 		local targetTile = Map.getTile(turnCalculator.world.map, Misc.round(newX), Misc.round(newY))
 		if targetTile then
-			Tile.moveActor(targetTile, actorMove.actor)
-			actorMove.floatingX = newX
-			actorMove.floatingY = newY
+			if targetTile.solidity >= Actor.getSpeed(actorMove.actor) then
+				if targetTile.x ~= actorMove.actor.x then
+					actorMove.actor.velX = 0
+					actorMove.movesLeft = actorMove.actor.velY
+				else
+					actorMove.actor.velY = 0
+					actorMove.movesLeft = actorMove.actor.velX
+				end
+			elseif actorMove.actor.solidity < targetTile.solidity then
+				Actor.kill(actorMove.actor)
+			else
+				if targetTile.solidity > 0 then
+					Actor.changeSpeed(actorMove.actor, -targetTile.solidity)
+					Tile.wreck(targetTile)
+				end
+				Tile.moveActor(targetTile, actorMove.actor)
+				actorMove.floatingX = newX
+				actorMove.floatingY = newY
+			end
 		end
 		
 		actorMove.movesLeft = actorMove.movesLeft - 1
@@ -49,6 +67,9 @@ function TurnCalculator.pass(turnCalculator)
 			Misc.binaryInsert(actorMoves, actorMove, comparator)
 		end
 	end
+	
+	Player.forceUpdateHeading(turnCalculator.player)
+	Player.calculatePredictedSquares(turnCalculator.player)
 end
 
 return TurnCalculator

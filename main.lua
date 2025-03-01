@@ -21,6 +21,10 @@ function love.keypressed(key)
 	end
 end
 
+function love.mousepressed(screenx, screeny, button)
+	Game.mouseInput(rootGame, screenx, screeny, button)
+end
+
 function love.draw()
 	Game.draw(rootGame)
 end

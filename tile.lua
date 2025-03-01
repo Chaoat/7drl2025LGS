@@ -8,20 +8,29 @@ function Tile.fromXP(xpCharacter)
 	local fCol = xpCharacter.fCol
 	local bCol = xpCharacter.bCol
 	
+	local solidity = 0
+	if charCode ~= 0 and fCol[3] > 0 then
+		solidity = 5
+	end
 	local tags = {}
-	local tile = Tile.new(tags, Letter.new(charCode, fCol, bCol))
+	local tile = Tile.new(solidity, tags, Letter.new(charCode, fCol, bCol))
 	
 	return tile
 end
 
-function Tile.new(tags, letter)
-	local tile = {drawX = 0, drawY = 0, x = 0, y = 0, actors = {}, letter = letter, tags = {}}
+function Tile.new(solidity, tags, letter)
+	local tile = {drawX = 0, drawY = 0, x = 0, y = 0, actors = {}, letter = letter, solidity = solidity, tags = {}}
 	
 	for i = 1, #tags do
 		tile.tags[tags[i]] = true
 	end
 	
 	return tile
+end
+
+function Tile.wreck(tile)
+	tile.solidity = 0
+	tile.letter.charCode = string.byte(";")
 end
 
 function Tile.moveActor(tile, actor)
@@ -49,7 +58,7 @@ end
 Tile.library = {}
 do
 	function Tile.library.newEmpty()
-		return Tile.new({"empty"}, Letter.new(0, {0, 0, 0, 0}, nil))
+		return Tile.new(0, {"empty"}, Letter.new(0, {0, 0, 0, 0}, nil))
 	end
 end
 
