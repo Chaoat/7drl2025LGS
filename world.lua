@@ -23,7 +23,7 @@ end
 function World.update(world, dt)
 	for i = 1, #world.actors do
 		local actor = world.actors[i]
-		Actor.update(actor, dt)
+		Actor.update(actor, 4*dt)
 	end
 end
 

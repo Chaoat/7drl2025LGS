@@ -25,8 +25,11 @@ function TurnCalculator.pass(turnCalculator)
 	for i = 1, #turnCalculator.world.actors do
 		local actor = turnCalculator.world.actors[i]
 		local numMoves = math.floor(math.max(math.abs(actor.velX), math.abs(actor.velY)))
-		local actorMove = {actor = actor, floatingX = actor.x, floatingY = actor.y, movesLeft = numMoves}
-		Misc.binaryInsert(actorMoves, actorMove, comparator)
+		
+		if numMoves > 0 then
+			local actorMove = {actor = actor, floatingX = actor.x, floatingY = actor.y, movesLeft = numMoves}
+			Misc.binaryInsert(actorMoves, actorMove, comparator)
+		end
 	end
 	
 	while #actorMoves > 0 do

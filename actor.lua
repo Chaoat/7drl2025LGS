@@ -1,5 +1,6 @@
 local Letter = require "letter"
 local Camera = require "camera"
+local Misc = require "misc"
 
 local Actor = {}
 
@@ -24,6 +25,10 @@ function Actor.update(actor, dt)
 			actor.drawY = actor.y
 		end
 	end
+end
+
+function Actor.getSpeed(actor)
+	return Misc.orthogDistance(0, 0, actor.velX, actor.velY)
 end
 
 function Actor.draw(actor, camera)

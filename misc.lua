@@ -49,4 +49,16 @@ function Misc.orthogPointFrom(x, y, dist, angle)
 	return returnX, returnY
 end
 
+function Misc.differenceBetweenAngles(a1, a2)
+	a1 = a1%(2*math.pi)
+	a2 = a2%(2*math.pi)
+	if math.abs(a2 - a1) <= math.pi then
+		return a2 - a1
+	elseif math.abs(a2 - a1 - 2*math.pi) <= math.pi then
+		return a2 - a1 - 2*math.pi
+	elseif math.abs(a2 - a1 + 2*math.pi) <= math.pi then
+		return a2 - a1 + 2*math.pi
+	end
+end
+
 return Misc

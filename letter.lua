@@ -88,13 +88,15 @@ function Letter.copy(letter)
 end
 
 function Letter.draw(letter, drawX, drawY, tileWidth, tileHeight)
+	love.graphics.setColor(1, 1, 1, 0.4)
+	love.graphics.rectangle("line", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
+	
 	if letter.colour == nil then
 		error("Letter color: " .. letter.letter)
 	else
 		love.graphics.setColor(letter.colour)
 	end
-	
-	love.graphics.draw(fontImage, charCodeToQuad(letter.charCode), drawX + tileWidth/2, drawY + tileHeight/2, letter.facing, tileWidth/letterTileWidth, tileHeight/letterTileHeight, letterTileWidth/2, letterTileHeight/2)
+	love.graphics.draw(fontImage, charCodeToQuad(letter.charCode), drawX, drawY, letter.facing, tileWidth/letterTileWidth, tileHeight/letterTileHeight, letterTileWidth/2, letterTileHeight/2)
 end
 
 function Letter.drawBack(letter, x, y, camera)

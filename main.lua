@@ -1,5 +1,6 @@
 local Game = require "game"
 local Controls = require "controls"
+local Misc = require "misc"
 
 GlobalDebugFlag = false
 

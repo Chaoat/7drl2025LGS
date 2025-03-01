@@ -31,6 +31,7 @@ end
 
 function Game.draw(game)
 	World.draw(game.world, game.mainCamera)
+	Player.drawMovementPrediction(game.player, game.mainCamera)
 	
 	Camera.draw(0, 0, game.mainCamera)
 end

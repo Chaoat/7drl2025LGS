@@ -77,6 +77,9 @@ function Controls.loadDefaultControls()
 	addControls("top", 		{"kp8"})
 	addControls("topRight", {"kp9"})
 	
+	addControls("accelerate", {"kp+"})
+	addControls("decelerate", {"kp-"})
+	
 	addControls("back", {"escape"})
 	
 	--addControls("examine", {"l"})
