@@ -14,9 +14,12 @@ function Player.generatePlayerActor(actor)
 end
 
 function Player.new(actor)
-	local player = {actor = actor, heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 3, deceleration = 3, predictedSquares = {}, activeTools = {}, inventory = Inventory.new()}
+	local player = {actor = actor, controlMode = "movement", lookCursorX = 0, lookCursorY = 0, targettingTool = nil,
+	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 3, deceleration = 3, 
+	predictedSquares = {}, activeTools = {}, inventory = Inventory.new()}
 	
 	Inventory.addTool(player.inventory, "nitro", 2)
+	Inventory.addTool(player.inventory, "blink", 2)
 	
 	return player
 end
@@ -56,52 +59,129 @@ end
 local function useNamedTool(player, world, toolName)
 	if Inventory.containsTool(player.inventory, toolName, 1) then
 		if not Tool.protoHasTag(toolName, "targetted") then
-			local tool = Tool.activate(toolName, player.actor, world, player, player.actor.x, player.actor.y)
-			table.insert(player.activeTools, tool)
-			return true
+			if Tool.canActivateProto(toolName, world, player, player.actor.x, player.actor.y) then
+				local tool = Tool.activate(toolName, player.actor, world, player, player.actor.x, player.actor.y)
+				table.insert(player.activeTools, tool)
+				return true
+			end
+		else
+			player.controlMode = "targetting"
+			player.lookCursorX = player.actor.x
+			player.lookCursorY = player.actor.y
+			player.targettingTool = toolName
 		end
 	end
+	return false
 end
 
 function Player.keyInput(player, world, key)
-	local targetHeading = 0
 	local executeTurn = false
 	local playerSpeed = Actor.getSpeed(player.actor)
-	if Controls.checkControl(key, "botLeft", false) then
-		executeTurn = true
-		targetHeading = 3*math.pi/4
-	elseif Controls.checkControl(key, "bot", false) then
-		executeTurn = true
-		targetHeading = math.pi/2
-	elseif Controls.checkControl(key, "botRight", false) then
-		executeTurn = true
-		targetHeading = math.pi/4
-	elseif Controls.checkControl(key, "left", false) then
-		executeTurn = true
-		targetHeading = math.pi
-	elseif Controls.checkControl(key, "skip", false) then
-		executeTurn = true
-		targetHeading = player.heading
-	elseif Controls.checkControl(key, "right", false) then
-		executeTurn = true
-		targetHeading = 0
-	elseif Controls.checkControl(key, "topLeft", false) then
-		executeTurn = true
-		targetHeading = -3*math.pi/4
-	elseif Controls.checkControl(key, "top", false) then
-		executeTurn = true
-		targetHeading = -math.pi/2
-	elseif Controls.checkControl(key, "topRight", false) then
-		executeTurn = true
-		targetHeading = -math.pi/4
-	elseif Controls.checkControl(key, "accelerate", false) then
-		player.targetSpeed = math.min(player.targetSpeed + 1, player.maxSpeed)
-		Player.calculatePredictedSquares(player)
-	elseif Controls.checkControl(key, "decelerate", false) then
-		player.targetSpeed = math.max(player.targetSpeed - 1, math.max(player.minSpeed, 0))
-		Player.calculatePredictedSquares(player)
-	elseif Controls.checkControl(key, "activateNitro", false) then
-		executeTurn = useNamedTool(player, world, "nitro")
+	local targetHeading = player.heading
+	if player.controlMode == "movement" then
+		if Controls.checkControl(key, "botLeft", false) then
+			executeTurn = true
+			targetHeading = 3*math.pi/4
+		elseif Controls.checkControl(key, "bot", false) then
+			executeTurn = true
+			targetHeading = math.pi/2
+		elseif Controls.checkControl(key, "botRight", false) then
+			executeTurn = true
+			targetHeading = math.pi/4
+		elseif Controls.checkControl(key, "left", false) then
+			executeTurn = true
+			targetHeading = math.pi
+		elseif Controls.checkControl(key, "skip", false) then
+			executeTurn = true
+		elseif Controls.checkControl(key, "right", false) then
+			executeTurn = true
+			targetHeading = 0
+		elseif Controls.checkControl(key, "topLeft", false) then
+			executeTurn = true
+			targetHeading = -3*math.pi/4
+		elseif Controls.checkControl(key, "top", false) then
+			executeTurn = true
+			targetHeading = -math.pi/2
+		elseif Controls.checkControl(key, "topRight", false) then
+			executeTurn = true
+			targetHeading = -math.pi/4
+		elseif Controls.checkControl(key, "accelerate", false) then
+			player.targetSpeed = math.min(player.targetSpeed + 1, player.maxSpeed)
+			Player.calculatePredictedSquares(player)
+		elseif Controls.checkControl(key, "decelerate", false) then
+			player.targetSpeed = math.max(player.targetSpeed - 1, math.max(player.minSpeed, 0))
+			Player.calculatePredictedSquares(player)
+		elseif Controls.checkControl(key, "startLooking", false) then
+			player.controlMode = "freeLook"
+			player.lookCursorX = player.actor.x
+			player.lookCursorY = player.actor.y
+		elseif Controls.checkControl(key, "activateNitro", false) then
+			executeTurn = useNamedTool(player, world, "nitro")
+		elseif Controls.checkControl(key, "activateBlink", false) then
+			executeTurn = useNamedTool(player, world, "blink")
+		end
+	elseif player.controlMode == "freeLook" then
+		if Controls.checkControl(key, "botLeft", false) then
+			player.lookCursorX = player.lookCursorX - 1
+			player.lookCursorY = player.lookCursorY + 1
+		elseif Controls.checkControl(key, "bot", false) then
+			player.lookCursorY = player.lookCursorY + 1
+		elseif Controls.checkControl(key, "botRight", false) then
+			player.lookCursorX = player.lookCursorX + 1
+			player.lookCursorY = player.lookCursorY + 1
+		elseif Controls.checkControl(key, "left", false) then
+			player.lookCursorX = player.lookCursorX - 1
+		elseif Controls.checkControl(key, "right", false) then
+			player.lookCursorX = player.lookCursorX + 1
+		elseif Controls.checkControl(key, "topLeft", false) then
+			player.lookCursorX = player.lookCursorX - 1
+			player.lookCursorY = player.lookCursorY - 1
+		elseif Controls.checkControl(key, "top", false) then
+			player.lookCursorY = player.lookCursorY - 1
+		elseif Controls.checkControl(key, "topRight", false) then
+			player.lookCursorX = player.lookCursorX + 1
+			player.lookCursorY = player.lookCursorY - 1
+		elseif Controls.checkControl(key, "back", false) then
+			player.controlMode = "movement"
+		end
+	elseif player.controlMode == "targetting" then
+		local newCursorX = player.lookCursorX
+		local newCursorY = player.lookCursorY
+		if Controls.checkControl(key, "botLeft", false) then
+			newCursorX = newCursorX - 1
+			newCursorY = newCursorY + 1
+		elseif Controls.checkControl(key, "bot", false) then
+			newCursorY = newCursorY + 1
+		elseif Controls.checkControl(key, "botRight", false) then
+			newCursorX = newCursorX + 1
+			newCursorY = newCursorY + 1
+		elseif Controls.checkControl(key, "left", false) then
+			newCursorX = newCursorX - 1
+		elseif Controls.checkControl(key, "right", false) then
+			newCursorX = newCursorX + 1
+		elseif Controls.checkControl(key, "topLeft", false) then
+			newCursorX = newCursorX - 1
+			newCursorY = newCursorY - 1
+		elseif Controls.checkControl(key, "top", false) then
+			newCursorY = newCursorY - 1
+		elseif Controls.checkControl(key, "topRight", false) then
+			newCursorX = newCursorX + 1
+			newCursorY = newCursorY - 1
+		elseif Controls.checkControl(key, "activateTargettedTool", false) and player.controlMode == "targetting" then
+			if Tool.canActivateProto(player.targettingTool, world, player, player.lookCursorX, player.lookCursorY) then
+				local tool = Tool.activate(player.targettingTool, player.actor, world, player, player.lookCursorX, player.lookCursorY)
+				table.insert(player.activeTools, tool)
+				player.controlMode = "movement"
+				executeTurn = true
+			end
+		elseif Controls.checkControl(key, "back", false) then
+			player.controlMode = "movement"
+		end
+		
+		if Misc.orthogDistance(player.actor.x, player.actor.y, newCursorX, newCursorY) <= Tool.getProtoRange(player.targettingTool) then
+			player.lookCursorX = newCursorX
+			player.lookCursorY = newCursorY
+		end
 	end
 	
 	if executeTurn then
@@ -112,11 +192,27 @@ function Player.keyInput(player, world, key)
 end
 
 function Player.clickInput(player, tilex, tiley, button)
-	for i = 1, #player.predictedSquares do
-		local predSquare = player.predictedSquares[i]
-		if predSquare.clickable and predSquare.x == tilex and predSquare.y == tiley then
-			executePlayerAcceleration(player, predSquare.targetHeading)
-			return true
+	if player.controlMode == "movement" then
+		if button == 1 then
+			for i = 1, #player.predictedSquares do
+				local predSquare = player.predictedSquares[i]
+				if predSquare.clickable and predSquare.x == tilex and predSquare.y == tiley then
+					executePlayerAcceleration(player, predSquare.targetHeading)
+					return true
+				end
+			end
+		elseif button == 2 then
+			player.controlMode = "freeLook"
+			player.lookCursorX = tilex
+			player.lookCursorY = tiley
+		end
+	elseif player.controlMode == "freeLook" then
+		player.lookCursorX = tilex
+		player.lookCursorY = tiley
+	elseif player.controlMode == "targetting" then
+		if Misc.orthogDistance(player.actor.x, player.actor.y, tilex, tiley) <= Tool.getProtoRange(player.targettingTool) then
+			player.lookCursorX = tilex
+			player.lookCursorY = tiley
 		end
 	end
 	return false
@@ -196,6 +292,24 @@ function Player.drawMovementPrediction(player, camera)
 			love.graphics.setColor(arrow.tint)
 			Image.drawImageScreenSpace(arrow.image, drawX, drawY, arrow.angle, 0.5, 0.5, tileWidth/arrow.image.width, tileHeight/arrow.image.height)
 		end)
+	end
+end
+
+function Player.drawCursor(player, camera)
+	if player.controlMode == "freeLook" or player.controlMode == "targetting" then
+		Camera.drawTo({}, player.lookCursorX, player.lookCursorY, camera, 
+		function(cursor, drawX, drawY, tileWidth, tileHeight)
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("line", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
+		end)
+		
+		if player.controlMode == "targetting" then
+			Camera.drawTo({radius = Tool.getProtoRange(player.targettingTool)}, player.actor.x, player.actor.y, camera, 
+			function(cursor, drawX, drawY, tileWidth, tileHeight)
+				love.graphics.setColor(1, 0, 0, 1)
+				love.graphics.rectangle("line", drawX - (cursor.radius + 0.5)*tileWidth, drawY - (cursor.radius + 0.5)*tileHeight, (2*cursor.radius + 1)*tileWidth, (2*cursor.radius + 1)*tileHeight)
+			end)
+		end
 	end
 end
 

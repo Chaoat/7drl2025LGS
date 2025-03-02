@@ -75,7 +75,7 @@ function Tile.wreck(tile)
 	tile.letter.charCode = string.byte(";")
 end
 
-function Tile.moveActor(tile, actor)
+function Tile.moveActor(tile, actor, instant)
 	if actor.tile then
 		local oldTile = actor.tile
 		for i = #oldTile.actors, 1, -1 do
@@ -91,7 +91,7 @@ function Tile.moveActor(tile, actor)
 	actor.y = tile.y
 	actor.tile = tile
 	
-	if actor.drawX == nil or actor.drawY == nil then
+	if actor.drawX == nil or actor.drawY == nil or instant then
 		actor.drawX = tile.x
 		actor.drawY = tile.y
 	end

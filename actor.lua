@@ -6,9 +6,23 @@ local Actor = {}
 
 local latestID = 0
 function Actor.new(letter, solidity)
-	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, velX = 0, velY = 0, momentX = 0, momentY = 0, solidity = solidity, letter = letter, id = latestID}
+	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, activatedTools = {}, velX = 0, velY = 0, momentX = 0, momentY = 0, solidity = solidity, letter = letter, id = latestID}
 	latestID = latestID + 1
 	return actor
+end
+
+function Actor.toolEffectActive(actor, toolName)
+	for i = #actor.activatedTools, 1, -1 do
+		print(1)
+		local tool = actor.activatedTools[i]
+		
+		if tool.complete then
+			table.remove(actor.activatedTools, i)
+		elseif tool.proto.name == toolName then
+			return true
+		end
+	end
+	return false
 end
 
 function Actor.kill(actor)

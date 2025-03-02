@@ -25,7 +25,7 @@ function Game.update(game, dt)
 	World.update(game.world, dt)
 	
 	--Camera.move(game.mainCamera, (game.mainCamera.worldX + game.player.actor.drawX)/2, (game.mainCamera.worldY + game.player.actor.drawY)/2)
-	Camera.move(game.mainCamera, game.player.actor.drawX, game.player.actor.drawY)
+	Camera.trackPlayer(game.mainCamera, game.player)
 end
 
 function Game.keyInput(game, key)
@@ -44,6 +44,7 @@ end
 function Game.draw(game)
 	World.draw(game.world, game.mainCamera)
 	Player.drawMovementPrediction(game.player, game.mainCamera)
+	Player.drawCursor(game.player, game.mainCamera)
 	
 	Camera.draw(0, 0, game.mainCamera)
 end

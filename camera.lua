@@ -15,6 +15,14 @@ function Camera.move(camera, x, y)
 	camera.worldY = y
 end
 
+function Camera.trackPlayer(camera, player)
+	if player.controlMode == "movement" then
+		Camera.move(camera, player.actor.drawX, player.actor.drawY)
+	elseif player.controlMode == "freeLook" then
+		Camera.move(camera, player.lookCursorX, player.lookCursorY)
+	end
+end
+
 function Camera.resize(camera, width, height)
 	camera.cameraWidth = width
 	camera.cameraHeight = height

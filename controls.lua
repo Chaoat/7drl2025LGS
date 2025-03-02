@@ -77,7 +77,11 @@ function Controls.loadDefaultControls()
 	addControls("top", 		{"kp8"})
 	addControls("topRight", {"kp9"})
 	
+	addControls("startLooking", {"l"})
+	
 	addControls("activateNitro", {"1"})
+	addControls("activateBlink", {"2"})
+	addControls("activateTargettedTool", {"kpenter", "space", "return"})
 	
 	addControls("accelerate", {"kp+", "=", "wheelUp"})
 	addControls("decelerate", {"kp-", "-", "wheelDown"})

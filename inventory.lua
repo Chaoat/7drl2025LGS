@@ -23,10 +23,8 @@ function Inventory.addTool(inventory, toolName, count)
 end
 
 function Inventory.containsTool(inventory, toolName, count)
-	print("111")
 	for i = 1, #inventory.tools do
 		local tool = inventory.tools[i]
-		print("222" .. tool.count)
 		if tool.toolName == toolName then
 			return tool.count >= count
 		end
