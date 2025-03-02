@@ -6,7 +6,7 @@ local Actor = require "actor"
 local World = {}
 
 function World.new()
-	local world = {map = Map.loadFromXP(XpInterpreter.load("7drl2020CityBlockTest")), actors = {}, enemies = {}}
+	local world = {map = Map.loadFromXP(XpInterpreter.load("7drl2020CityBlockTest")), actors = {}, enemies = {}, activeTools = {}}
 	return world
 end
 

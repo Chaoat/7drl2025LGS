@@ -4,6 +4,8 @@ local Controls = require "controls"
 local Misc = require "misc"
 local Camera = require "camera"
 local Image = require "image"
+local Inventory = require "inventory"
+local Tool = require "tool"
 
 local Player = {}
 
@@ -12,7 +14,10 @@ function Player.generatePlayerActor(actor)
 end
 
 function Player.new(actor)
-	local player = {actor = actor, heading = 0, speed = 0, targetSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 3, deceleration = 3, predictedSquares = {}}
+	local player = {actor = actor, heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 3, deceleration = 3, predictedSquares = {}, activeTools = {}, inventory = Inventory.new()}
+	
+	Inventory.addTool(player.inventory, "nitro", 2)
+	
 	return player
 end
 
@@ -48,46 +53,58 @@ local function executePlayerAcceleration(player, targetHeading)
 	player.actor.velY = Misc.round(velY)
 end
 
-function Player.keyInput(player, key)
+local function useNamedTool(player, world, toolName)
+	if Inventory.containsTool(player.inventory, toolName, 1) then
+		if not Tool.protoHasTag(toolName, "targetted") then
+			local tool = Tool.activate(toolName, player.actor, world, player, player.actor.x, player.actor.y)
+			table.insert(player.activeTools, tool)
+			return true
+		end
+	end
+end
+
+function Player.keyInput(player, world, key)
 	local targetHeading = 0
-	local turning = false
+	local executeTurn = false
 	local playerSpeed = Actor.getSpeed(player.actor)
 	if Controls.checkControl(key, "botLeft", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = 3*math.pi/4
 	elseif Controls.checkControl(key, "bot", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = math.pi/2
 	elseif Controls.checkControl(key, "botRight", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = math.pi/4
 	elseif Controls.checkControl(key, "left", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = math.pi
 	elseif Controls.checkControl(key, "skip", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = player.heading
 	elseif Controls.checkControl(key, "right", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = 0
 	elseif Controls.checkControl(key, "topLeft", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = -3*math.pi/4
 	elseif Controls.checkControl(key, "top", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = -math.pi/2
 	elseif Controls.checkControl(key, "topRight", false) then
-		turning = true
+		executeTurn = true
 		targetHeading = -math.pi/4
 	elseif Controls.checkControl(key, "accelerate", false) then
 		player.targetSpeed = math.min(player.targetSpeed + 1, player.maxSpeed)
 		Player.calculatePredictedSquares(player)
 	elseif Controls.checkControl(key, "decelerate", false) then
-		player.targetSpeed = math.max(player.targetSpeed - 1, 0)
+		player.targetSpeed = math.max(player.targetSpeed - 1, math.max(player.minSpeed, 0))
 		Player.calculatePredictedSquares(player)
+	elseif Controls.checkControl(key, "activateNitro", false) then
+		executeTurn = useNamedTool(player, world, "nitro")
 	end
 	
-	if turning then
+	if executeTurn then
 		executePlayerAcceleration(player, targetHeading)
 		return true
 	end
@@ -107,7 +124,7 @@ end
 
 function Player.forceUpdateHeading(player)
 	player.heading = math.atan2(player.actor.velY, player.actor.velX)
-	player.speed = Misc.round(Misc.orthogDistance(0, 0, player.actor.velX, player.actor.velY))
+	player.speed = math.max(player.minSpeed, math.min(Misc.round(Misc.orthogDistance(0, 0, player.actor.velX, player.actor.velY)), player.maxSpeed))
 end
 
 function Player.calculatePredictedSquares(player)

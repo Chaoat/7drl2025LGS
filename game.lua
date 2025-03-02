@@ -29,7 +29,7 @@ function Game.update(game, dt)
 end
 
 function Game.keyInput(game, key)
-	if Player.keyInput(game.player, key) then
+	if Player.keyInput(game.player, game.world, key) then
 		TurnCalculator.pass(game.turnCalculator)
 	end
 end

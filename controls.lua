@@ -77,6 +77,8 @@ function Controls.loadDefaultControls()
 	addControls("top", 		{"kp8"})
 	addControls("topRight", {"kp9"})
 	
+	addControls("activateNitro", {"1"})
+	
 	addControls("accelerate", {"kp+", "=", "wheelUp"})
 	addControls("decelerate", {"kp-", "-", "wheelDown"})
 	

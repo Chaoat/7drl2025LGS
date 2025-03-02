@@ -3,6 +3,7 @@ local Map = require "map"
 local Misc = require "misc"
 local Actor = require "actor"
 local Player = require "player"
+local Tool = require "tool"
 
 local TurnCalculator = {}
 
@@ -131,6 +132,14 @@ function TurnCalculator.pass(turnCalculator)
 		local actor = turnCalculator.world.actors[i]
 		actor.velX = actor.velX - actor.momentX
 		actor.velY = actor.velY - actor.momentX
+	end
+	
+	for i = #turnCalculator.world.activeTools, 1, -1 do
+		local tool = turnCalculator.world.activeTools[i]
+		Tool.tick(tool, turnCalculator.world, turnCalculator.player)
+		if tool.complete then
+			table.remove(turnCalculator.world.activeTools, i)
+		end
 	end
 	
 	Player.forceUpdateHeading(turnCalculator.player)
