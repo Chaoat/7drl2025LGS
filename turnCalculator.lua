@@ -142,7 +142,7 @@ function TurnCalculator.pass(turnCalculator)
 		end
 	end
 	
-	Player.forceUpdateHeading(turnCalculator.player)
+	Player.postTurnUpdate(turnCalculator.player, turnCalculator.world)
 	Player.calculatePredictedSquares(turnCalculator.player)
 end
 

@@ -3,6 +3,7 @@ local Controls = require "controls"
 local Misc = require "misc"
 
 GlobalDebugFlag = false
+GLOBALAnimationClock = 0
 
 local rootGame = nil
 function love.load()
@@ -10,6 +11,7 @@ function love.load()
 end
 
 function love.update(dt)
+	GLOBALAnimationClock = GLOBALAnimationClock + dt
 	Game.update(rootGame, dt)
 end
 
@@ -30,6 +32,10 @@ function love.wheelmoved(x, y)
 	if wheelControl then
 		Game.keyInput(rootGame, wheelControl)
 	end
+end
+
+function love.resize(w, h)
+	Game.resize(rootGame, w, h)
 end
 
 function love.draw()

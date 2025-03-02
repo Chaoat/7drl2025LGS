@@ -9,7 +9,7 @@ local function newEffectToolProto(name, nameTag, descriptionTag, colour, duratio
 	--activateFunc(tool, world, player)
 	--deactivateFunc(tool, world, player)
 	--animationEffect(tool, world, player, dt)
-	--canActivateFunc(world, player, targetX, targetY)
+	--canActivateFunc(world, player, targetX, targetY) if checking for press activation, targetX and targetY will be nil
 	protos[name] = {name = name, nameTag = nameTag, descriptionTag = descriptionTag, duration = duration, range = range, 
 					activateFunc = activateFunc, deactivateFunc = deactivateFunc, animationEffect = animationEffect, canActivateFunc = canActivateFunc,
 					tags = {}}
@@ -53,6 +53,9 @@ do
 	nil,
 	nil,
 	function(world, player, targetX, targetY)
+		if targetX == nil or targetY == nil then
+			return true
+		end
 		local tile = Map.getTile(world.map, targetX, targetY)
 		return tile ~= nil and tile.solidity == 0 and #tile.actors == 0
 	end,

@@ -79,9 +79,16 @@ function Controls.loadDefaultControls()
 	
 	addControls("startLooking", {"l"})
 	
-	addControls("activateNitro", {"1"})
-	addControls("activateBlink", {"2"})
+	addControls("activateNitro", {"n"})
+	addControls("activateBlink", {"b"})
 	addControls("activateTargettedTool", {"kpenter", "space", "return"})
+	
+	addControls("tradeOption1", {"1"})
+	addControls("tradeOption2", {"2"})
+	addControls("tradeOption3", {"3"})
+	addControls("tradeOption4", {"4"})
+	addControls("tradeOption5", {"5"})
+	addControls("tradeOption6", {"6"})
 	
 	addControls("accelerate", {"kp+", "=", "wheelUp"})
 	addControls("decelerate", {"kp-", "-", "wheelDown"})
@@ -97,7 +104,6 @@ function Controls.loadDefaultControls()
 	
 	--addControls("useStaircase", {"return"})
 end
-
 
 local buttonNumbers = {"leftMouse", "rightMouse", "middleMouse"}
 function Controls.mouseButtonNumberToControl(buttonNumber)

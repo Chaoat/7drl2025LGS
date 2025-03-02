@@ -13,7 +13,6 @@ end
 
 function Actor.toolEffectActive(actor, toolName)
 	for i = #actor.activatedTools, 1, -1 do
-		print(1)
 		local tool = actor.activatedTools[i]
 		
 		if tool.complete then

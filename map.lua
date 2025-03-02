@@ -45,6 +45,16 @@ function Map.getTile(map, x, y)
 	return nil
 end
 
+function Map.getTileCoordsInSquare(map, x1, y1, x2, y2)
+	local tiles = {}
+	for x = x1, x2 do
+		for y = y1, y2 do
+			table.insert(tiles, {x, y})
+		end
+	end
+	return tiles
+end
+
 local function posToIndex(map, x, y)
 	return (map.bounds[xMax] - map.bounds[xMin])*y + x
 end

@@ -3,11 +3,42 @@ local World = require "world"
 local Player = require "player"
 local TurnCalculator = require "turnCalculator"
 local EnemyProto = require "enemyProto"
+local Menu = require "menu"
 
 local Game = {}
 
+local function blackBack(opacity)
+	return function(x, y, width, height, timeChange)
+		love.graphics.setColor(0, 0, 0, opacity)
+		love.graphics.rectangle("fill", x, y, width, height)
+	end
+end
+
+local function generateInterface(world, player, camera)
+	local menu = Menu.new(nil)
+	
+	local screen = Menu.screen.new("main", nil)
+	
+	local sideBar = Menu.screen.new("side", blackBack(0.7))
+	
+	local toolElements = {
+	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "nitro", "activateNitro"),
+	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "blink", "activateBlink"),
+	}
+	
+	Menu.screen.addElement(sideBar, Menu.element.verticalList(Menu.position.dynamicCenter(0.5, -200, 180, 180), true, nil, 0, false, toolElements, nil, false))
+	Menu.screen.addElement(sideBar, Menu.element.cargoHold(Menu.position.dynamicSize(10, -450, -10, -210), player))
+	Menu.screen.addElement(sideBar, Menu.element.crewHold(Menu.position.dynamicSize(10, -700, -10, -460), player))
+	
+	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
+	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 400), player, camera))
+	Menu.addScreen(menu, screen)
+	
+	return menu
+end
+
 function Game.new()
-	local game = {mainCamera = Camera.new(), player = nil, world = World.new(), turnCalculator = nil}
+	local game = {mainCamera = Camera.new(), player = nil, interface = nil, world = World.new(), turnCalculator = nil}
 	
 	local playerActor = World.placeActor(game.world, Player.generatePlayerActor(actor), 0, 0)
 	game.player = Player.new(playerActor)
@@ -18,7 +49,13 @@ function Game.new()
 	
 	game.turnCalculator = TurnCalculator.new(game.world, game.player)
 	
+	game.interface = generateInterface(game.world, game.player, game.mainCamera)
+	
 	return game
+end
+
+function Game.resize(game, w, h)
+	Camera.resize(game.mainCamera, w, h)
 end
 
 function Game.update(game, dt)
@@ -35,9 +72,11 @@ function Game.keyInput(game, key)
 end
 
 function Game.mouseInput(game, screenx, screeny, button)
-	local tilex, tiley = Camera.screenToTileCoords(game.mainCamera, screenx, screeny)
-	if Player.clickInput(game.player, tilex, tiley, button) then
-		TurnCalculator.pass(game.turnCalculator)
+	if Menu.click(game.interface, screenx, screeny, button) == false then
+		local tilex, tiley = Camera.screenToTileCoords(game.mainCamera, screenx, screeny)
+		if Player.clickInput(game.player, tilex, tiley, button) then
+			TurnCalculator.pass(game.turnCalculator)
+		end
 	end
 end
 
@@ -47,6 +86,9 @@ function Game.draw(game)
 	Player.drawCursor(game.player, game.mainCamera)
 	
 	Camera.draw(0, 0, game.mainCamera)
+	
+	local width, height, flags = love.window.getMode()
+	Menu.draw(game.interface, 0, 0, width, height)
 end
 
 return Game

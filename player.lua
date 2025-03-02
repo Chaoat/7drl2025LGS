@@ -6,6 +6,7 @@ local Camera = require "camera"
 local Image = require "image"
 local Inventory = require "inventory"
 local Tool = require "tool"
+local Bunker = require "bunker"
 
 local Player = {}
 
@@ -16,10 +17,13 @@ end
 function Player.new(actor)
 	local player = {actor = actor, controlMode = "movement", lookCursorX = 0, lookCursorY = 0, targettingTool = nil,
 	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 3, deceleration = 3, 
-	predictedSquares = {}, activeTools = {}, inventory = Inventory.new()}
+	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), parkedBunker = nil}
 	
 	Inventory.addTool(player.inventory, "nitro", 2)
 	Inventory.addTool(player.inventory, "blink", 2)
+	
+	--Inventory.addCargo(player.inventory, "food", 1)
+	--Inventory.addCargo(player.inventory, "fresh water", 1)
 	
 	return player
 end
@@ -59,8 +63,9 @@ end
 local function useNamedTool(player, world, toolName)
 	if Inventory.containsTool(player.inventory, toolName, 1) then
 		if not Tool.protoHasTag(toolName, "targetted") then
-			if Tool.canActivateProto(toolName, world, player, player.actor.x, player.actor.y) then
+			if Tool.canActivateProto(toolName, world, player, nil, nil) then
 				local tool = Tool.activate(toolName, player.actor, world, player, player.actor.x, player.actor.y)
+				Inventory.removeTool(player.inventory, toolName, 1)
 				table.insert(player.activeTools, tool)
 				return true
 			end
@@ -72,6 +77,14 @@ local function useNamedTool(player, world, toolName)
 		end
 	end
 	return false
+end
+local function executeNthTrade(player, tradeN)
+	if player.parkedBunker then
+		local trade = player.parkedBunker.validTrades[tradeN]
+		if trade and trade.canExecuteFunction(player, player.parkedBunker) then
+			trade.executeFunction(player, player.parkedBunker)
+		end
+	end
 end
 
 function Player.keyInput(player, world, key)
@@ -119,6 +132,18 @@ function Player.keyInput(player, world, key)
 			executeTurn = useNamedTool(player, world, "nitro")
 		elseif Controls.checkControl(key, "activateBlink", false) then
 			executeTurn = useNamedTool(player, world, "blink")
+		elseif Controls.checkControl(key, "tradeOption1", false) then
+			executeNthTrade(player, 1)
+		elseif Controls.checkControl(key, "tradeOption2", false) then
+			executeNthTrade(player, 2)
+		elseif Controls.checkControl(key, "tradeOption3", false) then
+			executeNthTrade(player, 3)
+		elseif Controls.checkControl(key, "tradeOption4", false) then
+			executeNthTrade(player, 4)
+		elseif Controls.checkControl(key, "tradeOption5", false) then
+			executeNthTrade(player, 5)
+		elseif Controls.checkControl(key, "tradeOption6", false) then
+			executeNthTrade(player, 6)
 		end
 	elseif player.controlMode == "freeLook" then
 		if Controls.checkControl(key, "botLeft", false) then
@@ -171,6 +196,7 @@ function Player.keyInput(player, world, key)
 			if Tool.canActivateProto(player.targettingTool, world, player, player.lookCursorX, player.lookCursorY) then
 				local tool = Tool.activate(player.targettingTool, player.actor, world, player, player.lookCursorX, player.lookCursorY)
 				table.insert(player.activeTools, tool)
+				Inventory.removeTool(player.inventory, player.targettingTool, 1)
 				player.controlMode = "movement"
 				executeTurn = true
 			end
@@ -218,9 +244,11 @@ function Player.clickInput(player, tilex, tiley, button)
 	return false
 end
 
-function Player.forceUpdateHeading(player)
+function Player.postTurnUpdate(player, world)
 	player.heading = math.atan2(player.actor.velY, player.actor.velX)
 	player.speed = math.max(player.minSpeed, math.min(Misc.round(Misc.orthogDistance(0, 0, player.actor.velX, player.actor.velY)), player.maxSpeed))
+	
+	player.parkedBunker = Bunker.getBunkerOnTile(world.bunkers, player.actor.tile)
 end
 
 function Player.calculatePredictedSquares(player)
