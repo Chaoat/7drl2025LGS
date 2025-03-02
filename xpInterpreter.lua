@@ -39,8 +39,8 @@ function XpInterpreter.load(fileName)
 			for j = 0, properties.height - 1 do
 				local charCode = readBytes(4)
 				--print(charCode)
-				local fCol = {readBytes(1)/255, readBytes(1)/255, readBytes(1)/255}
-				local bCol = {readBytes(1)/255, readBytes(1)/255, readBytes(1)/255}
+				local fCol = {readBytes(1)/255, readBytes(1)/255, readBytes(1)/255, 1}
+				local bCol = {readBytes(1)/255, readBytes(1)/255, readBytes(1)/255, 1}
 				image[i][j] = {character = string.char(charCode), charCode = charCode, fCol = fCol, bCol = bCol}
 			end
 		end

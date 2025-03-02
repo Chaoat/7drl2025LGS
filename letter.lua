@@ -1,4 +1,5 @@
 local Camera = require "camera"
+local Misc = require "misc"
 
 local Letter = {}
 
@@ -78,7 +79,7 @@ function Letter.new(charCode, colour, backColour)
 	if not backColour then
 		backColour = {0, 0, 0, 0}
 	end
-	local letter = {charCode = charCode, colour = colour, backColour = backColour, facing = 0}
+	local letter = {charCode = charCode, colour = colour, backColour = backColour, tint = {1, 1, 1, 1}, facing = 0}
 	return letter
 end
 
@@ -94,7 +95,8 @@ function Letter.draw(letter, drawX, drawY, tileWidth, tileHeight)
 	if letter.colour == nil then
 		error("Letter color: " .. letter.letter)
 	else
-		love.graphics.setColor(letter.colour)
+		
+		love.graphics.setColor(Misc.multiplyColours(letter.colour, letter.tint))
 	end
 	love.graphics.draw(fontImage, charCodeToQuad(letter.charCode), drawX, drawY, letter.facing, tileWidth/letterTileWidth, tileHeight/letterTileHeight, letterTileWidth/2, letterTileHeight/2)
 end

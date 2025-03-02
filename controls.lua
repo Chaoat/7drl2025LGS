@@ -77,8 +77,8 @@ function Controls.loadDefaultControls()
 	addControls("top", 		{"kp8"})
 	addControls("topRight", {"kp9"})
 	
-	addControls("accelerate", {"kp+", "="})
-	addControls("decelerate", {"kp-", "-"})
+	addControls("accelerate", {"kp+", "=", "wheelUp"})
+	addControls("decelerate", {"kp-", "-", "wheelDown"})
 	
 	addControls("back", {"escape"})
 	
@@ -99,6 +99,16 @@ function Controls.mouseButtonNumberToControl(buttonNumber)
 		return buttonNumbers[buttonNumber]
 	else
 		return "none"
+	end
+end
+
+function Controls.mousewheelToControl(wheelVel)
+	if wheelVel < 0 then
+		return "wheelDown"
+	elseif wheelVel > 0 then
+		return "wheelUp"
+	else
+		return nil
 	end
 end
 

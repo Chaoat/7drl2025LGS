@@ -3,15 +3,18 @@ local Camera = require "camera"
 
 local Tile = {}
 
-function Tile.fromXP(xpCharacter)
+local solidityTiers = {2, 4, 6, 8, 10}
+function Tile.fromXP(xpCharacter, solidityCharacter)
 	local charCode = xpCharacter.charCode
 	local fCol = xpCharacter.fCol
 	local bCol = xpCharacter.bCol
 	
+	local solidityTier = math.max(solidityCharacter.charCode - 48, 0)
 	local solidity = 0
-	if charCode ~= 0 and fCol[3] > 0 then
-		solidity = 5
+	if solidityTier > 0 then
+		solidity = solidityTiers[solidityTier]
 	end
+	
 	local tags = {}
 	local tile = Tile.new(solidity, tags, Letter.new(charCode, fCol, bCol))
 	

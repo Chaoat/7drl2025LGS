@@ -25,6 +25,13 @@ function love.mousepressed(screenx, screeny, button)
 	Game.mouseInput(rootGame, screenx, screeny, button)
 end
 
+function love.wheelmoved(x, y)
+	local wheelControl = Controls.mousewheelToControl(y)
+	if wheelControl then
+		Game.keyInput(rootGame, wheelControl)
+	end
+end
+
 function love.draw()
 	Game.draw(rootGame)
 end

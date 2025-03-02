@@ -2,6 +2,7 @@ local Camera = require "camera"
 local World = require "world"
 local Player = require "player"
 local TurnCalculator = require "turnCalculator"
+local EnemyProto = require "enemyProto"
 
 local Game = {}
 
@@ -10,6 +11,10 @@ function Game.new()
 	
 	local playerActor = World.placeActor(game.world, Player.generatePlayerActor(actor), 0, 0)
 	game.player = Player.new(playerActor)
+	
+	--EnemyProto.spawn("debris", game.world, 3, 3)
+	--EnemyProto.spawn("debris", game.world, 5, 3)
+	--EnemyProto.spawn("debris", game.world, 7, 3)
 	
 	game.turnCalculator = TurnCalculator.new(game.world, game.player)
 	

@@ -26,6 +26,8 @@ function TurnCalculator.pass(turnCalculator)
 	local actorMoves = {}
 	for i = 1, #turnCalculator.world.actors do
 		local actor = turnCalculator.world.actors[i]
+		actor.velX = actor.velX + actor.momentX
+		actor.velY = actor.velY + actor.momentX
 		local numMoves = math.floor(math.max(math.abs(actor.velX), math.abs(actor.velY)))
 		
 		if numMoves > 0 then
@@ -34,12 +36,36 @@ function TurnCalculator.pass(turnCalculator)
 		end
 	end
 	
+	local function reorderActorMove(actor)
+		for i = 1, #actorMoves do
+			local actorMove = actorMoves[i]
+			if actorMove.actor.id == actor.id then
+				table.remove(actorMoves, i)
+				actorMove.movesLeft = math.floor(math.max(math.abs(actor.velX), math.abs(actor.velY)))
+				Misc.binaryInsert(actorMoves, actorMove, comparator)
+				break
+			end
+		end
+	end
+	
+	local function addMomentum(actor, momentX, momentY)
+		actor.velX = actor.velX + momentX
+		actor.velY = actor.velY + momentY
+		actor.momentX = actor.momentX + momentX
+		actor.momentY = actor.momentY + momentY
+		
+		reorderActorMove(actor)
+	end
+	
 	while #actorMoves > 0 do
 		local actorMove = actorMoves[1]
+		table.remove(actorMoves, 1)
+		
 		local newX, newY = Misc.orthogPointFrom(actorMove.floatingX, actorMove.floatingY, 1, math.atan2(actorMove.actor.velY, actorMove.actor.velX))
 		--print(newX .. " : " .. newY)
 		local targetTile = Map.getTile(turnCalculator.world.map, Misc.round(newX), Misc.round(newY))
 		if targetTile then
+			--Collision
 			if targetTile.solidity >= Actor.getSpeed(actorMove.actor) then
 				if targetTile.x ~= actorMove.actor.x then
 					actorMove.actor.velX = 0
@@ -55,17 +81,56 @@ function TurnCalculator.pass(turnCalculator)
 					Actor.changeSpeed(actorMove.actor, -targetTile.solidity)
 					Tile.wreck(targetTile)
 				end
-				Tile.moveActor(targetTile, actorMove.actor)
-				actorMove.floatingX = newX
-				actorMove.floatingY = newY
+				
+				--Actor collision
+				local collidingActor = nil
+				if actorMove.actor.solidity > 0 then
+					for i = 1, #targetTile.actors do
+						if targetTile.actors[i].solidity > 0 then
+							collidingActor = targetTile.actors[i]
+							break
+						end
+					end
+				end
+				
+				if collidingActor and collidingActor.solidity >= Actor.getSpeed(actorMove.actor) and actorMove.actor.solidity >= Actor.getSpeed(collidingActor) then
+					if targetTile.x ~= actorMove.actor.x then
+						addMomentum(collidingActor, actorMove.actor.velX, 0)
+						
+						actorMove.actor.velX = 0
+						actorMove.movesLeft = actorMove.actor.velY
+					else
+						addMomentum(collidingActor, 0, actorMove.actor.velY)
+						
+						actorMove.actor.velY = 0
+						actorMove.movesLeft = actorMove.actor.velX
+					end
+				elseif collidingActor and actorMove.actor.solidity < Actor.getSpeed(collidingActor) then
+					Actor.changeSpeed(collidingActor, -actorMove.actor.solidity)
+					Actor.kill(actorMove.actor)
+					reorderActorMove(collidingActor)
+				else
+					if collidingActor and collidingActor.solidity < Actor.getSpeed(actorMove.actor) then
+						Actor.kill(collidingActor)
+						Actor.changeSpeed(actorMove.actor, -collidingActor.solidity)
+					end
+					Tile.moveActor(targetTile, actorMove.actor)
+					actorMove.floatingX = newX
+					actorMove.floatingY = newY
+				end
 			end
 		end
 		
 		actorMove.movesLeft = actorMove.movesLeft - 1
-		table.remove(actorMoves, 1)
 		if actorMove.movesLeft > 0 then
 			Misc.binaryInsert(actorMoves, actorMove, comparator)
 		end
+	end
+	
+	for i = 1, #turnCalculator.world.actors do
+		local actor = turnCalculator.world.actors[i]
+		actor.velX = actor.velX - actor.momentX
+		actor.velY = actor.velY - actor.momentX
 	end
 	
 	Player.forceUpdateHeading(turnCalculator.player)
