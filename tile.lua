@@ -3,13 +3,52 @@ local Camera = require "camera"
 
 local Tile = {}
 
+local colourToSolidity = {}
+local function colourToColourKey(colour)
+	return 255*colour[1]*1000000 + 255*colour[2]*1000 + 255*colour[3]
+end
+local function newColourToSolidity(colour, solidity)
+	colour[1] = colour[1]/255
+	colour[2] = colour[2]/255
+	colour[3] = colour[3]/255
+	local key = colourToColourKey(colour)
+	colourToSolidity[key] = solidity
+end
+
+do
+	newColourToSolidity({70, 146, 128}, 0)
+	newColourToSolidity({47, 122, 120}, 0)
+	newColourToSolidity({29, 90, 103}, 0)
+	newColourToSolidity({19, 64, 77}, 0)
+	newColourToSolidity({16, 59, 62}, 0)
+	
+	newColourToSolidity({200, 212, 139}, 1)
+	newColourToSolidity({168, 182, 95}, 1)
+	newColourToSolidity({133, 159, 87}, 1)
+	newColourToSolidity({84, 111, 69}, 1)
+	newColourToSolidity({87, 94, 50}, 1)
+	
+	newColourToSolidity({241, 242, 246}, 2)
+	newColourToSolidity({220, 222, 228}, 2)
+	newColourToSolidity({185, 195, 207}, 2)
+	newColourToSolidity({241, 242, 246}, 2)
+	newColourToSolidity({131, 98, 57}, 2)
+	
+	newColourToSolidity({144, 151, 149}, 3)
+	
+	newColourToSolidity({92, 76, 36}, 4)
+	
+	newColourToSolidity({68, 68, 68}, 5)
+end
+
 local solidityTiers = {2, 4, 6, 8, 10}
-function Tile.fromXP(xpCharacter, solidityCharacter)
+function Tile.fromXP(xpCharacter)
 	local charCode = xpCharacter.charCode
 	local fCol = xpCharacter.fCol
 	local bCol = xpCharacter.bCol
 	
-	local solidityTier = math.max(solidityCharacter.charCode - 48, 0)
+	--local solidityTier = math.max(solidityCharacter.charCode - 48, 0)
+	local solidityTier = colourToSolidity[colourToColourKey(fCol)] or 0
 	local solidity = 0
 	if solidityTier > 0 then
 		solidity = solidityTiers[solidityTier]

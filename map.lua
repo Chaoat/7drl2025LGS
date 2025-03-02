@@ -23,13 +23,14 @@ function Map.new()
 end
 
 local imageLayer = 1
-local solidityLayer = 2
+--local solidityLayer = 2
 function Map.loadFromXP(xpImage)
 	local map = Map.new()
 	
 	for i = 0, xpImage.properties.width - 1 do
 		for j = 0, xpImage.properties.height - 1 do
-			local tile = Tile.fromXP(xpImage.images[imageLayer][i][j], xpImage.images[solidityLayer][i][j])
+			--local tile = Tile.fromXP(xpImage.images[imageLayer][i][j], xpImage.images[solidityLayer][i][j])
+			local tile = Tile.fromXP(xpImage.images[imageLayer][i][j])
 			Map.setTile(map, i, j, tile)
 		end
 	end
