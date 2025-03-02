@@ -16,29 +16,32 @@ local function newColourToSolidity(colour, solidity)
 end
 
 do
+	--Water Tiles
 	newColourToSolidity({70, 146, 128}, 0)
 	newColourToSolidity({47, 122, 120}, 0)
 	newColourToSolidity({29, 90, 103}, 0)
 	newColourToSolidity({19, 64, 77}, 0)
 	newColourToSolidity({16, 59, 62}, 0)
-	
+	--Vegetation Tiles
 	newColourToSolidity({200, 212, 139}, 1)
 	newColourToSolidity({168, 182, 95}, 1)
 	newColourToSolidity({133, 159, 87}, 1)
-	newColourToSolidity({84, 111, 69}, 1)
+	--Tree Trunks are harder
+	newColourToSolidity({84, 111, 69}, 3)
 	newColourToSolidity({87, 94, 50}, 1)
-	
+
+	--Debris Tiles
 	newColourToSolidity({241, 242, 246}, 2)
 	newColourToSolidity({220, 222, 228}, 2)
 	newColourToSolidity({185, 195, 207}, 2)
 	newColourToSolidity({241, 242, 246}, 2)
+	--Dirt Tiles
 	newColourToSolidity({131, 98, 57}, 2)
+	newColourToSolidity({92, 76, 36}, 3)
 	
+	--Outer Walls
 	newColourToSolidity({144, 151, 149}, 3)
-	
-	newColourToSolidity({92, 76, 36}, 4)
-	
-	newColourToSolidity({68, 68, 68}, 5)
+	newColourToSolidity({68, 68, 68}, 4)
 end
 
 local solidityTiers = {2, 4, 6, 8, 10}
