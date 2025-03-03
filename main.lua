@@ -7,6 +7,7 @@ GLOBALAnimationClock = 0
 
 local rootGame = nil
 function love.load()
+	math.randomseed(os.clock())
 	rootGame = Game.new()
 end
 

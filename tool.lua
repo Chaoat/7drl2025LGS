@@ -1,6 +1,7 @@
 local Actor = require "actor"
 local Tile = require "tile"
 local Map = require "map"
+local Misc = require "misc"
 
 local Tool = {}
 
@@ -27,6 +28,7 @@ do
 	--
 	--tags
 	
+	--PLAYER TOOLS
 	newEffectToolProto("nitro", "nitroName", "nitroDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
 	function(tool, world, player)
 		player.minSpeed = player.minSpeed + 10
@@ -60,6 +62,31 @@ do
 		return tile ~= nil and tile.solidity == 0 and #tile.actors == 0
 	end,
 	{"targetted"})
+	
+	--ENEMY TOOLS
+	newEffectToolProto("impulseExplosion", "impulseExplosionName", "impulseExplosionDescription", {1, 1, 1, 1}, 0, 5,
+	function(tool, world, player)
+		local radius = 6
+		for xOff = -radius, radius do
+			for yOff = -radius, radius do
+				local x = tool.targetX + xOff
+				local y = tool.targetY + yOff
+				local tile = Map.getTile(world.map, x, y)
+				
+				if tile then
+					local angle = math.atan2(yOff, xOff)
+					local xMoment, yMoment = Misc.orthogPointFrom(0, 0, 5, angle)
+					for i = 1, #tile.actors do
+						Actor.impulseActor(tile.actors[i], xMoment, yMoment)
+					end
+				end
+			end
+		end
+	end, 
+	nil,
+	nil,
+	nil,
+	{})
 end
 
 function Tool.protoHasTag(protoName, tagName)

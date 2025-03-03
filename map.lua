@@ -31,6 +31,10 @@ function Map.new()
 	return map
 end
 
+function Map.getSize(map)
+	return map.bounds[xMax] - map.bounds[xMin], map.bounds[yMax] - map.bounds[yMin]
+end
+
 local imageLayer = 1
 --local solidityLayer = 2
 function Map.loadFromXP(xpImage)

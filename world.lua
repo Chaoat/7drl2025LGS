@@ -6,6 +6,7 @@ local Bunker = require "bunker"
 local Inventory = require "inventory"
 local Crew = require "crew"
 local Weather = require "weather"
+local Enemy = require "enemy"
 
 local World = {}
 
@@ -19,6 +20,15 @@ function World.new()
 	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
 	
 	return world
+end
+
+function World.tickAllEnemies(world, player)
+	for i = 1, #world.enemies do
+		local enemy = world.enemies[i]
+		if enemy.actor.dead == false then
+			Enemy.tick(enemy, world, player)
+		end
+	end
 end
 
 function World.placeActor(world, actor, x, y)

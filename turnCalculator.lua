@@ -4,6 +4,8 @@ local Misc = require "misc"
 local Actor = require "actor"
 local Player = require "player"
 local Tool = require "tool"
+local World = require "world"
+local Enemy = require "enemy"
 
 local TurnCalculator = {}
 
@@ -14,6 +16,8 @@ function TurnCalculator.new(world, player)
 end
 
 function TurnCalculator.pass(turnCalculator)
+	World.tickAllEnemies(turnCalculator.world, turnCalculator.player)
+	
 	--Move Actors
 	local comparator = function(a, b)
 		if a.movesLeft > b.movesLeft then
@@ -108,12 +112,12 @@ function TurnCalculator.pass(turnCalculator)
 					end
 				elseif collidingActor and actorMove.actor.solidity < Actor.getSpeed(collidingActor) then
 					Actor.changeSpeed(collidingActor, -actorMove.actor.solidity)
-					Actor.kill(actorMove.actor)
 					reorderActorMove(collidingActor)
+					Actor.kill(actorMove.actor)
 				else
 					if collidingActor and collidingActor.solidity < Actor.getSpeed(actorMove.actor) then
-						Actor.kill(collidingActor)
 						Actor.changeSpeed(actorMove.actor, -collidingActor.solidity)
+						Actor.kill(collidingActor)
 					end
 					Tile.moveActor(targetTile, actorMove.actor)
 					actorMove.floatingX = newX
@@ -132,6 +136,8 @@ function TurnCalculator.pass(turnCalculator)
 		local actor = turnCalculator.world.actors[i]
 		actor.velX = actor.velX - actor.momentX
 		actor.velY = actor.velY - actor.momentX
+		
+		Actor.momentumDrag(actor, 1)
 	end
 	
 	for i = #turnCalculator.world.activeTools, 1, -1 do
@@ -139,6 +145,13 @@ function TurnCalculator.pass(turnCalculator)
 		Tool.tick(tool, turnCalculator.world, turnCalculator.player)
 		if tool.complete then
 			table.remove(turnCalculator.world.activeTools, i)
+		end
+	end
+	
+	for i = 1, #turnCalculator.world.enemies do
+		local enemy = turnCalculator.world.enemies[i]
+		if enemy.actor.dead == false then
+			Enemy.postTick(enemy, turnCalculator.world, turnCalculator.player)
 		end
 	end
 	

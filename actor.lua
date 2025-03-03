@@ -5,8 +5,9 @@ local Misc = require "misc"
 local Actor = {}
 
 local latestID = 0
-function Actor.new(letter, solidity)
-	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, activatedTools = {}, velX = 0, velY = 0, momentX = 0, momentY = 0, solidity = solidity, letter = letter, id = latestID}
+function Actor.new(letter, solidity, health)
+	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, activatedTools = {}, velX = 0, velY = 0, momentX = 0, momentY = 0, 
+				   solidity = solidity, health = health, maxHealth = health, letter = letter, id = latestID, dead = false}
 	latestID = latestID + 1
 	return actor
 end
@@ -54,6 +55,27 @@ function Actor.changeSpeed(actor, val)
 	local currentSpeed = Actor.getSpeed(actor)
 	local newSpeed = math.max(currentSpeed + val, 0)
 	actor.velX, actor.velY = Misc.orthogPointFrom(0, 0, newSpeed, math.atan2(actor.velY, actor.velX))
+	actor.velX = Misc.round(actor.velX)
+	actor.velY = Misc.round(actor.velY)
+end
+
+function Actor.impulseActor(actor, xMoment, yMoment)
+	actor.momentX = actor.momentX + Misc.round(xMoment)
+	actor.momentY = actor.momentY + Misc.round(yMoment)
+end
+
+function Actor.momentumDrag(actor, drag)
+	local currentMoment = Misc.orthogDistance(0, 0, actor.momentX, actor.momentY)
+	local newMoment = math.max(currentMoment - drag, 0)
+	if newMoment > 0 then
+		print(actor.momentX .. " : " .. actor.momentY)
+	end
+	actor.momentX, actor.momentY = Misc.orthogPointFrom(0, 0, newMoment, math.atan2(actor.momentY, actor.momentX))
+	actor.momentX = Misc.round(actor.momentX)
+	actor.momentY = Misc.round(actor.momentY)
+	if newMoment > 0 then
+		print(actor.momentX .. " - " .. actor.momentY)
+	end
 end
 
 function Actor.draw(actor, camera)

@@ -1720,6 +1720,28 @@ do --element
 		end)
 	end
 	
+	function Menu.element.actorHealth(posFunc, actor)
+		return Menu.element.new(posFunc, function(element)
+				love.graphics.setColor(0, 0, 0, 1)
+				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
+				
+				local width = (actor.health/actor.maxHealth)*(element.x2 - element.x1)
+				love.graphics.setColor(1, 0, 0, 1)
+				love.graphics.rectangle("fill", element.x1, element.y1, width, element.y2 - element.y1)
+			end)
+	end
+	
+	function Menu.element.playerFuel(posFunc, player)
+		return Menu.element.new(posFunc, function(element)
+				love.graphics.setColor(0, 0, 0, 1)
+				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
+				
+				local width = (player.fuel/player.maxFuel)*(element.x2 - element.x1)
+				love.graphics.setColor(0.5, 0.3, 0, 1)
+				love.graphics.rectangle("fill", element.x1, element.y1, width, element.y2 - element.y1)
+			end)
+	end
+	
 	local enemyDisplays = {}
 	local function newEnemyDisplay(enemyName)
 		local world = World.new(10)

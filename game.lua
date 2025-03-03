@@ -4,6 +4,8 @@ local Player = require "player"
 local TurnCalculator = require "turnCalculator"
 local EnemyProto = require "enemyProto"
 local Menu = require "menu"
+local RandomGen = require "randomGen"
+local Map = require "map"
 
 local Game = {}
 
@@ -30,6 +32,9 @@ local function generateInterface(world, player, camera)
 	Menu.screen.addElement(sideBar, Menu.element.cargoHold(Menu.position.dynamicSize(10, -450, -10, -210), player))
 	Menu.screen.addElement(sideBar, Menu.element.crewHold(Menu.position.dynamicSize(10, -700, -10, -460), player))
 	
+	Menu.screen.addElement(sideBar, Menu.element.actorHealth(Menu.position.dynamicSize(10, 10, -10, 25), player.actor))
+	Menu.screen.addElement(sideBar, Menu.element.playerFuel(Menu.position.dynamicSize(10, 30, -10, 45), player))
+	
 	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
 	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 400), player, camera))
 	Menu.addScreen(menu, screen)
@@ -38,10 +43,23 @@ local function generateInterface(world, player, camera)
 end
 
 function Game.new()
-	local game = {mainCamera = Camera.new(), player = nil, interface = nil, world = World.new(), turnCalculator = nil}
+	local game = {mainCamera = Camera.new(), player = nil, currentPlayerCellX = -10, currentPlayerCellY = -10, cellGrid = {}, gridWidth = 0, gridHeight = 0, interface = nil, world = World.new(), turnCalculator = nil}
 	
 	local playerActor = World.placeActor(game.world, Player.generatePlayerActor(actor), 0, 0)
 	game.player = Player.new(playerActor)
+	
+	local mapWidth, mapHeight = Map.getSize(game.world.map)
+	game.gridWidth = math.ceil(mapWidth/(game.world.map.cellWidth))
+	game.gridHeight = math.ceil(mapHeight/(game.world.map.cellHeight))
+	
+	for x = 0, game.gridWidth do
+		game.cellGrid[x] = {}
+		for y = 0, game.gridHeight do
+			game.cellGrid[x][y] = false
+		end
+	end
+	
+	Game.updatePlayerCellPos(game)
 	
 	--EnemyProto.spawn("debris", game.world, 3, 3)
 	--EnemyProto.spawn("debris", game.world, 5, 3)
@@ -68,6 +86,36 @@ end
 function Game.keyInput(game, key)
 	if Player.keyInput(game.player, game.world, key) then
 		TurnCalculator.pass(game.turnCalculator)
+		Game.updatePlayerCellPos(game)
+	end
+end
+
+function Game.updatePlayerCellPos(game)
+	local world = game.world
+	local player = game.player
+	
+	local cellWidth = world.map.cellWidth
+	local cellHeight = world.map.cellHeight
+	
+	local cellX = math.floor(player.actor.x/cellWidth)
+	local cellY = math.floor(player.actor.y/cellHeight)
+	
+	if game.currentPlayerCellX ~= cellX or game.currentPlayerCellY ~= cellY then
+		game.currentPlayerCellX = cellX
+		game.currentPlayerCellY = cellY
+		
+		for x = 0, game.gridWidth do
+			for y = 0, game.gridHeight do
+				local shouldBeActive = math.abs(x - cellX) <= 1 and math.abs(y - cellY) <= 1
+				local currentlyActive = game.cellGrid[x][y]
+				
+				if currentlyActive == false and shouldBeActive == true then
+					RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, (x + 1)*world.map.cellHeight, y*world.map.cellWidth, (y + 1)*world.map.cellHeight)
+				end
+				
+				game.cellGrid[x][y] = shouldBeActive
+			end
+		end
 	end
 end
 

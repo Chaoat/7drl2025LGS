@@ -11,13 +11,13 @@ local Bunker = require "bunker"
 local Player = {}
 
 function Player.generatePlayerActor(actor)
-	return Actor.new(Letter.newFromLetter("@", {1, 1, 1, 1}, nil), 99)
+	return Actor.new(Letter.newFromLetter("@", {1, 1, 1, 1}, nil), 99, 10)
 end
 
 function Player.new(actor)
 	local player = {actor = actor, controlMode = "movement", lookCursorX = 0, lookCursorY = 0, targettingTool = nil,
 	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 3, deceleration = 3, 
-	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), parkedBunker = nil}
+	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), fuel = 100, maxFuel = 100, parkedBunker = nil}
 	
 	Inventory.addTool(player.inventory, "nitro", 2)
 	Inventory.addTool(player.inventory, "blink", 2)
@@ -249,12 +249,17 @@ function Player.postTurnUpdate(player, world)
 	player.speed = math.max(player.minSpeed, math.min(Misc.round(Misc.orthogDistance(0, 0, player.actor.velX, player.actor.velY)), player.maxSpeed))
 	
 	player.parkedBunker = Bunker.getBunkerOnTile(world.bunkers, player.actor.tile)
+	if player.parkedBunker then
+		player.fuel = player.maxFuel
+	else
+		player.fuel = player.fuel - 1
+	end
 end
 
 function Player.calculatePredictedSquares(player)
 	player.predictedSquares = {}
 	local function addPredictedSquare(arrowImage, arrowAngle, arrowTint, x, y, priority, targetHeading, clickable)
-		local predictedSquare = {arrowImage = arrowImage, arrowAngle = arrowAngle, arrowTint = arrowTint, x = x, y = y, priority = priority, targetHeading = targetHeading, clickable = true}
+		local predictedSquare = {arrowImage = arrowImage, arrowAngle = arrowAngle, arrowTint = arrowTint, x = x + player.actor.momentX, y = y + player.actor.momentY, priority = priority, targetHeading = targetHeading, clickable = true}
 		
 		local discard = false
 		for i = 1, #player.predictedSquares do
@@ -313,6 +318,14 @@ function Player.calculatePredictedSquares(player)
 end
 
 function Player.drawMovementPrediction(player, camera)
+	if player.actor.momentX ~= 0 or player.actor.momentY ~= 0 then
+		Camera.drawTo({}, player.actor.x + player.actor.momentX, player.actor.y + player.actor.momentY, camera, 
+		function(square, drawX, drawY, tileWidth, tileHeight)
+			love.graphics.setColor(1, 0, 0, 0.5)
+			love.graphics.rectangle("fill", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
+		end)
+	end
+	
 	for i = 1, #player.predictedSquares do
 		local predictedSquare = player.predictedSquares[i]
 		Camera.drawTo({image = predictedSquare.arrowImage, angle = predictedSquare.arrowAngle, tint = predictedSquare.arrowTint}, predictedSquare.x, predictedSquare.y, camera, 

@@ -84,7 +84,7 @@ function Letter.new(charCode, colour, backColour)
 end
 
 function Letter.copy(letter)
-	local newLetter = Letter.new(letter.letter, letter.colour)
+	local newLetter = Letter.new(letter.charCode, letter.colour)
 	return newLetter
 end
 
