@@ -2,6 +2,7 @@ local Actor = require "actor"
 local Tile = require "tile"
 local Map = require "map"
 local Misc = require "misc"
+local Particle = require "particle"
 
 local Tool = {}
 
@@ -73,12 +74,14 @@ do
 				local y = tool.targetY + yOff
 				local tile = Map.getTile(world.map, x, y)
 				
-				if tile then
+				if tile and Map.isLineClear(world.map, tool.targetX, tool.targetY, x, y) then
 					local angle = math.atan2(yOff, xOff)
 					local xMoment, yMoment = Misc.orthogPointFrom(0, 0, 5, angle)
 					for i = 1, #tile.actors do
 						Actor.impulseActor(tile.actors[i], xMoment, yMoment)
 					end
+					
+					Particle.queue(Particle.colourShiftBox(x, y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
 				end
 			end
 		end

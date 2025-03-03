@@ -7,11 +7,13 @@ local Inventory = require "inventory"
 local Crew = require "crew"
 local Weather = require "weather"
 local Enemy = require "enemy"
+local Particle = require "particle"
 
 local World = {}
 
 function World.new()
-	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1")), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {}}
+	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1")), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {},
+				   overActorParticles = {}}
 	world.weather = Weather.new(world.map)
 	
 	World.addBunker(world, Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {"food"}, {"steel"}, 
@@ -50,6 +52,8 @@ function World.update(world, dt)
 		local actor = world.actors[i]
 		Actor.update(actor, 4*dt)
 	end
+	
+	Particle.updateCollection(world.overActorParticles, "overActor", dt)
 end
 
 function World.draw(world, camera)
@@ -63,6 +67,8 @@ function World.draw(world, camera)
 	for i = 1, #world.actors do
 		Actor.draw(world.actors[i], camera)
 	end
+	
+	Particle.drawCollection(world.overActorParticles, camera)
 end
 
 return World

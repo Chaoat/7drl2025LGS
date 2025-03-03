@@ -2,6 +2,7 @@ local Camera = require("camera")
 local Tile = require("tile")
 local CanvasCache = require "canvasCache"
 local Letter = require "letter"
+local Misc = require "misc"
 
 local Map = {}
 
@@ -59,9 +60,25 @@ end
 
 function Map.getTile(map, x, y)
 	if x >= map.bounds[xMin] and x <= map.bounds[xMax] and y >= map.bounds[yMin] and y <= map.bounds[yMax] then
+		if map.tiles[x] == nil then
+			print(x)
+			print(map.tiles[x])
+		end
+		
 		return map.tiles[x][y]
 	end
 	return nil
+end
+
+function Map.isLineClear(map, x1, y1, x2, y2)
+	local coords = Misc.orthogLineBetween(x1, y1, x2, y2)
+	for i = 1, #coords do
+		local tile = Map.getTile(map, coords[i][1], coords[i][2])
+		if tile and tile.solidity > 0 then
+			return false
+		end
+	end
+	return true
 end
 
 function Map.getTileCoordsInSquare(map, x1, y1, x2, y2)

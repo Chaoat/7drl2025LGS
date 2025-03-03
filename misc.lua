@@ -49,6 +49,18 @@ function Misc.orthogPointFrom(x, y, dist, angle)
 	return returnX, returnY
 end
 
+function Misc.orthogLineBetween(x1, y1, x2, y2)
+	local dist = Misc.round(Misc.orthogDistance(x1, y1, x2, y2))
+	local angle = math.atan2(y2 - y1, x2 - x1)
+	
+	local coords = {}
+	for i = 0, dist do
+		local xCoord, yCoord = Misc.orthogPointFrom(x1, y1, i, angle)
+		table.insert(coords, {Misc.round(xCoord), Misc.round(yCoord)})
+	end
+	return coords
+end
+
 function Misc.differenceBetweenAngles(a1, a2)
 	a1 = a1%(2*math.pi)
 	a2 = a2%(2*math.pi)
@@ -79,6 +91,10 @@ function Misc.multiplyColours(c1, c2)
 	--print(c1[1] .. ":" .. c1[2] .. ":" .. c1[3] .. ":" .. c1[4])
 	--print(c2[1] .. ":" .. c2[2] .. ":" .. c2[3] .. ":" .. c2[4])
 	return {c1[1]*c2[1], c1[2]*c2[2], c1[3]*c2[3], c1[4]*c2[4]}
+end
+
+function Misc.addColours(c1, c2)
+	return {c1[1] + c2[1], c1[2] + c2[2], c1[3] + c2[3], c1[4] + c2[4]}
 end
 
 return Misc

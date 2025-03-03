@@ -32,7 +32,7 @@ function TurnCalculator.pass(turnCalculator)
 	for i = 1, #turnCalculator.world.actors do
 		local actor = turnCalculator.world.actors[i]
 		actor.velX = actor.velX + actor.momentX
-		actor.velY = actor.velY + actor.momentX
+		actor.velY = actor.velY + actor.momentY
 		local numMoves = math.floor(math.max(math.abs(actor.velX), math.abs(actor.velY)))
 		
 		if numMoves > 0 then
