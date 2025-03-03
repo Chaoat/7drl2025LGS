@@ -86,6 +86,7 @@ function Game.draw(game)
 	Player.drawCursor(game.player, game.mainCamera)
 	
 	Camera.draw(0, 0, game.mainCamera)
+	Camera.clear(game.mainCamera)
 	
 	local width, height, flags = love.window.getMode()
 	Menu.draw(game.interface, 0, 0, width, height)

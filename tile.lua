@@ -60,7 +60,7 @@ function Tile.fromXP(xpCharacter)
 	local tags = {}
 	local tile = Tile.new(solidity, tags, Letter.new(charCode, fCol, bCol))
 	
-	return tile
+	return tile, colourToSolidity[colourToColourKey(fCol)] == nil
 end
 
 function Tile.new(solidity, tags, letter)

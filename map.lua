@@ -1,5 +1,7 @@
 local Camera = require("camera")
 local Tile = require("tile")
+local CanvasCache = require "canvasCache"
+local Letter = require "letter"
 
 local Map = {}
 
@@ -9,7 +11,14 @@ local yMin = 2
 local xMax = 3
 local yMax = 4
 function Map.new()
-	local map = {bounds = {0, 0, 0, 0}, tiles = {{}}, upStairs = {}, downStairs = {}}
+	local cellWidth = 100
+	local cellHeight = 100
+	local mapCamera = Camera.new()
+	local waveCamera = Camera.new()
+	Camera.resize(mapCamera, 3*mapCamera.tileWidth*cellWidth, 3*mapCamera.tileHeight*cellHeight)
+	Camera.resize(waveCamera, 3*mapCamera.tileWidth*cellWidth, 3*mapCamera.tileHeight*cellHeight)
+	
+	local map = {bounds = {0, 0, 0, 0}, tiles = {{}}, upStairs = {}, downStairs = {}, waveCamera = waveCamera, camera = mapCamera, cellCornerX = 0, cellCornerY = 0, cellWidth = cellWidth, cellHeight = cellHeight}
 	
 	map.tiles[0] = {}
 	local originTile = Tile.library.newEmpty()
@@ -29,11 +38,17 @@ function Map.loadFromXP(xpImage)
 	
 	for i = 0, xpImage.properties.width - 1 do
 		for j = 0, xpImage.properties.height - 1 do
-			--local tile = Tile.fromXP(xpImage.images[imageLayer][i][j], xpImage.images[solidityLayer][i][j])
-			local tile = Tile.fromXP(xpImage.images[imageLayer][i][j])
+			local tile, noColour = Tile.fromXP(xpImage.images[imageLayer][i][j])
+			
+			if noColour then
+				print("TILE IS MISSING COLOUR AT: " .. i .. "," .. j)
+			end
+			
 			Map.setTile(map, i, j, tile)
 		end
 	end
+	
+	Map.redrawCells(map, 0, 0)
 	
 	return map
 end
@@ -183,15 +198,47 @@ do --shapes
 	end
 end
 
-function Map.draw(map, camera)
-	for i = map.bounds[xMin], map.bounds[xMax] do
-		for j = map.bounds[yMin], map.bounds[yMax] do
-			if map.tiles[i][j] == nil then
-				print(i .. " " .. j)
+function Map.redrawCells(map, playerX, playerY)
+	Camera.clear(map.camera)
+	
+	local cellX = math.floor(playerX/map.cellWidth)
+	local cellY = math.floor(playerY/map.cellHeight)
+	
+	map.cellCornerX = (cellX - 1)*map.cellWidth
+	map.cellCornerY = (cellY - 1)*map.cellHeight
+	
+	Camera.move(map.camera, (cellX + 0.5)*map.cellWidth, (cellY + 0.5)*map.cellHeight)
+	Camera.move(map.waveCamera, (cellX + 0.5)*map.cellWidth, (cellY + 0.5)*map.cellHeight)
+	
+	local lastCanvas = love.graphics.getCanvas()
+	love.graphics.setCanvas(map.camera.canvas)
+	for i = math.max(map.bounds[xMin], map.cellWidth*(cellX - 1)), math.min(map.bounds[xMax], map.cellWidth*(cellX + 2)) do
+		for j = math.max(map.bounds[yMin], map.cellHeight*(cellY - 1)), math.min(map.bounds[yMax], map.cellHeight*(cellY + 2)) do
+			local tile = map.tiles[i][j]
+			if tile.solidity > 0 then
+				local drawX, drawY = Camera.worldToDrawCoords(tile.drawX, tile.drawY, map.camera)
+				Letter.draw(tile.letter, drawX, drawY, map.camera.tileWidth, map.camera.tileHeight)
 			end
-			Tile.draw(map.tiles[i][j], camera)
 		end
 	end
+	
+	love.graphics.setCanvas(map.waveCamera.canvas)
+	for i = math.max(map.bounds[xMin], map.cellWidth*(cellX - 1)), math.min(map.bounds[xMax], map.cellWidth*(cellX + 2)) do
+		for j = math.max(map.bounds[yMin], map.cellHeight*(cellY - 1)), math.min(map.bounds[yMax], map.cellHeight*(cellY + 2)) do
+			local tile = map.tiles[i][j]
+			if tile.solidity == 0 then
+				local drawX, drawY = Camera.worldToDrawCoords(tile.drawX, tile.drawY, map.camera)
+				Letter.draw(tile.letter, drawX, drawY, map.camera.tileWidth, map.camera.tileHeight)
+			end
+		end
+	end
+	
+	love.graphics.setCanvas(lastCanvas)
+end
+
+function Map.draw(map, camera)
+	local drawX, drawY = Camera.worldToDrawCoords(map.cellCornerX, map.cellCornerY, camera)
+	Camera.draw(drawX, drawY, map.camera)
 end
 
 return Map

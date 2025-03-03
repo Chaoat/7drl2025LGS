@@ -142,6 +142,7 @@ function TurnCalculator.pass(turnCalculator)
 		end
 	end
 	
+	Map.redrawCells(turnCalculator.world.map, turnCalculator.player.actor.x, turnCalculator.player.actor.y)
 	Player.postTurnUpdate(turnCalculator.player, turnCalculator.world)
 	Player.calculatePredictedSquares(turnCalculator.player)
 end

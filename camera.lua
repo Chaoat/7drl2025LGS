@@ -36,12 +36,17 @@ function Camera.screenToTileCoords(camera, screenx, screeny)
 	return Misc.round(camera.worldX + (screenx - centerX)/camera.tileWidth), Misc.round(camera.worldY + (screeny - centerY)/camera.tileHeight)
 end
 
+function Camera.worldToDrawCoords(worldX, worldY, camera)
+	local drawX = (worldX - camera.worldX)*camera.tileWidth + camera.cameraWidth/2
+	local drawY = (worldY - camera.worldY)*camera.tileHeight + camera.cameraHeight/2
+	return drawX, drawY
+end
+
 function Camera.drawTo(object, worldX, worldY, camera, drawFunc)
 	--drawFunc(object, drawX, drawY, tileWidth, tileHeight)
 	local lastCanvas = love.graphics.getCanvas()
 	
-	local drawX = (worldX - camera.worldX)*camera.tileWidth + camera.cameraWidth/2
-	local drawY = (worldY - camera.worldY)*camera.tileHeight + camera.cameraHeight/2
+	local drawX, drawY = Camera.worldToDrawCoords(worldX, worldY, camera)
 	
 	if drawX >= -camera.tileWidth/2 and drawX <= camera.cameraWidth + camera.tileWidth/2 and drawY >= -camera.tileHeight/2 and drawY <= camera.cameraHeight + camera.tileHeight/2 then
 		love.graphics.setCanvas(camera.canvas)
@@ -58,7 +63,9 @@ function Camera.draw(screenX, screenY, camera)
 	
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(camera.canvas, screenX, screenY)
-	
+end
+
+function Camera.clear(camera)
 	local lastCanvas = love.graphics.getCanvas()
 	love.graphics.setCanvas(camera.canvas)
 	love.graphics.clear()

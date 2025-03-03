@@ -10,9 +10,36 @@ function love.load()
 	rootGame = Game.new()
 end
 
+local doProfile = false
+local profileTimer = 0
 function love.update(dt)
 	GLOBALAnimationClock = GLOBALAnimationClock + dt
 	Game.update(rootGame, dt)
+	
+	if doProfile then
+		if love.profiler == nil then
+			love.profiler = require('profile')
+		end
+		
+		if love.profiler.isRunning() == false then
+			love.profiler.start()
+		end
+		
+		print(profileTimer)
+		profileTimer = profileTimer + 1
+		if profileTimer > 60 then
+			print(love.profiler.report(20))
+			love.profiler.reset()
+			profileTimer = 0
+			doProfile = false
+		end
+	else
+		if love.profiler then
+			if love.profiler.isRunning() then
+				love.profiler.stop()
+			end
+		end
+	end
 end
 
 function love.keypressed(key)
@@ -20,6 +47,8 @@ function love.keypressed(key)
 	
 	if Controls.checkControl(key, "debug", false) then
 		GlobalDebugFlag = not GlobalDebugFlag
+	elseif Controls.checkControl(key, "profile", false) then
+		doProfile = true
 	end
 end
 

@@ -100,7 +100,8 @@ function Controls.loadDefaultControls()
 	--addControls("cancelTargetting", {"escape"})
 	--addControls("restart", {"r"})
 	
-	--addControls("debug", {"f6"})
+	addControls("debug", {"f6"})
+	addControls("profile", {"f7"})
 	
 	--addControls("useStaircase", {"return"})
 end

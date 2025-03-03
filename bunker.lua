@@ -29,7 +29,6 @@ local function newReceiveTrade(good)
 end
 
 function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, tileCoords, rewardInventory)
-	print(Inventory.getfullContentsString(rewardInventory))
 	local centerX = 0
 	local centerY = 0
 	for i = 1, #tileCoords do

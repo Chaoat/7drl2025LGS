@@ -5,11 +5,13 @@ local Actor = require "actor"
 local Bunker = require "bunker"
 local Inventory = require "inventory"
 local Crew = require "crew"
+local Weather = require "weather"
 
 local World = {}
 
 function World.new()
-	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1")), actors = {}, enemies = {}, bunkers = {}, activeTools = {}}
+	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1")), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {}}
+	world.weather = Weather.new(world.map)
 	
 	World.addBunker(world, Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {"food"}, {"steel"}, 
 	Map.getTileCoordsInSquare(map, 23, 6, 27, 10), Inventory.addCrew(Inventory.addTool(Inventory.new(), "nitro", 2), Crew.new("architect", "GenesisName"))))
@@ -41,6 +43,7 @@ function World.update(world, dt)
 end
 
 function World.draw(world, camera)
+	Weather.draw(world.weather, camera)
 	Map.draw(world.map, camera)
 	
 	for i = 1, #world.bunkers do
