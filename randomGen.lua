@@ -9,7 +9,7 @@ local enemyTable = {
 	{"blowFish", 1}
 }
 
-function RandomGen.fillAreaWithEnemies(world, difficulty, x1, x2, y1, y2)
+function RandomGen.fillAreaWithEnemies(world, difficulty, x1, y1, x2, y2)
 	local validTiles = {}
 	for x = x1, x2 do
 		for y = y1, y2 do

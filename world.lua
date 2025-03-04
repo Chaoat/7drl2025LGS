@@ -8,6 +8,7 @@ local Crew = require "crew"
 local Weather = require "weather"
 local Enemy = require "enemy"
 local Particle = require "particle"
+local DebrisGen = require "debrisGen"
 
 local World = {}
 
@@ -20,6 +21,8 @@ function World.new()
 	Map.getTileCoordsInSquare(map, 23, 6, 27, 10), Inventory.addCrew(Inventory.addTool(Inventory.new(), "nitro", 2), Crew.new("architect", "GenesisName"))))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
 	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	
+	DebrisGen.fillArea(world, 4, 5, {5, 5}, {200, 200})
 	
 	return world
 end

@@ -84,7 +84,7 @@ function Weather.draw(weather, camera)
 	local drawX, drawY = Camera.worldToDrawCoords(weather.map.cellCornerX, weather.map.cellCornerY, camera)
 	
 	waveShader:send("angle", math.pi/4)
-	waveShader:send("magnitude", 1)
+	waveShader:send("magnitude", 0)
 	--waveShader:send("frequency", 1)
 	waveShader:send("timer", GLOBALAnimationClock)
 	waveShader:send("tileSize", {weather.map.waveCamera.tileWidth, weather.map.waveCamera.tileHeight})

@@ -53,8 +53,6 @@ function Map.loadFromXP(xpImage)
 		end
 	end
 	
-	Map.redrawCells(map, 0, 0)
-	
 	return map
 end
 

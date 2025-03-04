@@ -61,6 +61,8 @@ function Game.new()
 	
 	Game.updatePlayerCellPos(game)
 	
+	Map.redrawCells(game.world.map, game.player.actor.x, game.player.actor.y)
+	
 	--EnemyProto.spawn("debris", game.world, 3, 3)
 	--EnemyProto.spawn("debris", game.world, 5, 3)
 	--EnemyProto.spawn("debris", game.world, 7, 3)
@@ -110,7 +112,7 @@ function Game.updatePlayerCellPos(game)
 				local currentlyActive = game.cellGrid[x][y]
 				
 				if currentlyActive == false and shouldBeActive == true then
-					RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, (x + 1)*world.map.cellHeight, y*world.map.cellWidth, (y + 1)*world.map.cellHeight)
+					RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, y*world.map.cellWidth, (x + 1)*world.map.cellHeight, (y + 1)*world.map.cellHeight)
 				end
 				
 				game.cellGrid[x][y] = shouldBeActive
