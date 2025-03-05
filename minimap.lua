@@ -48,7 +48,7 @@ function Minimap.redraw(minimap)
 		else
 			love.graphics.setColor(1, 0, 0, 1)
 		end
-		love.graphics.circle("fill", mapX, mapY, 2)
+		love.graphics.circle("fill", mapX, mapY, 4)
 	end
 	
 	love.graphics.setCanvas()

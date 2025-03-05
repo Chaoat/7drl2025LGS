@@ -13,51 +13,51 @@ local DebrisGen = require "debrisGen"
 local World = {}
 
 function World.new()
-	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1", 600, 600)), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {},
+	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1", 600, 400)), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {},
 				   overActorParticles = {}}
 	world.weather = Weather.new(world.map)
 	
 	World.addBunker(world, Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {"food"}, {"steel"}, 
-	Map.getTileCoordsInSquare(map, 335, 282, 344, 2 87), Inventory.addCrew(Inventory.addTool(Inventory.new(), "nitro", 2), Crew.new("architect", "GenesisName"))))
+	Map.getTileCoordsInSquare(map, 335, 282, 344, 287), Inventory.addTool(Inventory.new(), "nitro", 2), Crew.new("architect", "GenesisName"), 200))
 
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 
 	World.addBunker(world, Bunker.new("North West Cafe", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 7, 70, 12, 77), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("Chef", "North West Cafe"))))
+	Map.getTileCoordsInSquare(map, 7, 70, 12, 77), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("Chef", "North West Cafe"), 200))
 
 	World.addBunker(world, Bunker.new("Collapsed Trade Tower", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 146, 18, 151, 27), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "Collapsed Trade Tower"))))
+	Map.getTileCoordsInSquare(map, 146, 18, 151, 27), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "Collapsed Trade Tower"), 200))
 
 	World.addBunker(world, Bunker.new("Warehouse Depot", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 149, 6, 157, 11), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "Warehouse Depot"))))
+	Map.getTileCoordsInSquare(map, 149, 6, 157, 11), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "Warehouse Depot"), 200))
 
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 575, 178, 585, 183), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 575, 178, 585, 183), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 
 	World.addBunker(world, Bunker.new("Mountain Cabin", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 449, 270, 458, 275 ), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 449, 270, 458, 275 ), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 
 	World.addBunker(world, Bunker.new("North Central Plaza", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 222, 244, 230, 249), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "North Central Plaza"))))
+	Map.getTileCoordsInSquare(map, 222, 244, 230, 249), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "North Central Plaza"), 200))
 	 
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
 	
 	--DebrisGen.fillArea(world, 4, 5, {5, 5}, {200, 200})
 	

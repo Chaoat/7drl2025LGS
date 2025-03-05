@@ -45,7 +45,7 @@ local function generateInterface(game)
 	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
 	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 400), player, camera))
 	
-	local minimapElement = Menu.element.minimap(Menu.position.dynamicSize(10, 10, 610, 610), minimap)
+	local minimapElement = Menu.element.minimap(Menu.position.dynamicSize(10, 10, 610, 410), minimap)
 	minimapElement.ignoreOverlap = true
 	minimapElement.hidden = true
 	Menu.screen.addElement(screen, minimapElement)
