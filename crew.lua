@@ -5,4 +5,8 @@ function Crew.new(class, origin)
 	return crew
 end
 
+function Crew.getName(crew)
+	return crew.class .. " from " .. crew.origin
+end
+
 return Crew

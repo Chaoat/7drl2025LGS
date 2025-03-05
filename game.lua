@@ -6,6 +6,8 @@ local EnemyProto = require "enemyProto"
 local Menu = require "menu"
 local RandomGen = require "randomGen"
 local Map = require "map"
+local Minimap = require "minimap"
+local Controls = require "controls"
 
 local Game = {}
 
@@ -16,7 +18,12 @@ local function blackBack(opacity)
 	end
 end
 
-local function generateInterface(world, player, camera)
+local function generateInterface(game)
+	local world = game.world
+	local player = game.player
+	local camera = game.mainCamera
+	local minimap = game.minimap
+	
 	local menu = Menu.new(nil)
 	
 	local screen = Menu.screen.new("main", nil)
@@ -37,13 +44,21 @@ local function generateInterface(world, player, camera)
 	
 	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
 	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 400), player, camera))
+	
+	local minimapElement = Menu.element.minimap(Menu.position.dynamicSize(10, 10, 610, 410), minimap)
+	minimapElement.ignoreOverlap = true
+	minimapElement.hidden = true
+	Menu.screen.addElement(screen, minimapElement)
+	game.minimapElement = minimapElement
+	
 	Menu.addScreen(menu, screen)
 	
 	return menu
 end
 
 function Game.new()
-	local game = {mainCamera = Camera.new(), player = nil, currentPlayerCellX = -10, currentPlayerCellY = -10, cellGrid = {}, gridWidth = 0, gridHeight = 0, interface = nil, world = World.new(), turnCalculator = nil}
+	local game = {mainCamera = Camera.new(), player = nil, currentPlayerCellX = -10, currentPlayerCellY = -10, cellGrid = {}, gridWidth = 0, gridHeight = 0, 
+				  interface = nil, world = World.new(), miniMap = nil, turnCalculator = nil}
 	
 	local playerActor = World.placeActor(game.world, Player.generatePlayerActor(actor), 0, 0)
 	game.player = Player.new(playerActor)
@@ -61,6 +76,8 @@ function Game.new()
 	
 	Game.updatePlayerCellPos(game)
 	
+	game.minimap = Minimap.new(game.world)
+	
 	Map.redrawCells(game.world.map, game.player.actor.x, game.player.actor.y)
 	
 	--EnemyProto.spawn("debris", game.world, 3, 3)
@@ -69,7 +86,7 @@ function Game.new()
 	
 	game.turnCalculator = TurnCalculator.new(game.world, game.player)
 	
-	game.interface = generateInterface(game.world, game.player, game.mainCamera)
+	game.interface = generateInterface(game)
 	
 	return game
 end
@@ -89,6 +106,9 @@ function Game.keyInput(game, key)
 	if Player.keyInput(game.player, game.world, key) then
 		TurnCalculator.pass(game.turnCalculator)
 		Game.updatePlayerCellPos(game)
+		Minimap.redraw(game.minimap)
+	elseif Controls.checkControl(key, "openMap", false) then
+		game.minimapElement.hidden = not game.minimapElement.hidden
 	end
 end
 
@@ -112,7 +132,7 @@ function Game.updatePlayerCellPos(game)
 				local currentlyActive = game.cellGrid[x][y]
 				
 				if currentlyActive == false and shouldBeActive == true then
-					RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, y*world.map.cellWidth, (x + 1)*world.map.cellHeight, (y + 1)*world.map.cellHeight)
+					--RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, y*world.map.cellWidth, (x + 1)*world.map.cellHeight, (y + 1)*world.map.cellHeight)
 				end
 				
 				game.cellGrid[x][y] = shouldBeActive

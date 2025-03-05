@@ -28,7 +28,9 @@ local function newReceiveTrade(good)
 	return trade
 end
 
-function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, tileCoords, rewardInventory)
+function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, tileCoords, rewardInventory, passenger, doomsdayClock)
+	doomsdayClock = doomsdayClock or 0
+	
 	local centerX = 0
 	local centerY = 0
 	for i = 1, #tileCoords do
@@ -46,10 +48,19 @@ function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, t
 		table.insert(validTrades, newReceiveTrade(goodsNeeded[i]))
 	end
 	
-	local bunker = {nameTag = nameTag, descriptionTag = descriptionTag, colour = colour, goodsNeeded = goodsNeeded, goodsToGive = goodsToGive, validTrades = validTrades, rewardInventory = rewardInventory, 
-					tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false}
+	local bunker = {nameTag = nameTag, descriptionTag = descriptionTag, colour = colour, goodsNeeded = goodsNeeded, goodsToGive = goodsToGive, validTrades = validTrades, rewardInventory = rewardInventory, passenger = passenger, 
+					timeTillDeath = doomsdayClock, dead = false, tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false}
 	
 	return bunker
+end
+
+function Bunker.tick(bunker)
+	if bunker.dead == false then
+		bunker.timeTillDeath = bunker.timeTillDeath - 1
+		if bunker.timeTillDeath <= 0 then
+			bunker.dead = true
+		end
+	end
 end
 
 function Bunker.getBunkerOnTile(bunkerList, tile)
@@ -75,10 +86,6 @@ function Bunker.drawRegion(bunker, camera)
 			love.graphics.rectangle("fill", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
 		end)
 	end
-end
-
-function Bunker.drawInteriorView(bunker, x1, x2, y2, y2, camera)
-	
 end
 
 return Bunker

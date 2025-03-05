@@ -93,6 +93,8 @@ function Controls.loadDefaultControls()
 	addControls("accelerate", {"kp+", "=", "wheelUp"})
 	addControls("decelerate", {"kp-", "-", "wheelDown"})
 	
+	addControls("openMap", {"m"})
+	
 	addControls("back", {"escape"})
 	
 	--addControls("examine", {"l"})
