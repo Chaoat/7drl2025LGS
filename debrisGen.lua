@@ -14,8 +14,8 @@ local function newDebrisMap(density, mapName)
 	table.insert(debrisMaps[density], XpInterpreter.load(mapName))
 end
 do
-	newDebrisMap(1, "densedebris")
-	newDebrisMap(2, "densedebris")
+	newDebrisMap(1, "debris_light")
+	newDebrisMap(2, "debris_mid")
 	newDebrisMap(3, "densedebris")
 end
 

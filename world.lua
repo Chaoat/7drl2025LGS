@@ -13,16 +13,14 @@ local DebrisGen = require "debrisGen"
 local World = {}
 
 function World.new()
-	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1")), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {},
+	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1", 600, 600)), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {},
 				   overActorParticles = {}}
 	world.weather = Weather.new(world.map)
 	
 	World.addBunker(world, Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {"food"}, {"steel"}, 
-	Map.getTileCoordsInSquare(map, 23, 6, 27, 10), Inventory.addCrew(Inventory.addTool(Inventory.new(), "nitro", 2), Crew.new("architect", "GenesisName"))))
+	Map.getTileCoordsInSquare(map, 23, 6, 27, 10), Inventory.addTool(Inventory.new(), "nitro", 2), Crew.new("architect", "GenesisName"), 100))
 	World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
-	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"))))
-	
-	DebrisGen.fillArea(world, 4, 5, {5, 5}, {200, 200})
+	Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("interior designer", "GenesisName"), 100))
 	
 	return world
 end

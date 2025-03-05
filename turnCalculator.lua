@@ -6,6 +6,7 @@ local Player = require "player"
 local Tool = require "tool"
 local World = require "world"
 local Enemy = require "enemy"
+local Bunker = require "bunker"
 
 local TurnCalculator = {}
 
@@ -74,9 +75,11 @@ function TurnCalculator.pass(turnCalculator)
 			if targetTile.solidity >= Actor.getSpeed(actorMove.actor) then
 				if targetTile.x ~= actorMove.actor.x then
 					actorMove.actor.velX = 0
+					actorMove.actor.momentX = 0
 					actorMove.movesLeft = actorMove.actor.velY
 				else
 					actorMove.actor.velY = 0
+					actorMove.actor.momentY = 0
 					actorMove.movesLeft = actorMove.actor.velX
 				end
 			elseif actorMove.actor.solidity < targetTile.solidity then
@@ -103,11 +106,13 @@ function TurnCalculator.pass(turnCalculator)
 						addMomentum(collidingActor, actorMove.actor.velX, 0)
 						
 						actorMove.actor.velX = 0
+						actorMove.actor.momentX = 0
 						actorMove.movesLeft = actorMove.actor.velY
 					else
 						addMomentum(collidingActor, 0, actorMove.actor.velY)
 						
 						actorMove.actor.velY = 0
+						actorMove.actor.momentY = 0
 						actorMove.movesLeft = actorMove.actor.velX
 					end
 				elseif collidingActor and actorMove.actor.solidity < Actor.getSpeed(collidingActor) then
@@ -135,7 +140,7 @@ function TurnCalculator.pass(turnCalculator)
 	for i = 1, #turnCalculator.world.actors do
 		local actor = turnCalculator.world.actors[i]
 		actor.velX = actor.velX - actor.momentX
-		actor.velY = actor.velY - actor.momentX
+		actor.velY = actor.velY - actor.momentY
 		
 		Actor.momentumDrag(actor, 1)
 	end
@@ -155,9 +160,15 @@ function TurnCalculator.pass(turnCalculator)
 		end
 	end
 	
+	for i = 1, #turnCalculator.world.bunkers do
+		local bunker = turnCalculator.world.bunkers[i]
+		Bunker.tick(bunker)
+	end
+	
 	Map.redrawCells(turnCalculator.world.map, turnCalculator.player.actor.x, turnCalculator.player.actor.y)
 	Player.postTurnUpdate(turnCalculator.player, turnCalculator.world)
 	Player.calculatePredictedSquares(turnCalculator.player)
+	GLOBALStallClock = true
 end
 
 return TurnCalculator

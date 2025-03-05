@@ -1,6 +1,6 @@
 local XpInterpreter = {}
 
-function XpInterpreter.load(fileName)
+function XpInterpreter.load(fileName, overrideWidth, overrideHeight)
 	--local basePath = love.filesystem.getSource()
 	--
 	--local dirs = love.filesystem.getDirectoryItems("xpFiles")
@@ -20,12 +20,18 @@ function XpInterpreter.load(fileName)
 		
 		return data
 	end
-	
 	local properties = {version = readBytes(4), layers = readBytes(4), width = readBytes(4), height = readBytes(4)}
 	--print(properties.version)
 	--print(properties.layers)
 	--print(properties.width)
 	--print(properties.height)
+	
+	if overrideWidth then
+		properties.width = overrideWidth
+	end
+	if overrideHeight then
+		properties.height = overrideHeight
+	end
 	
 	local images = {}
 	for k = 1, properties.layers do

@@ -4,6 +4,7 @@ local Misc = require "misc"
 
 GlobalDebugFlag = false
 GLOBALAnimationClock = 0
+GLOBALStallClock = false
 
 local rootGame = nil
 function love.load()
@@ -14,6 +15,11 @@ end
 local doProfile = false
 local profileTimer = 0
 function love.update(dt)
+	if GLOBALStallClock then
+		dt = 0
+		GLOBALStallClock = false
+	end
+	
 	GLOBALAnimationClock = GLOBALAnimationClock + dt
 	Game.update(rootGame, dt)
 	

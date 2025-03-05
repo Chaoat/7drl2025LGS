@@ -41,6 +41,7 @@ local imageLayer = 1
 function Map.loadFromXP(xpImage)
 	local map = Map.new()
 	
+	print(xpImage.properties.width .. "::" .. xpImage.properties.height)
 	for i = 0, xpImage.properties.width - 1 do
 		for j = 0, xpImage.properties.height - 1 do
 			local tile, noColour = Tile.fromXP(xpImage.images[imageLayer][i][j])

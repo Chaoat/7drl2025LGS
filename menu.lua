@@ -6,6 +6,7 @@ local Font = require "font"
 local Controls = require "controls"
 local Inventory = require "inventory"
 local Tool = require "tool"
+local Crew = require "crew"
 
 local Menu = {}
 
@@ -608,7 +609,7 @@ do --screen
 			
 			--print("screen: " .. screen.identifier .. " element: " .. i .. " x1: " .. screen.elements[i].x1 .. " x2: " .. screen.elements[i].x2 .. " y1: " .. screen.elements[i].y1 .. " y2: " .. screen.elements[i].y2 .. " withinScreen: " .. tostring(withinScreen))
 			
-			if element.active and element.width() > 0 and element.height() > 0 and withinScreen then
+			if element.active and element.width() > 0 and element.height() > 0 and withinScreen and not element.hidden then
 				element.drawFunc(element, timeChange)
 			end
 			
@@ -657,7 +658,7 @@ do --element
 	function Menu.element.new(posFunc, drawFunc)
 		--posFunc - (element, parX, parY, parWidth, parHeight) returns x1, y1, x2, y2, defining draw position of the element
 		--drawFunc - (element, timeChange), draws the element based on the above decided position
-		local element = {x1 = nil, y1 = nil, x2 = nil, y2 = nil, ignoreOverlap = false, posFunc = posFunc, drawFunc = drawFunc, parent = nil, active = true, inView = false, mouseOver = false, mouseOverTime = 0, clicked = false, selectable = false, overlapping = {}, storedMinDims = nil, minDims = defaultMinDims}
+		local element = {x1 = nil, y1 = nil, x2 = nil, y2 = nil, ignoreOverlap = false, posFunc = posFunc, drawFunc = drawFunc, parent = nil, active = true, hidden = false, inView = false, mouseOver = false, mouseOverTime = 0, clicked = false, selectable = false, overlapping = {}, storedMinDims = nil, minDims = defaultMinDims}
 		--selectable - boolean that determines whether an element can be clicked. Auto set when added to a screen, but can be fiddled with however you want.
 		
 		--clickFunc(element, mouseX, mouseY)
@@ -1697,25 +1698,36 @@ do --element
 				love.graphics.setColor(0, 0, 0, 0.6)
 				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
 				
-				local tradeTextX = element.x1 + 0.3*(element.x2 - element.x1)
-				local tradeTextY = element.y1 + 0.6*(element.y2 - element.y1)
+				local doomTextX = Misc.round(element.x1 + 0.5*(element.x2 - element.x1))
+				local doomTextY = Misc.round(element.y1 + 0.55*(element.y2 - element.y1))
 				love.graphics.setColor(1, 1, 1, 1)
-				love.graphics.printf("Trade Options: ", tradeTextX, tradeTextY, 150)
-				for i = 1, #bunker.validTrades do
-					local trade = bunker.validTrades[i]
+				if bunker.dead then
+					love.graphics.printf("This bunker has collapsed", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
+				else
+					love.graphics.printf("This bunker will collapse in " .. bunker.timeTillDeath .. " turns", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
 					
-					if trade.canExecuteFunction(player, bunker) then
-						love.graphics.setColor(1, 1, 1, 1)
-					else
-						love.graphics.setColor(0.5, 0.5, 0.5, 1)
+					local tradeTextX = Misc.round(element.x1 + 0.1*(element.x2 - element.x1))
+					local tradeTextY = Misc.round(element.y1 + 0.6*(element.y2 - element.y1))
+					love.graphics.setColor(1, 1, 1, 1)
+					love.graphics.printf("Trade Options: ", tradeTextX, tradeTextY, 150)
+					for i = 1, #bunker.validTrades do
+						local trade = bunker.validTrades[i]
+						
+						if trade.canExecuteFunction(player, bunker) then
+							love.graphics.setColor(1, 1, 1, 1)
+						else
+							love.graphics.setColor(0.5, 0.5, 0.5, 1)
+						end
+						
+						local text = i .. ": " .. trade.displayText
+						if trade.give then
+							text = text .. " and accept " .. Crew.getName(bunker.passenger) .. " on board"
+						elseif trade.receive then
+							text = text .. " and receive " .. Inventory.getfullContentsString(bunker.rewardInventory)
+						end
+						love.graphics.printf(text, tradeTextX, tradeTextY + 20*i, element.x2 - element.x1 - tradeTextX - 5)
 					end
-					
-					local text = i .. ": " .. trade.displayText
-					love.graphics.printf(text, tradeTextX, tradeTextY + 20*i, 150)
 				end
-				
-				love.graphics.setColor(1, 1, 1, 1)
-				love.graphics.printf(Inventory.getfullContentsString(bunker.rewardInventory), tradeTextX + 160, tradeTextY, 200)
 			end
 		end)
 	end
@@ -1733,13 +1745,26 @@ do --element
 	
 	function Menu.element.playerFuel(posFunc, player)
 		return Menu.element.new(posFunc, function(element)
-				love.graphics.setColor(0, 0, 0, 1)
-				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
-				
-				local width = (player.fuel/player.maxFuel)*(element.x2 - element.x1)
-				love.graphics.setColor(0.5, 0.3, 0, 1)
-				love.graphics.rectangle("fill", element.x1, element.y1, width, element.y2 - element.y1)
-			end)
+			love.graphics.setColor(0, 0, 0, 1)
+			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
+			
+			local width = (player.fuel/player.maxFuel)*(element.x2 - element.x1)
+			love.graphics.setColor(0.5, 0.3, 0, 1)
+			love.graphics.rectangle("fill", element.x1, element.y1, width, element.y2 - element.y1)
+		end)
+	end
+	
+	function Menu.element.minimap(posFunc, minimap)
+		return Menu.element.new(posFunc, function(element)
+			love.graphics.setColor(0, 0, 0, 1)
+			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
+			
+			local width = minimap.canvas:getWidth()
+			local height = minimap.canvas:getHeight()
+			
+			love.graphics.setColor(1, 1, 1, 1)
+			love.graphics.draw(minimap.canvas, element.x1, element.y1, 0, (element.x2 - element.x1)/width, (element.y2 - element.y1)/height)
+		end)
 	end
 	
 	local enemyDisplays = {}
