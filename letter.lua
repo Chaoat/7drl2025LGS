@@ -101,16 +101,14 @@ function Letter.draw(letter, drawX, drawY, tileWidth, tileHeight)
 	love.graphics.draw(fontImage, quad, drawX, drawY, letter.facing, tileWidth/letterTileWidth, tileHeight/letterTileHeight, letterTileWidth/2, letterTileHeight/2)
 end
 
-function Letter.drawBack(letter, x, y, camera)
-	local drawX, drawY = getDrawPos(x, y, camera)
-	
-	if letter.momentaryInfluence > 0 then
-		love.graphics.setColor(blendColours(letter.momentaryInfluenceColour, letter.backColour, letter.momentaryInfluence))
+function Letter.drawBack(letter, drawX, drawY, tileWidth, tileHeight)
+	if letter.backColour == nil then
+		error("Letter color: " .. letter.backColour)
 	else
-		love.graphics.setColor(letter.backColour)
+		love.graphics.setColor(Misc.multiplyColours(letter.backColour, letter.tint))
 	end
 	
-	love.graphics.rectangle('fill', drawX, drawY, camera.tileWidth, camera.tileHeight)
+	love.graphics.rectangle('fill', drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
 end
 
 return Letter

@@ -53,11 +53,11 @@ function DebrisGen.fillArea(world, density, edgeBleed, topCorn, botCorn)
 	
 	for x = x1, x2 do
 		for y = y1, y2 do
-			local edgeDist = math.min(math.min(math.abs(x - x1, x2 - x)), math.min(math.abs(y - y1, y2 - y)))
+			local edgeDist = math.min(math.min(math.abs(x - x1), math.abs(x2 - x)), math.min(math.abs(y - y1), math.abs(y2 - y)))
 			local edgeMult = math.max(1 - edgeDist/edgeBleed, 0)
 			
 			local existingTile = Map.getTile(world.map, x, y)
-			if existingTile and existingTile.solidity == 0 then
+			if existingTile == nil or existingTile.solidity == 0 then
 				local pixX = x%densityMapCoords[1]
 				local pixY = y%densityMapCoords[2]
 				

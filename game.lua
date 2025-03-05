@@ -45,7 +45,7 @@ local function generateInterface(game)
 	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
 	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 400), player, camera))
 	
-	local minimapElement = Menu.element.minimap(Menu.position.dynamicSize(10, 10, 610, 410), minimap)
+	local minimapElement = Menu.element.minimap(Menu.position.dynamicSize(10, 10, 736, 537), minimap)
 	minimapElement.ignoreOverlap = true
 	minimapElement.hidden = true
 	Menu.screen.addElement(screen, minimapElement)
@@ -60,8 +60,29 @@ function Game.new()
 	local game = {mainCamera = Camera.new(), player = nil, currentPlayerCellX = -10, currentPlayerCellY = -10, cellGrid = {}, gridWidth = 0, gridHeight = 0, 
 				  interface = nil, world = World.new(), miniMap = nil, turnCalculator = nil}
 	
-	local playerActor = World.placeActor(game.world, Player.generatePlayerActor(actor), 0, 0)
+	local playerActor = World.placeActor(game.world, Player.generatePlayerActor(actor), 344, 287)
 	game.player = Player.new(playerActor)
+	
+	RandomGen.placeBunkers(game.world, 
+		{
+			{23, 26, 27, 30},
+			{7, 70, 12, 77},
+			{146, 18, 151, 27},
+			{349, 6, 357, 11},
+			{575, 178, 585, 183},
+			{449, 270, 458, 275},
+			{222, 244, 230, 249},
+			{160, 344, 168, 349},
+			{523, 329, 528, 339},
+			{358, 161, 366, 166},
+			{230, 119, 235, 128},
+			{437, 102, 445, 107},
+			{75, 140, 80, 149},
+			{556, 37, 566, 42},
+			{1, 382, 9, 387},
+			{369, 391, 378, 398},
+		}
+	)
 	
 	local mapWidth, mapHeight = Map.getSize(game.world.map)
 	game.gridWidth = math.ceil(mapWidth/(game.world.map.cellWidth))

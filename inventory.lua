@@ -1,4 +1,40 @@
+local Letter = require "letter"
+local Misc = require "misc"
+
 local Inventory = {}
+
+local cargoDefinitions = {}
+do
+	local function newCargoDefinition(name, letter)
+		local definition = {name = name, letter = letter}
+		cargoDefinitions[name] = definition
+	end
+	
+	newCargoDefinition("Steel", Letter.newFromLetter("S", {1, 0, 0, 1}, {0.5, 0.3, 0, 1}))
+	newCargoDefinition("Medicine", Letter.newFromLetter("M", {1, 0.5, 0.5, 1}, {0.5, 0, 0.5, 1}))
+	newCargoDefinition("Electronics", Letter.newFromLetter("E", {1, 1, 0.5, 1}, {0.4, 0.4, 0.4, 1}))
+	newCargoDefinition("Gasoline", Letter.newFromLetter("G", {0.3, 0.3, 0, 1}, {0.7, 0.7, 0.7, 1}))
+	newCargoDefinition("Purifiers", Letter.newFromLetter("P", {0.5, 0.7, 0.7, 1}, {0.3, 0.5, 0.3, 1}))
+	newCargoDefinition("Roots", Letter.newFromLetter("R", {0.3, 0.6, 0.3, 1}, {0.4, 0.2, 0.1, 1}))
+	newCargoDefinition("Volatiles", Letter.newFromLetter("V", {0.3, 0.3, 0.6, 1}, {0.6, 0, 0, 1}))
+	
+	newCargoDefinition("Weapons", Letter.newFromLetter("W", {1, 1, 1, 1}, {0, 0, 0, 1}))
+	newCargoDefinition("Clothes", Letter.newFromLetter("C", {1, 1, 1, 1}, {0, 0, 0, 1}))
+	newCargoDefinition("Food", Letter.newFromLetter("F", {1, 1, 1, 1}, {0, 0, 0, 1}))
+	newCargoDefinition("Tools", Letter.newFromLetter("T", {1, 1, 1, 1}, {0, 0, 0, 1}))
+end
+
+function Inventory.getCargoLetter(cargoName)
+	return cargoDefinitions[cargoName].letter
+end
+
+function Inventory.drawCargoSymbol(cargoName, x, y, tileWidth, tileHeight)
+	local letter = Inventory.getCargoLetter(cargoName)
+	Letter.drawBack(letter, x, y, tileWidth, tileHeight)
+	Letter.draw(letter, x, y, tileWidth, tileHeight)
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.rectangle("line", Misc.round(x - tileWidth/2), Misc.round(y - tileHeight/2), tileWidth, tileHeight)
+end
 
 function Inventory.new()
 	local inventory = {cargo = {}, tools = {}, crew = {}, cargoLimit = 2}

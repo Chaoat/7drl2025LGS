@@ -1721,9 +1721,9 @@ do --element
 						
 						local text = i .. ": " .. trade.displayText
 						if trade.give then
-							text = text .. " and accept " .. Crew.getName(bunker.passenger) .. " on board"
+							text = text .. " and " .. bunker.passenger.class
 						elseif trade.receive then
-							text = text .. " and receive " .. Inventory.getfullContentsString(bunker.rewardInventory)
+							text = text .. " - receive " .. Inventory.getfullContentsString(bunker.rewardInventory)
 						end
 						love.graphics.printf(text, tradeTextX, tradeTextY + 20*i, element.x2 - element.x1 - tradeTextX - 5)
 					end
@@ -1762,6 +1762,8 @@ do --element
 			local width = minimap.canvas:getWidth()
 			local height = minimap.canvas:getHeight()
 			
+			--print((element.x2 - element.x1) .. ":" .. width)
+			--print((element.y2 - element.y1) .. ":" .. height)
 			love.graphics.setColor(1, 1, 1, 1)
 			love.graphics.draw(minimap.canvas, element.x1, element.y1, 0, (element.x2 - element.x1)/width, (element.y2 - element.y1)/height)
 		end)
