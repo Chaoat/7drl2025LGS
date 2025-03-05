@@ -67,6 +67,9 @@ function World.new()
 
 	World.addBunker(world, Bunker.new("Southern Hideout", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
 	Map.getTileCoordsInSquare(map, 369, 391, 378, 398 ), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "Southern Hideout"), 200)))
+	 
+	World.addBunker(world, Bunker.new("Park Admin Office", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
+	Map.getTileCoordsInSquare(map, 80, 243, 88, 248 ), Inventory.addCrew(Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "Park Admin Office"), 200)))
 	
 	--DebrisGen.fillArea(world, 4, 5, {5, 5}, {200, 200})
 	
