@@ -16,8 +16,8 @@ end
 
 function Player.new(actor)
 	local player = {actor = actor, controlMode = "movement", lookCursorX = 0, lookCursorY = 0, targettingTool = nil,
-	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 3, deceleration = 3, 
-	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), fuel = 100, maxFuel = 100, parkedBunker = nil}
+	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 1, deceleration = 1, 
+	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), fuel = 100, maxFuel = 100, parkedBunker = nil, indestructible = false}
 	
 	Inventory.addTool(player.inventory, "nitro", 2)
 	Inventory.addTool(player.inventory, "blink", 2)
