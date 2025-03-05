@@ -80,6 +80,7 @@ local function generatePossibleGives()
 		{"Purifiers"},
 		{"Roots"},
 		{"Roots"},
+		{"Roots"},
 		{"Roots", "Volatiles"},
 	}
 end
@@ -99,6 +100,7 @@ local function generatePossibleReceives()
 		{"Gasoline", "Volatiles"},
 		{"Purifiers", "Medicine"},
 		{"Purifiers"},
+		{"Roots"},
 		{"Roots"},
 		{"Roots"},
 		{"Roots"},

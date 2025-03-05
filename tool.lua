@@ -63,6 +63,52 @@ do
 		return tile ~= nil and tile.solidity == 0 and #tile.actors == 0
 	end,
 	{"targetted"})
+
+	newEffectToolProto("cannon", "cannonName", "cannonDescription", {0.6, 0.6, 0.6, 1}, 0, 15,
+	function(tool, world, player)
+		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
+		--TODO Wreck all tiles within 3 of the target
+	end, 
+	nil,
+	nil,
+	function(world, player, targetX, targetY)
+		if targetX == nil or targetY == nil then
+			return true
+		end
+		local tile = Map.getTile(world.map, targetX, targetY)
+		return tile ~= nil and tile.solidity == 0 and #tile.actors == 0
+	end,
+	{"targetted"})
+
+	newEffectToolProto("drill", "drillName", "drillDescription", {0.6, 0.6, 0.6, 1}, 0, 30,
+	function(tool, world, player)
+		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
+		--TODO Wreck all tiles between PLAYER and the target
+	end, 
+	nil,
+	nil,
+	function(world, player, targetX, targetY)
+		if targetX == nil or targetY == nil then
+			return true
+		end
+		local tile = Map.getTile(world.map, targetX, targetY)
+		return tile ~= nil and tile.solidity == 0 and #tile.actors == 0
+	end,
+	{"targetted"})
+
+	--TODO make indestructible work with damage system
+	newEffectToolProto("indestructibility", "indestructibilityName", "indestructibilityDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
+	function(tool, world, player)
+		player.indestructible = true
+	end, 
+	function(tool, world, player)
+		player.indestructible = false
+	end,
+	nil,
+	function(world, player, targetX, targetY)
+		return Actor.toolEffectActive(player.actor, "indestructible") == false
+	end,
+	{"deactivateWithDeath"})
 	
 	--ENEMY TOOLS
 	newEffectToolProto("impulseExplosion", "impulseExplosionName", "impulseExplosionDescription", {1, 1, 1, 1}, 0, 5,
