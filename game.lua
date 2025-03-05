@@ -132,7 +132,7 @@ function Game.updatePlayerCellPos(game)
 				local currentlyActive = game.cellGrid[x][y]
 				
 				if currentlyActive == false and shouldBeActive == true then
-					RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, y*world.map.cellWidth, (x + 1)*world.map.cellHeight, (y + 1)*world.map.cellHeight)
+					--RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, y*world.map.cellWidth, (x + 1)*world.map.cellHeight, (y + 1)*world.map.cellHeight)
 				end
 				
 				game.cellGrid[x][y] = shouldBeActive

@@ -1706,7 +1706,7 @@ do --element
 				else
 					love.graphics.printf("This bunker will collapse in " .. bunker.timeTillDeath .. " turns", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
 					
-					local tradeTextX = Misc.round(element.x1 + 0.1*(element.x2 - element.x1))
+					local tradeTextX = Misc.round(element.x1 + 10)
 					local tradeTextY = Misc.round(element.y1 + 0.6*(element.y2 - element.y1))
 					love.graphics.setColor(1, 1, 1, 1)
 					love.graphics.printf("Trade Options: ", tradeTextX, tradeTextY, 150)
