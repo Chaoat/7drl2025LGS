@@ -99,7 +99,10 @@ do
 	newEffectToolProto("drill", "drillName", "drillDescription", {0.6, 0.6, 0.6, 1}, 0, 30,
 	function(tool, world, player)
 		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
-		--TODO Wreck all tiles between PLAYER and the target
+		local tiles = Map.shape.line(world.Map, tool.targetX, tool.targetY, player.actor.x, player.actor.y)
+		for i= 1, #tiles do 
+			Tile.wreck(tiles[i])
+		end
 	end, 
 	nil,
 	nil,
@@ -108,7 +111,7 @@ do
 			return true
 		end
 		local tile = Map.getTile(world.map, targetX, targetY)
-		return tile ~= nil and tile.solidity == 0 and #tile.actors == 0
+		return tile ~= nil
 	end,
 	{"targetted"})
 
