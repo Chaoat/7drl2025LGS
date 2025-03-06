@@ -67,7 +67,23 @@ do
 	newEffectToolProto("cannon", "cannonName", "cannonDescription", {0.6, 0.6, 0.6, 1}, 0, 15,
 	function(tool, world, player)
 		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
-		--TODO Wreck all tiles within 3 of the target
+		local radius = 3
+		for xOff = -radius, radius do
+			for yOff = -radius, radius do
+				local x = tool.targetX + xOff
+				local y = tool.targetY + yOff
+				local tile = Map.getTile(world.map, x, y)
+				
+				if tile then
+					Tile.wreck(tile)
+					for i = 1, #tile.actors do
+						Actor.kill(tile.actors[i]))
+					end
+					
+					Particle.queue(Particle.colourShiftBox(x, y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
+				end
+			end
+		end
 	end, 
 	nil,
 	nil,
@@ -76,7 +92,7 @@ do
 			return true
 		end
 		local tile = Map.getTile(world.map, targetX, targetY)
-		return tile ~= nil and tile.solidity == 0 and #tile.actors == 0
+		return tile ~= nil
 	end,
 	{"targetted"})
 
@@ -107,6 +123,19 @@ do
 	nil,
 	function(world, player, targetX, targetY)
 		return Actor.toolEffectActive(player.actor, "indestructible") == false
+	end,
+	{"deactivateWithDeath"})
+
+	newEffectToolProto("Drift", "driftName", "driftDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
+	function(tool, world, player)
+		player.minSpeed = player.turnSpeed + 3
+	end, 
+	function(tool, world, player)
+		player.minSpeed = player.turnSpeed - 3
+	end,
+	nil,
+	function(world, player, targetX, targetY)
+		return Actor.toolEffectActive(player.actor, "drift") == false
 	end,
 	{"deactivateWithDeath"})
 	
