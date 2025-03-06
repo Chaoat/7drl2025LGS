@@ -54,7 +54,7 @@ function Minimap.redraw(minimap)
 			local green = 0.2 + 0.5*(bunker.timeTillDeath/500)
 			love.graphics.setColor(0.4, green, 0, 1)
 		else
-			love.graphics.setColor(0.5, 0, 0, 1)
+			love.graphics.setColor(0.7, 0, 0, 1)
 		end
 		love.graphics.circle("fill", mapX, mapY, 12)
 		

@@ -78,7 +78,7 @@ do
 	function(tool, world, player)
 		--player.minSpeed = player.minSpeed - 10
 		player.maxSpeed = player.maxSpeed - 10
-		player.targetSpeed = player.targetSpeed - 10
+		player.targetSpeed = math.max(player.targetSpeed - 10, 0)
 	end,
 	nil,
 	function(world, player, targetX, targetY)

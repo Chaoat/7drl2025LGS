@@ -34,12 +34,12 @@ local function generateInterface(game)
 	local sideBar = Menu.screen.new("side", blackBack(0.7))
 	
 	local toolElements = {
-	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "nitro", "activateNitro"),
-	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "blink", "activateBlink"),
-	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "cannon", "activateCannon"),
 	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "drill", "activateDrill"),
-	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "indestructibility", "activateIndestructibility"),
 	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "Drift", "activateDrift"),
+	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "cannon", "activateCannon"),
+	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "indestructibility", "activateIndestructibility"),
+	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "blink", "activateBlink"),
+	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "nitro", "activateNitro"),
 	}
 	
 	Menu.screen.addElement(sideBar, Menu.element.verticalList(Menu.position.dynamicCenter(0.5, -200, 180, 180), true, nil, 0, false, toolElements, nil, false))

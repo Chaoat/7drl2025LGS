@@ -68,7 +68,8 @@ local function useNamedTool(player, world, toolName)
 				local tool = Tool.activate(toolName, player.actor, world, player, player.actor.x, player.actor.y)
 				Inventory.removeTool(player.inventory, toolName, 1)
 				table.insert(player.activeTools, tool)
-				return true
+				Player.calculatePredictedSquares(player)
+				return false
 			end
 		else
 			player.controlMode = "targetting"
@@ -207,7 +208,7 @@ function Player.keyInput(player, world, key)
 				table.insert(player.activeTools, tool)
 				Inventory.removeTool(player.inventory, player.targettingTool, 1)
 				player.controlMode = "movement"
-				executeTurn = true
+				Player.calculatePredictedSquares(player)
 			end
 		elseif Controls.checkControl(key, "back", false) then
 			player.controlMode = "movement"
@@ -264,8 +265,10 @@ function Player.postTurnUpdate(player, world)
 	
 	player.parkedBunker = Bunker.getBunkerOnTile(world.bunkers, player.actor.tile)
 	if player.parkedBunker then
-		player.fuel = player.maxFuel
-		Actor.fullHeal(player.actor)
+		if not player.parkedBunker.dead then
+			player.fuel = player.maxFuel
+			Actor.fullHeal(player.actor)
+		end
 	else
 		player.fuel = player.fuel - 1
 	end
