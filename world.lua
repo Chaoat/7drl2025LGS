@@ -20,8 +20,8 @@ function World.new()
 				   overActorParticles = {}}
 	world.weather = Weather.new(world.map)
 	
-	World.addBunker(world, Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {"Roots"}, {"Medicine"}, 
-	Map.getTileCoordsInSquare(map, 335, 282, 344, 287), Inventory.addTool(Inventory.new(), "nitro", 2), Crew.new("architect", "GenesisName"), 200))
+	World.addBunker(world, Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {}, {}, 
+	Map.getTileCoordsInSquare(map, 335, 282, 344, 287), Inventory.new(), nil, 200))
 
 	--World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
 	--Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))

@@ -37,7 +37,7 @@ function Inventory.drawCargoSymbol(cargoName, x, y, tileWidth, tileHeight)
 end
 
 function Inventory.new()
-	local inventory = {cargo = {}, tools = {}, crew = {}, cargoLimit = 2}
+	local inventory = {cargo = {}, tools = {}, crew = {}, cargoLimit = 1}
 	
 	return inventory
 end
@@ -46,7 +46,7 @@ function Inventory.transferTo(inventoryTo, inventoryFrom)
 	for i = 1, #inventoryFrom.cargo do
 		local name = inventoryFrom.cargo[i].cargoName
 		local count = inventoryFrom.cargo[i].count
-		Inventory.addCargo(inventoryTo, name, count)
+		Inventory.addCargo(inventoryTo, name, count, nil)
 		Inventory.removeCargo(inventoryFrom, name, count)
 	end
 	
@@ -144,19 +144,20 @@ function Inventory.getToolCount(inventory, toolName)
 end
 
 
-function Inventory.addCargo(inventory, cargoName, count)
+function Inventory.addCargo(inventory, cargoName, count, origin)
 	local alreadyPresent = false
 	for i = 1, #inventory.cargo do
 		local cargo = inventory.cargo
 		if cargo.cargoName == cargoName then
 			cargo.count = cargo.count + count
+			table.insert(cargo.origins, origin)
 			alreadyPresent = true
 			break
 		end
 	end
 	
 	if alreadyPresent == false then
-		table.insert(inventory.cargo, {cargoName = cargoName, count = count})
+		table.insert(inventory.cargo, {cargoName = cargoName, count = count, origins = {origin}})
 	end
 	return inventory
 end
@@ -167,11 +168,13 @@ function Inventory.removeCargo(inventory, cargoName, count)
 		local cargo = inventory.cargo[i]
 		if cargo.cargoName == cargoName then
 			cargo.count = cargo.count - count
+			local origin = cargo.origins[1]
+			table.remove(cargo.origins, 1)
 			
 			if cargo.count <= 0 then
 				table.remove(inventory.cargo, i)
 			end
-			break
+			return origin
 		end
 	end
 end

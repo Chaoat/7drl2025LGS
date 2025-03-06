@@ -1684,9 +1684,23 @@ do --element
 	function Menu.element.crewHold(posFunc, player)
 		return Menu.element.new(posFunc, function(element)
 			love.graphics.printf("Crew: ", element.x1 + 2, element.y1 + 2, element.x2 - element.x1)
+			local textWidth = (element.x2 - element.x1)/2 - 5
 			for i = 1, #player.inventory.crew do
 				local crew = player.inventory.crew[i]
-				love.graphics.printf(crew.class .. " from " .. crew.origin, element.x1 + 2, element.y1 + 18 + 32*(i) - 1, element.x2 - element.x1)
+				if crew.happiness == -1 then
+					love.graphics.setColor(1, 0, 0, 1)
+					love.graphics.printf(crew.class .. "\n" .. crew.origin, element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.crewDef.negEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
+				elseif crew.happiness == 1 then
+					love.graphics.setColor(0, 1, 0, 1)
+					love.graphics.printf(crew.class .. "\n" .. crew.origin, element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
+				else
+					love.graphics.setColor(1, 1, 1, 1)
+					love.graphics.printf(crew.class .. "\n" .. crew.origin, element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.setColor(0.5, 0.5, 0.5, 1)
+					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
+				end
 			end
 		end)
 	end
@@ -1720,7 +1734,7 @@ do --element
 						end
 						
 						local text = i .. ": " .. trade.displayText
-						if trade.give then
+						if trade.give and bunker.passenger then
 							text = text .. " and " .. bunker.passenger.class
 						elseif trade.receive then
 							text = text .. " - receive " .. Inventory.getfullContentsString(bunker.rewardInventory)

@@ -1,16 +1,21 @@
 local Camera = require "camera"
 local Inventory = require "inventory"
+local Crew = require "crew"
 
 local Bunker = {}
 
 local function newGiveTrade(good)
 	local trade = {give = true, displayText = "take " .. good, 
 	canExecuteFunction = function(player, bunker)
-		return bunker.hasGiven == false
+		return bunker.hasGiven == false and Inventory.cargoCount(player.inventory) < player.inventory.cargoLimit
 	end,
 	executeFunction = function(player, bunker)
-		Inventory.addCargo(player.inventory, good, 1)
+		Inventory.addCargo(player.inventory, good, 1, bunker)
+		bunker.passenger.letter.tint = {0.2, 0.2, 0.2, 1}
+		Inventory.addCrew(player.inventory, bunker.passenger)
 		bunker.hasGiven = true
+		
+		Crew.tick(bunker.passenger, player)
 	end}
 	return trade
 end
@@ -21,7 +26,7 @@ local function newReceiveTrade(good)
 		return bunker.hasReceived == false and Inventory.hasCargo(player.inventory, good) > 0
 	end,
 	executeFunction = function(player, bunker)
-		Inventory.removeCargo(player.inventory, good, 1)
+		bunker.receivedFrom = Inventory.removeCargo(player.inventory, good, 1)
 		Inventory.transferTo(player.inventory, bunker.rewardInventory)
 		bunker.hasReceived = true
 	end}
@@ -49,13 +54,17 @@ function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, t
 	end
 	
 	local bunker = {nameTag = nameTag, descriptionTag = descriptionTag, colour = colour, goodsNeeded = goodsNeeded, goodsToGive = goodsToGive, validTrades = validTrades, rewardInventory = rewardInventory, passenger = passenger, 
-					timeTillDeath = doomsdayClock, dead = false, tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false}
+					timeTillDeath = doomsdayClock, dead = false, tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false, receivedFrom = nil}
+	
+	if passenger then
+		bunker.passenger.originLink = bunker
+	end
 	
 	return bunker
 end
 
 function Bunker.tick(bunker)
-	if bunker.dead == false then
+	if bunker.dead == false and bunker.hasReceived == false then
 		bunker.timeTillDeath = bunker.timeTillDeath - 1
 		if bunker.timeTillDeath <= 0 then
 			bunker.dead = true

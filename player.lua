@@ -7,6 +7,7 @@ local Image = require "image"
 local Inventory = require "inventory"
 local Tool = require "tool"
 local Bunker = require "bunker"
+local Crew = require "crew"
 
 local Player = {}
 
@@ -253,6 +254,10 @@ function Player.postTurnUpdate(player, world)
 		player.fuel = player.maxFuel
 	else
 		player.fuel = player.fuel - 1
+	end
+	
+	for i = 1, #player.inventory.crew do
+		Crew.tick(player.inventory.crew[i], player)
 	end
 end
 

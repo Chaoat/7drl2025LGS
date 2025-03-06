@@ -12,6 +12,11 @@ function Actor.new(letter, solidity, health)
 	return actor
 end
 
+function Actor.changeMaxHealth(actor, change)
+	actor.health = actor.health + change
+	actor.maxHealth = actor.maxHealth + change
+end
+
 function Actor.toolEffectActive(actor, toolName)
 	for i = #actor.activatedTools, 1, -1 do
 		local tool = actor.activatedTools[i]

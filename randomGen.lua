@@ -54,6 +54,8 @@ function RandomGen.fillAreaWithEnemies(world, difficulty, x1, y1, x2, y2)
 	end
 end
 
+--17 bunkers
+
 --"Steel"
 --"Medicine"
 --"Electronics"
@@ -61,50 +63,89 @@ end
 --"Purifiers"
 --"Roots"
 --"Volatiles"
---16 bunkers
 
 local function generatePossibleGives()
 	return {
-		{"Steel"},
-		{"Steel", "Volatiles"},
-		{"Steel", "Purifiers"},
+		{"Medicine", "Roots"},
+		{"Medicine", "Volatiles"},
 		{"Medicine"},
 		{"Medicine"},
-		{"Electronics"},
-		{"Electronics"},
-		{"Electronics", "Gasoline"},
-		{"Gasoline", "Medicine"},
+		{"Gasoline", "Roots"},
+		{"Gasoline", "Volatiles"},
 		{"Gasoline"},
 		{"Gasoline"},
+		{"Volatiles", "Purifiers"},
+		{"Volatiles", "Roots"},
+		{"Volatiles"},
+		{"Volatiles"},
+		{"Purifiers", "Roots"},
 		{"Purifiers"},
 		{"Purifiers"},
+		{"Purifiers"},
 		{"Roots"},
-		{"Roots"},
-		{"Roots"},
-		{"Roots", "Volatiles"},
 	}
 end
 
 local function generatePossibleReceives()
 	return {
-		{"Steel"},
-		{"Steel", "Gasoline"},
-		{"Steel"},
+		{"Medicine", "Roots"},
 		{"Medicine", "Volatiles"},
 		{"Medicine"},
-		{"Electronics", "Purifiers"},
-		{"Electronics"},
-		{"Electronics"},
-		{"Gasoline"},
-		{"Gasoline"},
+		{"Medicine"},
+		{"Gasoline", "Roots"},
 		{"Gasoline", "Volatiles"},
-		{"Purifiers", "Medicine"},
+		{"Gasoline"},
+		{"Gasoline"},
+		{"Volatiles", "Purifiers"},
+		{"Volatiles", "Roots"},
+		{"Volatiles"},
+		{"Volatiles"},
+		{"Purifiers", "Roots"},
+		{"Purifiers"},
+		{"Purifiers"},
 		{"Purifiers"},
 		{"Roots"},
-		{"Roots"},
-		{"Roots"},
-		{"Roots"},
 	}
+end
+
+--"Trucker"
+--"Engineer"
+--"Mathematician"
+--"Carpenter"
+--"Stocker"
+--"Brewer"
+
+local function generatePossibleCrew()
+	return {
+		"Engineer",
+		"Engineer",
+		"Engineer",
+		"Trucker",
+		"Trucker",
+		"Trucker",
+		"Mathematician",
+		"Mathematician",
+		"Carpenter",
+		"Carpenter",
+		"Stocker",
+		"Stocker",
+		"Brewer",
+		"Brewer",
+		"Brewer",
+		"Novelist",
+		"Novelist",
+	}
+end
+
+local function generatePossibleTimers(nBunkers)
+	local minTime = 300
+	local increment = 50
+	local timers = {}
+	for i = 1, nBunkers do
+		table.insert(timers, minTime + i*increment)
+	end
+	
+	return timers
 end
 
 function RandomGen.placeBunkers(world, locations)
@@ -152,13 +193,25 @@ function RandomGen.placeBunkers(world, locations)
 		end
 	end
 	
+	local crewChoices = generatePossibleCrew()
+	local timerChoices = generatePossibleTimers(#locations)
+	
 	for i = 1, #locations do
 		local location = locations[i]
 		local chosenTrade, tradeI = Misc.randomFromList(tradeCombos)
 		table.remove(tradeCombos, tradeI)
+		local chosenCrew, crewI = Misc.randomFromList(crewChoices)
+		table.remove(crewChoices, crewI)
+		local chosenTimer, timerI = Misc.randomFromList(timerChoices)
+		table.remove(timerChoices, timerI)
 		
-		World.addBunker(world, Bunker.new("Southern Hideout", "SouthStreetDescription", {1, 1, 0, 0.4}, chosenTrade[1], chosenTrade[2], 
-		Map.getTileCoordsInSquare(map, location[1], location[2], location[3], location[4]), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "Southern Hideout"), 200))
+		local crew = nil
+		if chosenCrew ~= "None" then
+			crew = Crew.new(chosenCrew, location[5])
+		end
+		
+		World.addBunker(world, Bunker.new(location[5], "SouthStreetDescription", {1, 1, 0, 0.4}, chosenTrade[1], chosenTrade[2], 
+		Map.getTileCoordsInSquare(map, location[1], location[2], location[3], location[4]), Inventory.addTool(Inventory.new(), "blink", 2), crew, chosenTimer))
 	end
 end
 
