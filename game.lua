@@ -9,6 +9,8 @@ local Map = require "map"
 local Minimap = require "minimap"
 local Controls = require "controls"
 local DebrisGen = require "debrisGen"
+local Text = require "text"
+local Score = require "score"
 
 local Game = {}
 
@@ -44,13 +46,18 @@ local function generateInterface(game)
 	Menu.screen.addElement(sideBar, Menu.element.playerFuel(Menu.position.dynamicSize(10, 30, -10, 45), player))
 	
 	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
-	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 400), player, camera))
+	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 600), player, camera))
 	
 	local minimapElement = Menu.element.minimap(Menu.position.dynamicSize(10, 10, 736, 537), minimap)
 	minimapElement.ignoreOverlap = true
 	minimapElement.hidden = true
 	Menu.screen.addElement(screen, minimapElement)
 	game.minimapElement = minimapElement
+	
+	local textElement = Menu.element.textScreen(Menu.position.dynamicSize(10, 10, -300, -200))
+	textElement.hidden = true
+	Menu.screen.addElement(screen, textElement)
+	game.textElement = textElement
 	
 	Menu.addScreen(menu, screen)
 	
@@ -63,6 +70,7 @@ function Game.new()
 	
 	local playerActor = World.placeActor(game.world, Player.generatePlayerActor(actor), 344, 287)
 	game.player = Player.new(playerActor)
+	Player.postTurnUpdate(game.player, game.world)
 	
 	RandomGen.placeBunkers(game.world, 
 		{
@@ -113,6 +121,8 @@ function Game.new()
 	
 	game.interface = generateInterface(game)
 	
+	Score.update(game)
+	
 	return game
 end
 
@@ -125,6 +135,14 @@ function Game.update(game, dt)
 	
 	--Camera.move(game.mainCamera, (game.mainCamera.worldX + game.player.actor.drawX)/2, (game.mainCamera.worldY + game.player.actor.drawY)/2)
 	Camera.trackPlayer(game.mainCamera, game.player)
+	
+	if game.textElement.hidden == true and game.player.controlMode == "reading" then
+		game.textElement.changeText(Text.get(game.player.readingTextID))
+		game.textElement.hidden = false
+	elseif game.textElement.hidden == false and game.player.controlMode ~= "reading" then
+		game.textElement.hidden = true
+	end
+	game.textElement.update(dt)
 end
 
 local function worldToGrid(game, wx, wy)
@@ -164,6 +182,7 @@ function Game.keyInput(game, key)
 		Game.updatePlayerCellPos(game)
 		Minimap.redraw(game.minimap)
 		Game.updateWorldDifficulty(game)
+		Score.update(game)
 	elseif Controls.checkControl(key, "openMap", false) then
 		game.minimapElement.hidden = not game.minimapElement.hidden
 	end

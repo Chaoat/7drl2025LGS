@@ -17,7 +17,7 @@ do
 		table.insert(mobTemplates[difficulty], mobs)
 	end
 	
-	newMobTemplate(0, {{"debris", 1}})
+	newMobTemplate(0, {{"tower", 1}})
 	newMobTemplate(1, {{"debris", 2}})
 	newMobTemplate(2, {{"debris", 3}})
 	newMobTemplate(3, {{"debris", 4}})

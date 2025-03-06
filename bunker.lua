@@ -1,13 +1,14 @@
 local Camera = require "camera"
 local Inventory = require "inventory"
 local Crew = require "crew"
+local Score = require "score"
 
 local Bunker = {}
 
 local function newGiveTrade(good)
 	local trade = {give = true, displayText = "take " .. good, 
 	canExecuteFunction = function(player, bunker)
-		return bunker.hasGiven == false and Inventory.cargoCount(player.inventory) < player.inventory.cargoLimit
+		return bunker.dead == false and bunker.hasGiven == false and Inventory.cargoCount(player.inventory) < player.inventory.cargoLimit
 	end,
 	executeFunction = function(player, bunker)
 		Inventory.addCargo(player.inventory, good, 1, bunker)
@@ -24,7 +25,7 @@ end
 local function newReceiveTrade(good)
 	local trade = {receive = true, displayText = "give " .. good, 
 	canExecuteFunction = function(player, bunker)
-		return bunker.hasReceived == false and Inventory.hasCargo(player.inventory, good) > 0
+		return bunker.dead == false and bunker.hasReceived == false and Inventory.hasCargo(player.inventory, good) > 0
 	end,
 	executeFunction = function(player, bunker)
 		bunker.receivedFrom = Inventory.removeCargo(player.inventory, good, 1)
@@ -62,6 +63,20 @@ function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, t
 	end
 	
 	return bunker
+end
+
+function Bunker.addWinTrade(bunker)
+	local trade = {win = true, displayText = "Report to overseer (end game)", 
+	canExecuteFunction = function(player, bunker)
+		return Score.get() >= 0
+	end,
+	executeFunction = function(player, bunker)
+		player.controlMode = "reading"
+		player.gameOver = true
+		player.readingTextID = "badEndText"
+	end}
+	
+	table.insert(bunker.validTrades, trade)
 end
 
 function Bunker.tick(bunker)

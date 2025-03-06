@@ -2,6 +2,7 @@ local Map = require "map"
 local Inventory = require "inventory"
 local Letter = require "letter"
 local Crew = require "crew"
+local Font = require "font"
 
 local Minimap = {}
 
@@ -45,14 +46,23 @@ function Minimap.redraw(minimap)
 		local bunker = minimap.world.bunkers[i]
 		local mapX, mapY = Minimap.worldToMap(minimap, bunker.centerX, bunker.centerY)
 		
-		if bunker.timeTillDeath > 100 then
-			love.graphics.setColor(0, 0.5, 0, 1)
+		if bunker.isEndBunker then
+			love.graphics.setColor(1, 0.7, 1, 1)
+		elseif bunker.timeTillDeath > 500 then
+			love.graphics.setColor(0, 0.7, 0, 1)
 		elseif bunker.timeTillDeath > 0 then
-			love.graphics.setColor(0.5, 0.5, 0, 1)
+			local green = 0.2 + 0.5*(bunker.timeTillDeath/500)
+			love.graphics.setColor(0.4, green, 0, 1)
 		else
 			love.graphics.setColor(0.5, 0, 0, 1)
 		end
 		love.graphics.circle("fill", mapX, mapY, 12)
+		
+		if bunker.isEndBunker then
+			Font.setFont("clacon", 24)
+			love.graphics.setColor(1, 1, 1, 1)
+			love.graphics.printf("HOME BASE", mapX - 100, mapY - 35, 200, "center")
+		end
 		
 		for j = 1, #bunker.goodsNeeded do
 			local goodName = bunker.goodsNeeded[j]

@@ -4,10 +4,17 @@ local Misc = require "misc"
 
 local Actor = {}
 
+local deathFunctionQueue = {}
+
+function Actor.getDeathFunctionQueue()
+	print(#deathFunctionQueue)
+	return deathFunctionQueue
+end
+
 local latestID = 0
 function Actor.new(letter, solidity, health)
 	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, activatedTools = {}, velX = 0, velY = 0, momentX = 0, momentY = 0, 
-				   solidity = solidity, health = health, maxHealth = health, letter = letter, id = latestID, dead = false, destroy = false}
+				   solidity = solidity, health = health, maxHealth = health, letter = letter, id = latestID, dead = false, destroy = false, parent = nil}
 	latestID = latestID + 1
 	return actor
 end
@@ -15,6 +22,19 @@ end
 function Actor.changeMaxHealth(actor, change)
 	actor.health = actor.health + change
 	actor.maxHealth = actor.maxHealth + change
+end
+
+function Actor.damage(actor, damage)
+	if actor.dead == false then
+		actor.health = actor.health - damage
+		if actor.health <= 0 then
+			Actor.kill(actor)
+		end
+	end
+end
+
+function Actor.fullHeal(actor)
+	actor.health = actor.maxHealth
 end
 
 function Actor.toolEffectActive(actor, toolName)
@@ -31,13 +51,19 @@ function Actor.toolEffectActive(actor, toolName)
 end
 
 function Actor.kill(actor)
-	actor.dead = true
-	actor.letter.tint = {0.1, 0.1, 0.1, 1}
-	actor.solidity = 0
+	if actor.dead == false then
+		actor.dead = true
+		actor.letter.tint = {0.1, 0.1, 0.1, 1}
+		actor.solidity = 0
+		
+		if actor.parent and actor.parent.proto and actor.parent.proto.deathFunc then
+			table.insert(deathFunctionQueue, actor.parent)
+		end
+	end
 end
 
 function Actor.destroy(actor)
-	Actor.kill(actor)
+	actor.dead = true
 	actor.destroy = true
 end
 
@@ -59,6 +85,10 @@ end
 
 function Actor.getSpeed(actor)
 	return Misc.orthogDistance(0, 0, actor.velX, actor.velY)
+end
+
+function Actor.predictPosition(actor)
+	return Misc.round(actor.x + actor.velX + actor.momentX), Misc.round(actor.y + actor.velY + actor.momentY)
 end
 
 function Actor.changeSpeed(actor, val)

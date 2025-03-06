@@ -16,7 +16,7 @@ function Player.generatePlayerActor(actor)
 end
 
 function Player.new(actor)
-	local player = {actor = actor, controlMode = "movement", lookCursorX = 0, lookCursorY = 0, targettingTool = nil,
+	local player = {actor = actor, controlMode = "movement", lookCursorX = 0, lookCursorY = 0, targettingTool = nil, readingTextID = "", gameOver = false,
 	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 1, deceleration = 1, 
 	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), fuel = 100, maxFuel = 100, parkedBunker = nil, indestructible = false}
 	
@@ -209,6 +209,11 @@ function Player.keyInput(player, world, key)
 			player.lookCursorX = newCursorX
 			player.lookCursorY = newCursorY
 		end
+	elseif player.controlMode == "reading" then
+		if player.gameOver == false and Controls.checkControl(key, "back", false) then
+			player.controlMode = "movement"
+			player.readingTextID = ""
+		end
 	end
 	
 	if executeTurn then
@@ -252,12 +257,19 @@ function Player.postTurnUpdate(player, world)
 	player.parkedBunker = Bunker.getBunkerOnTile(world.bunkers, player.actor.tile)
 	if player.parkedBunker then
 		player.fuel = player.maxFuel
+		Actor.fullHeal(player.actor)
 	else
 		player.fuel = player.fuel - 1
 	end
 	
 	for i = 1, #player.inventory.crew do
 		Crew.tick(player.inventory.crew[i], player)
+	end
+	
+	if player.actor.dead and player.gameOver == false then
+		player.readingTextID = "deathText"
+		player.controlMode = "reading"
+		player.gameOver = true
 	end
 end
 

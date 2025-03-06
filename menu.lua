@@ -7,6 +7,8 @@ local Controls = require "controls"
 local Inventory = require "inventory"
 local Tool = require "tool"
 local Crew = require "crew"
+local Text = require "text"
+local Score = require "score"
 
 local Menu = {}
 
@@ -658,7 +660,7 @@ do --element
 	function Menu.element.new(posFunc, drawFunc)
 		--posFunc - (element, parX, parY, parWidth, parHeight) returns x1, y1, x2, y2, defining draw position of the element
 		--drawFunc - (element, timeChange), draws the element based on the above decided position
-		local element = {x1 = nil, y1 = nil, x2 = nil, y2 = nil, ignoreOverlap = false, posFunc = posFunc, drawFunc = drawFunc, parent = nil, active = true, hidden = false, inView = false, mouseOver = false, mouseOverTime = 0, clicked = false, selectable = false, overlapping = {}, storedMinDims = nil, minDims = defaultMinDims}
+		local element = {x1 = nil, y1 = nil, x2 = nil, y2 = nil, ignoreOverlap = true, posFunc = posFunc, drawFunc = drawFunc, parent = nil, active = true, hidden = false, inView = false, mouseOver = false, mouseOverTime = 0, clicked = false, selectable = false, overlapping = {}, storedMinDims = nil, minDims = defaultMinDims}
 		--selectable - boolean that determines whether an element can be clicked. Auto set when added to a screen, but can be fiddled with however you want.
 		
 		--clickFunc(element, mouseX, mouseY)
@@ -1709,7 +1711,7 @@ do --element
 		return Menu.element.new(posFunc, function(element)
 			if player.parkedBunker then
 				local bunker = player.parkedBunker
-				love.graphics.setColor(0, 0, 0, 0.6)
+				love.graphics.setColor(0, 0, 0, 0.8)
 				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
 				
 				local doomTextX = Misc.round(element.x1 + 0.5*(element.x2 - element.x1))
@@ -1718,7 +1720,11 @@ do --element
 				if bunker.dead then
 					love.graphics.printf("This bunker has collapsed", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
 				else
-					love.graphics.printf("This bunker will collapse in " .. bunker.timeTillDeath .. " turns", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
+					if bunker.hasReceived == false then
+						love.graphics.printf("This bunker will collapse in " .. bunker.timeTillDeath .. " turns", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
+					else
+						love.graphics.printf("This bunker is saved", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
+					end
 					
 					local tradeTextX = Misc.round(element.x1 + 10)
 					local tradeTextY = Misc.round(element.y1 + 0.6*(element.y2 - element.y1))
@@ -1738,6 +1744,8 @@ do --element
 							text = text .. " and " .. bunker.passenger.class
 						elseif trade.receive then
 							text = text .. " - receive " .. Inventory.getfullContentsString(bunker.rewardInventory)
+						elseif trade.win then
+							text = text .. " - final score " .. Score.get()
 						end
 						love.graphics.printf(text, tradeTextX, tradeTextY + 20*i, element.x2 - element.x1 - tradeTextX - 5)
 					end
@@ -1779,60 +1787,33 @@ do --element
 			--print((element.x2 - element.x1) .. ":" .. width)
 			--print((element.y2 - element.y1) .. ":" .. height)
 			love.graphics.setColor(1, 1, 1, 1)
-			love.graphics.draw(minimap.canvas, element.x1, element.y1, 0, (element.x2 - element.x1)/width, (element.y2 - element.y1)/height)
+			love.graphics.draw(minimap.canvas, element.x1, element.y1, 0)
 		end)
 	end
 	
-	local enemyDisplays = {}
-	local function newEnemyDisplay(enemyName)
-		local world = World.new(10)
-		world.camera.cameraWidth = 0
-		world.camera.cameraHeight = 0
-		local enemy = EnemyBank.getEnemySpawnFunc(enemyName)(0, 0, world)
-		local shape = EnemyBank.getEnemyShape(enemyName)
-		local canvas = love.graphics.newCanvas(30*#shape, 30*#shape[1])
-		
-		world.player = {character = {drawX = 0, drawY = 0}}
-		
-		return {world = world, enemy = enemy, width = #shape, height = #shape[1], canvas = canvas}
-	end
-	function Menu.element.enemyDisplayElement(posFunc, enemyName)
-		local drawFunc = function(element, dt) end
-		
-		--print("Name:" .. tostring(enemyName) .. "||")
-		if EnemyBank.getEnemySpawnFunc(enemyName) then
-			if not enemyDisplays[enemyName] then
-				enemyDisplays[enemyName] = newEnemyDisplay(enemyName)
-			end
+	function Menu.element.textScreen(posFunc)
+		local element = Menu.element.new(posFunc, function(element)
+			love.graphics.setColor(0, 0, 0, 0.8)
+			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
 			
-			--print("Chosen")
-			drawFunc = function(element, dt)
-				local enemyDisplay = enemyDisplays[enemyName]
-				
-				enemyDisplay.world.player.character.drawX = (love.mouse.getX() - element.x1)/enemyDisplay.world.camera.tileX - enemyDisplay.width/2
-				enemyDisplay.world.player.character.drawY = (love.mouse.getY() - element.y1)/enemyDisplay.world.camera.tileY - enemyDisplay.width/2
-				
-				enemyDisplay.world.camera.x = -element.x1/enemyDisplay.world.camera.tileX - enemyDisplay.width/2
-				enemyDisplay.world.camera.y = -element.y1/enemyDisplay.world.camera.tileY - enemyDisplay.height/2
-				
-				--print(tostring(love.graphics.getCanvas()))
-				--CanvasStack.reset()
-				Character.drawCharacters(enemyDisplay.world.characters, enemyDisplay.world.camera)
-				--print(tostring(love.graphics.getCanvas()))
+			Text.print(element.text, element.textProgress, 24, element.x1 + 20, element.y1 + 20, element.x2 - element.x1 - 40, "center")
+		end)
+		
+		element.text = ""
+		element.textProgress = 0
+		element.textLength = 0
+		element.changeText = function(newText)
+			element.text = newText
+			element.textProgress = 0
+			element.textLength = string.len(newText)
+		end
+		
+		element.update = function(dt)
+			if element.textLength > 0 then
+				element.textProgress = math.min(element.textProgress + 40*dt, element.textLength)
 			end
 		end
 		
-		local enemyDisplay = enemyDisplays[enemyName]
-		local augmentedPosFunc = function(element, parX, parY, parWidth, parHeight)
-			local x1, y1, x2, y2 = posFunc(element, parX, parY, parWidth, parHeight)
-			if enemyDisplay then
-				x2 = x1 + enemyDisplay.world.camera.tileX*enemyDisplay.width
-				y2 = y1 + enemyDisplay.world.camera.tileY*enemyDisplay.height
-			end
-			return x1, y1, x2, y2
-		end
-		
-		local element = Menu.element.new(augmentedPosFunc, drawFunc)
 		return element
 	end
 end

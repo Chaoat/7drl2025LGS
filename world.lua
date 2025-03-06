@@ -20,8 +20,11 @@ function World.new()
 				   overActorParticles = {}}
 	world.weather = Weather.new(world.map)
 	
-	World.addBunker(world, Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {}, {}, 
-	Map.getTileCoordsInSquare(map, 335, 282, 344, 287), Inventory.new(), nil, 200))
+	local genesisBunker = Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {}, {}, Map.getTileCoordsInSquare(map, 335, 282, 344, 287), Inventory.new(), nil, 999)
+	genesisBunker.hasReceived = true
+	genesisBunker.isEndBunker = true
+	Bunker.addWinTrade(genesisBunker)
+	World.addBunker(world, genesisBunker)
 
 	--World.addBunker(world, Bunker.new("SouthStreetName", "SouthStreetDescription", {1, 1, 0, 0.4}, {"steel"}, {"food"}, 
 	--Map.getTileCoordsInSquare(map, 23, 26, 27, 30), Inventory.addTool(Inventory.new(), "blink", 2), Crew.new("quarter master", "SouthStreetName"), 200))
@@ -91,13 +94,22 @@ function World.clearEnemiesInRegion(world, x1, y1, x2, y2)
 			end
 		end
 	end
+	
+	for i = #world.enemies, 1, -1 do
+		local enemy = world.enemies[i]
+		if enemy.actor.dead == true then
+			table.remove(world.enemies, i)
+		end
+	end
 end
 
 function World.tickAllEnemies(world, player)
-	for i = 1, #world.enemies do
+	for i = #world.enemies, 1, -1 do
 		local enemy = world.enemies[i]
 		if enemy.actor.dead == false then
 			Enemy.tick(enemy, world, player)
+		else
+			table.remove(world.enemies, i)
 		end
 	end
 end
@@ -139,6 +151,10 @@ function World.draw(world, camera)
 	
 	for i = 1, #world.actors do
 		Actor.draw(world.actors[i], camera)
+	end
+	
+	for i = 1, #world.enemies do
+		Enemy.drawIndicators(world.enemies[i], camera)
 	end
 	
 	Particle.drawCollection(world.overActorParticles, camera)

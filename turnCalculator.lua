@@ -11,12 +11,13 @@ local Bunker = require "bunker"
 local TurnCalculator = {}
 
 function TurnCalculator.new(world, player)
-	local turnCalculator = {world = world, player = player}
+	local turnCalculator = {world = world, player = player, currentTurn = 0}
 	
 	return turnCalculator
 end
 
 function TurnCalculator.pass(turnCalculator)
+	turnCalculator.currentTurn = turnCalculator.currentTurn + 1
 	World.tickAllEnemies(turnCalculator.world, turnCalculator.player)
 	
 	--Move Actors
@@ -70,6 +71,8 @@ function TurnCalculator.pass(turnCalculator)
 		local newX, newY = Misc.orthogPointFrom(actorMove.floatingX, actorMove.floatingY, 1, math.atan2(actorMove.actor.velY, actorMove.actor.velX))
 		--print(newX .. " : " .. newY)
 		local targetTile = Map.getTile(turnCalculator.world.map, Misc.round(newX), Misc.round(newY))
+		
+		local startingSpeed = Actor.getSpeed(actorMove.actor)
 		if targetTile then
 			--Collision
 			if targetTile.solidity >= Actor.getSpeed(actorMove.actor) then
@@ -130,9 +133,14 @@ function TurnCalculator.pass(turnCalculator)
 				end
 			end
 		end
+		local endingSpeed = Actor.getSpeed(actorMove.actor)
+		
+		local speedChange = math.max(startingSpeed - endingSpeed, 0)
+		local damage = math.floor(speedChange/3)
+		Actor.damage(actorMove.actor, damage)
 		
 		actorMove.movesLeft = actorMove.movesLeft - 1
-		if actorMove.movesLeft > 0 then
+		if actorMove.actor.dead == false and actorMove.movesLeft > 0 then
 			Misc.binaryInsert(actorMoves, actorMove, comparator)
 		end
 	end
@@ -155,9 +163,15 @@ function TurnCalculator.pass(turnCalculator)
 	
 	for i = 1, #turnCalculator.world.enemies do
 		local enemy = turnCalculator.world.enemies[i]
-		if enemy.actor.dead == false then
-			Enemy.postTick(enemy, turnCalculator.world, turnCalculator.player)
-		end
+		Enemy.postTick(enemy, turnCalculator.world, turnCalculator.player)
+	end
+	
+	local deathFunctionQueue = Actor.getDeathFunctionQueue()
+	while #deathFunctionQueue > 0 do
+		local deadEnemy = deathFunctionQueue[1]
+		table.remove(deathFunctionQueue, 1)
+		
+		deadEnemy.proto.deathFunc(deadEnemy, turnCalculator.world, turnCalculator.player)
 	end
 	
 	for i = 1, #turnCalculator.world.bunkers do

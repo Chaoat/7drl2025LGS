@@ -21,6 +21,44 @@ local function newEffectToolProto(name, nameTag, descriptionTag, colour, duratio
 	end
 end
 
+local function explodeAtPosition(world, targetX, targetY, radius, force, damage)
+	local tiles = {}
+	
+	local processTile = function(xOff, yOff)
+		if math.sqrt(xOff^2 + yOff^2) <= radius then
+			local x = targetX + xOff
+			local y = targetY + yOff
+			local tile = Map.getTile(world.map, x, y)
+			
+			if tile and Map.isLineClear(world.map, targetX, targetY, x, y) then
+				local angle = math.atan2(yOff, xOff)
+				local xMoment, yMoment = Misc.orthogPointFrom(0, 0, force, angle)
+				for i = 1, #tile.actors do
+					Actor.impulseActor(tile.actors[i], xMoment, yMoment)
+					Actor.damage(tile.actors[i], damage)
+				end
+				
+				if tile.solidity > 0 and damage > 0 then
+					Tile.wreck(tile)
+				end				
+				
+				table.insert(tiles, tile)
+			end
+		end
+	end
+	
+	processTile(0, 0)
+	for r = 1, radius do
+		for off = -r, r - 1 do
+			processTile(off, -r)
+			processTile(r, off)
+			processTile(-off, r)
+			processTile(-r, -off)
+		end
+	end
+	return tiles
+end
+
 do
 	--tags
 	--
@@ -111,25 +149,23 @@ do
 	{"deactivateWithDeath"})
 	
 	--ENEMY TOOLS
-	newEffectToolProto("impulseExplosion", "impulseExplosionName", "impulseExplosionDescription", {1, 1, 1, 1}, 0, 5,
+	newEffectToolProto("impulseExplosion", "impulseExplosionName", "impulseExplosionDescription", {1, 1, 1, 1}, 0, 0,
 	function(tool, world, player)
-		local radius = 6
-		for xOff = -radius, radius do
-			for yOff = -radius, radius do
-				local x = tool.targetX + xOff
-				local y = tool.targetY + yOff
-				local tile = Map.getTile(world.map, x, y)
-				
-				if tile and Map.isLineClear(world.map, tool.targetX, tool.targetY, x, y) then
-					local angle = math.atan2(yOff, xOff)
-					local xMoment, yMoment = Misc.orthogPointFrom(0, 0, 5, angle)
-					for i = 1, #tile.actors do
-						Actor.impulseActor(tile.actors[i], xMoment, yMoment)
-					end
-					
-					Particle.queue(Particle.colourShiftBox(x, y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
-				end
-			end
+		local tiles = explodeAtPosition(world, tool.targetX, tool.targetY, 5, 5, 0)
+		for i = 1, #tiles do
+			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
+		end
+	end, 
+	nil,
+	nil,
+	nil,
+	{})
+	
+	newEffectToolProto("towerBlast", "towerBlastName", "towerBlastDescription", {1, 1, 1, 1}, 0, 0,
+	function(tool, world, player)
+		local tiles = explodeAtPosition(world, tool.targetX, tool.targetY, 2, 2, 1)
+		for i = 1, #tiles do
+			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
 		end
 	end, 
 	nil,
