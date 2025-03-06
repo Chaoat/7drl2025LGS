@@ -104,26 +104,32 @@ do
 
 	newEffectToolProto("cannon", "cannonName", "cannonDescription", {0.6, 0.6, 0.6, 1}, 0, 15,
 	function(tool, world, player)
-		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
+		--local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
 		local radius = 5
-		for xOff = -radius, radius do
-			for yOff = -radius, radius do
-				if math.sqrt(xOff^2 + yOff^2) <= radius then
-					local x = tool.targetX + xOff
-					local y = tool.targetY + yOff
-					local tile = Map.getTile(world.map, x, y)
-					
-					if tile then
-						Tile.wreck(tile)
-						for i = 1, #tile.actors do
-							Actor.kill(tile.actors[i])
-						end
-						
-						Particle.queue(Particle.colourShiftBox(x, y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
-					end
-				end
-			end
+		--for xOff = -radius, radius do
+		--	for yOff = -radius, radius do
+		--		if math.sqrt(xOff^2 + yOff^2) <= radius then
+		--			local x = tool.targetX + xOff
+		--			local y = tool.targetY + yOff
+		--			local tile = Map.getTile(world.map, x, y)
+		--			
+		--			if tile then
+		--				Tile.wreck(tile)
+		--				for i = 1, #tile.actors do
+		--					Actor.kill(tile.actors[i])
+		--				end
+		--				
+		--				Particle.queue(Particle.colourShiftBox(x, y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
+		--			end
+		--		end
+		--	end
+		--end
+		local tiles = explodeAtPosition(world, tool.targetX, tool.targetY, 5, 4, 5)
+		for i = 1, #tiles do
+			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
 		end
+		
+		Map.redrawCells(world.map, player.actor.x, player.actor.y)
 	end, 
 	nil,
 	nil,

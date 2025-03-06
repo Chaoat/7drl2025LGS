@@ -233,6 +233,10 @@ function Game.mouseInput(game, screenx, screeny, button)
 		local tilex, tiley = Camera.screenToTileCoords(game.mainCamera, screenx, screeny)
 		if Player.clickInput(game.player, tilex, tiley, button) then
 			TurnCalculator.pass(game.turnCalculator)
+			Game.updatePlayerCellPos(game)
+			Minimap.redraw(game.minimap)
+			Game.updateWorldDifficulty(game)
+			Score.update(game)
 		end
 	end
 end

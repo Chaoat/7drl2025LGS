@@ -22,6 +22,7 @@ function Player.new(actor)
 	
 	Inventory.addTool(player.inventory, "nitro", 2)
 	Inventory.addTool(player.inventory, "blink", 1)
+	Inventory.addTool(player.inventory, "cannon", 3)
 	
 	--Inventory.addCargo(player.inventory, "food", 1)
 	--Inventory.addCargo(player.inventory, "fresh water", 1)
@@ -347,10 +348,18 @@ end
 
 function Player.drawMovementPrediction(player, camera)
 	if player.actor.momentX ~= 0 or player.actor.momentY ~= 0 then
+		local coords = Misc.orthogLineBetween(player.actor.x, player.actor.y, player.actor.x + player.actor.momentX, player.actor.y + player.actor.momentY)
+		for i = 1, #coords do
+			Camera.drawTo(player, coords[i][1], coords[i][2], camera, 
+			function(player, drawX, drawY, tileWidth, tileHeight)
+				love.graphics.setColor(1, 0, 0, 0.6)
+				love.graphics.rectangle("fill", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
+			end)
+		end
+		
 		Camera.drawTo({}, player.actor.x + player.actor.momentX, player.actor.y + player.actor.momentY, camera, 
 		function(square, drawX, drawY, tileWidth, tileHeight)
-			love.graphics.setColor(1, 0, 0, 0.5)
-			love.graphics.rectangle("fill", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
+			Letter.draw(Letter.newFromLetter("@", {1, 0, 0, 1}), drawX, drawY, tileWidth, tileHeight)
 		end)
 	end
 	
