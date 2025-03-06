@@ -44,12 +44,19 @@ local function generateInterface(game)
 	
 	Menu.screen.addElement(sideBar, Menu.element.verticalList(Menu.position.dynamicCenter(0.5, -200, 180, 180), true, nil, 0, false, toolElements, nil, false))
 	Menu.screen.addElement(sideBar, Menu.element.cargoHold(Menu.position.dynamicSize(10, -450, -10, -210), player))
-	Menu.screen.addElement(sideBar, Menu.element.crewHold(Menu.position.dynamicSize(10, -700, -10, -460), player))
 	
 	Menu.screen.addElement(sideBar, Menu.element.actorHealth(Menu.position.dynamicSize(10, 10, -10, 25), player.actor))
 	Menu.screen.addElement(sideBar, Menu.element.playerFuel(Menu.position.dynamicSize(10, 30, -10, 45), player))
 	
+	Menu.screen.addElement(sideBar, Menu.element.playerStats(Menu.position.dynamicSize(10, 100, -10, 250), player))
+	Menu.screen.addElement(sideBar, Menu.element.controlsHelp(Menu.position.dynamicSize(10, 250, -10, 400), player))
+	
 	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
+	
+	local crewHold = Menu.element.crewHold(Menu.position.dynamicSize(-450, 0, -200, 0.6), player)
+	crewHold.hidden = true
+	Menu.screen.addElement(screen, crewHold)
+	game.crewHoldElement = crewHold
 	Menu.screen.addElement(screen, Menu.element.bunkerView(Menu.position.dynamicSize(10, 10, 500, 600), player, camera))
 	
 	local minimapElement = Menu.element.minimap(Menu.position.dynamicSize(10, 10, 736, 537), minimap)
@@ -62,6 +69,11 @@ local function generateInterface(game)
 	textElement.hidden = true
 	Menu.screen.addElement(screen, textElement)
 	game.textElement = textElement
+	
+	local helpScreenElement = Menu.element.helpScreen(Menu.position.dynamicSize(10, 10, -300, -200))
+	helpScreenElement.hidden = true
+	Menu.screen.addElement(screen, helpScreenElement)
+	game.helpScreenElement = helpScreenElement
 	
 	Menu.addScreen(menu, screen)
 	
@@ -136,6 +148,7 @@ end
 
 function Game.update(game, dt)
 	World.update(game.world, dt)
+	Player.update(game.player, dt)
 	
 	--Camera.move(game.mainCamera, (game.mainCamera.worldX + game.player.actor.drawX)/2, (game.mainCamera.worldY + game.player.actor.drawY)/2)
 	Camera.trackPlayer(game.mainCamera, game.player)
@@ -190,6 +203,10 @@ function Game.keyInput(game, key)
 		Score.update(game)
 	elseif Controls.checkControl(key, "openMap", false) then
 		game.minimapElement.hidden = not game.minimapElement.hidden
+	elseif Controls.checkControl(key, "openCrewHold", false) then
+		game.crewHoldElement.hidden = not game.crewHoldElement.hidden
+	elseif Controls.checkControl(key, "openHelpScreen", false) then
+		game.helpScreenElement.hidden = not game.helpScreenElement.hidden
 	end
 end
 

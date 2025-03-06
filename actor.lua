@@ -20,7 +20,7 @@ function Actor.new(letter, solidity, health)
 end
 
 function Actor.changeMaxHealth(actor, change)
-	actor.health = actor.health + change
+	Actor.damage(actor, -change)
 	actor.maxHealth = actor.maxHealth + change
 end
 
@@ -30,7 +30,7 @@ function Actor.damage(actor, damage)
 	end
 	
 	if actor.dead == false then
-		actor.health = actor.health - damage
+		actor.health = math.max(actor.health - damage, 0)
 		if actor.health <= 0 then
 			Actor.kill(actor)
 		end

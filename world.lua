@@ -17,7 +17,7 @@ function World.new()
 	local mapHeight = 400
 	
 	local world = {map = Map.loadFromXP(XpInterpreter.load("7drlmap1", 600, 400)), weather = nil, actors = {}, enemies = {}, bunkers = {}, activeTools = {},
-				   overActorParticles = {}}
+				   overActorParticles = {}, waterParticles = {}}
 	world.weather = Weather.new(world.map)
 	
 	local genesisBunker = Bunker.new("GenesisName", "GenesisDescription", {1, 1, 0, 0.4}, {}, {}, Map.getTileCoordsInSquare(map, 335, 282, 344, 287), Inventory.new(), nil, 999)
@@ -139,10 +139,12 @@ function World.update(world, dt)
 	end
 	
 	Particle.updateCollection(world.overActorParticles, "overActor", dt)
+	Particle.updateCollection(world.waterParticles, "water", dt)
 end
 
 function World.draw(world, camera)
 	Weather.draw(world.weather, camera)
+	Particle.drawCollection(world.waterParticles, camera)
 	Map.draw(world.map, camera)
 	
 	for i = 1, #world.bunkers do

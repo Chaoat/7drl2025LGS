@@ -297,7 +297,7 @@ function RandomGen.placeBunkers(world, locations)
 		
 		local chosenTool = Misc.randomFromList(toolChoices)
 		
-		World.addBunker(world, Bunker.new(location[5], "SouthStreetDescription", {1, 1, 0, 0.4}, chosenTrade[1], chosenTrade[2], 
+		World.addBunker(world, Bunker.new(location[5], location[5] .. "description", {1, 1, 0, 0.4}, chosenTrade[1], chosenTrade[2], 
 		Map.getTileCoordsInSquare(map, location[1], location[2], location[3], location[4]), Inventory.addTool(Inventory.new(), chosenTool[1], chosenTool[2]), crew, chosenTimer))
 	end
 end

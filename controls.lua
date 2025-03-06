@@ -98,6 +98,8 @@ function Controls.loadDefaultControls()
 	addControls("decelerate", {"kp-", "-", "wheelDown"})
 	
 	addControls("openMap", {"m"})
+	addControls("openCrewHold", {"h"})
+	addControls("openHelpScreen", {"/", "?"})
 	
 	addControls("back", {"escape"})
 	

@@ -56,7 +56,7 @@ function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, t
 	end
 	
 	local bunker = {nameTag = nameTag, descriptionTag = descriptionTag, colour = colour, goodsNeeded = goodsNeeded, goodsToGive = goodsToGive, validTrades = validTrades, rewardInventory = rewardInventory, passenger = passenger, 
-					timeTillDeath = doomsdayClock, dead = false, tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false, receivedFrom = nil, affectWorldDifficultyThisTurn = false}
+					timeTillDeath = doomsdayClock, dead = false, tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false, receivedFrom = nil, affectWorldDifficultyThisTurn = false, parkRealTime = 0}
 	
 	if passenger then
 		bunker.passenger.originLink = bunker

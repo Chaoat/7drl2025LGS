@@ -46,12 +46,13 @@ function Minimap.redraw(minimap)
 		local bunker = minimap.world.bunkers[i]
 		local mapX, mapY = Minimap.worldToMap(minimap, bunker.centerX, bunker.centerY)
 		
+		local minimumYellowTime = 500
 		if bunker.isEndBunker then
 			love.graphics.setColor(1, 0.7, 1, 1)
-		elseif bunker.timeTillDeath > 500 then
+		elseif bunker.timeTillDeath > minimumYellowTime then
 			love.graphics.setColor(0, 0.7, 0, 1)
 		elseif bunker.timeTillDeath > 0 then
-			local green = 0.2 + 0.5*(bunker.timeTillDeath/500)
+			local green = 0.2 + 0.5*(bunker.timeTillDeath/minimumYellowTime)
 			love.graphics.setColor(0.4, green, 0, 1)
 		else
 			love.graphics.setColor(0.7, 0, 0, 1)

@@ -20,48 +20,48 @@ do
 		player.turnRate = player.turnRate + 1
 	end, "+1 turn speed",
 	function(player)
-		player.turnRate = player.turnRate - 1
-	end, "-1 turn speed")
+		Actor.changeMaxHealth(player.actor, -2)
+	end, "-2 health")
 	
 	newCrewDef("Engineer", Letter.newFromLetter("E", {1, 1, 1, 1}), 
 	function(player)
 		player.acceleration = player.acceleration + 1
 	end, "+1 acceleration",
 	function(player)
-		player.acceleration = player.acceleration - 1
-	end, "-1 acceleration")
+		Actor.changeMaxHealth(player.actor, -2)
+	end, "-2 health")
 	
 	newCrewDef("Mathematician", Letter.newFromLetter("M", {1, 1, 1, 1}), 
 	function(player)
 		player.deceleration = player.deceleration + 1
 	end, "+1 deceleration",
 	function(player)
-		player.deceleration = player.deceleration - 1
-	end, "-1 deceleration")
+		Actor.changeMaxHealth(player.actor, -2)
+	end, "-2 health")
 	
 	newCrewDef("Carpenter", Letter.newFromLetter("C", {1, 1, 1, 1}), 
 	function(player)
 		Actor.changeMaxHealth(player.actor, 5)
 	end, "+5 health",
 	function(player)
-		Actor.changeMaxHealth(player.actor, -5)
-	end, "-5 health")
+		Actor.changeMaxHealth(player.actor, -2)
+	end, "-2 health")
 	
 	newCrewDef("Stocker", Letter.newFromLetter("S", {1, 1, 1, 1}), 
 	function(player)
 		player.inventory.cargoLimit = player.inventory.cargoLimit + 1
 	end, "+1 max cargo",
 	function(player)
-		player.inventory.cargoLimit = player.inventory.cargoLimit - 1
-	end, "-1 max cargo")
+		Actor.changeMaxHealth(player.actor, -2)
+	end, "-2 health")
 	
 	newCrewDef("Brewer", Letter.newFromLetter("B", {1, 1, 1, 1}), 
 	function(player)
 		player.maxFuel = player.maxFuel + 20
 	end, "+20 max fuel",
 	function(player)
-		player.maxFuel = player.maxFuel - 20
-	end, "-20 max fuel")
+		Actor.changeMaxHealth(player.actor, -2)
+	end, "-2 health")
 	
 	newCrewDef("Novelist", Letter.newFromLetter("N", {1, 1, 1, 1}), 
 	function(player)

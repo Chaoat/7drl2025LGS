@@ -9,6 +9,7 @@ local Tool = require "tool"
 local Crew = require "crew"
 local Text = require "text"
 local Score = require "score"
+local Player = require "player"
 
 local Menu = {}
 
@@ -1278,105 +1279,6 @@ do --element
 		end)
 	end
 	
-	function Menu.element.verticalListDEPRECATED(posFunc, open, backFunction, elementSeperation, scrollEnabled, elementsInList, elementsOutsideList, allowAcross)
-		local screen = Menu.screen.new("vertList", backFunction)
-		
-		for i = 1, #elementsInList do
-			local element = elementsInList[i]
-			--element.active = false
-			Menu.screen.addElement(screen, element)
-		end
-		
-		if elementsOutsideList then
-			for i = 1, #elementsOutsideList do
-				local element = elementsOutsideList[i]
-				Menu.screen.addElement(screen, element)
-			end
-		end
-		
-		if scrollEnabled then
-			local scrollBar = Menu.screen.addScrollBar(screen, Menu.position.dynamicSize(-20, 0, 1, 1), 0)
-			table.insert(elementsOutsideList, 1, scrollBar)
-		end
-		
-		local screenElement = Menu.element.screen(posFunc, open, screen)
-		
-		for i = 1, #elementsInList do
-			local element = elementsInList[i]
-			element.posFunc = Menu.position.fromList(element.posFunc, screenElement)
-		end
-		
-		local oldPosFunc = screenElement.posFunc
-		screenElement.posFunc = function(element, parX, parY, parWidth, parHeight)
-			local x1, y1, x2, y2 = oldPosFunc(element, parX, parY, parWidth, parHeight)
-			
-			if not scrollEnabled and not element.keepGivenSize then
-				element.currentHeight = 0
-				element.currentWidth = 0
-				element.maxHeight = 0
-				--if not allowAcross then
-				--	element.establishedHeight = 0
-				--end
-				Menu.screen.decidePositions(screen, x1, y1, x2, y2)
-				
-				y2 = y1 + element.establishedHeight
-				element.currentHeight = 0
-				element.currentWidth = 0
-				element.maxHeight = 0
-			elseif scrollEnabled then
-				
-			end
-			
-			return x1, y1, x2, y2
-		end
-		
-		screenElement.currentScroll = 0
-		screenElement.establishedHeight = 0
-		screenElement.currentHeight = 0
-		screenElement.currentWidth = 0
-		screenElement.maxHeight = 0
-		screenElement.elementSeperation = elementSeperation
-		screenElement.allowAcross = allowAcross
-		screenElement.scrollEnabled = scrollEnabled
-		
-		local oldFunc = screenElement.drawFunc
-		screenElement.drawFunc = function(element, timeChange)
-			if screen.forceReposition then
-				element.establishedHeight = 0
-			end
-			element.currentHeight = 0
-			element.currentWidth = 0
-			element.maxHeight = 0
-			
-			oldFunc(element, timeChange)
-			
-			if debugElementDraw then
-				love.graphics.setColor(1, 0, 0, 1)
-				Font.setFont("SQUARE", 10)
-				love.graphics.print(element.y2, element.x1 + 5, element.y1 + 5)
-			end
-		end
-		
-		screenElement.sortList = function(comparitor, descending)
-			--comparitor(element) - returns some number
-			screen.elements = {}
-			
-			for i = 1, #elementsInList do
-				local element = elementsInList[i]
-				element.sortValue = comparitor(element)
-				Misc.binaryInsert(screen.elements, element, "sortValue", descending)
-			end
-			
-			for i = 1, #elementsOutsideList do
-				table.insert(screen.elements, elementsOutsideList[i])
-			end
-			
-			screen.forceReposition = true
-		end
-		
-		return screenElement
-	end
-	
 	function Menu.element.verticalList(posFunc, open, backFunction, elementSeperation, scrollEnabled, elementsInList, elementsOutsideList, allowAcross)
 		local screen = Menu.screen.new("vertList", backFunction)
 		
@@ -1448,7 +1350,6 @@ do --element
 		--	
 		--	if debugElementDraw then
 		--		love.graphics.setColor(1, 0, 0, 1)
-		--		Font.setFont("SQUARE", 10)
 		--		love.graphics.print(element.y2, element.x1 + 5, element.y1 + 5)
 		--	end
 		--end
@@ -1671,6 +1572,7 @@ do --element
 				if Tool.canActivateProto(toolName, world, player, nil, nil) then
 					love.graphics.setColor(1, 1, 1, 1)
 				end
+				Font.setFont("clacon", 24)
 				love.graphics.printf(text, element.x1 + 2, element.y1 + 2, element.x2 - element.x1)
 			end
 		end)
@@ -1678,6 +1580,8 @@ do --element
 	
 	function Menu.element.cargoHold(posFunc, player)
 		return Menu.element.new(posFunc, function(element)
+			Font.setFont("clacon", 24)
+			love.graphics.setColor(1, 1, 1, 1)
 			local ledgerText = Inventory.getCargoLedger(player.inventory)
 			love.graphics.printf(ledgerText, element.x1 + 2, element.y1 + 2, element.x2 - element.x1)
 		end)
@@ -1685,7 +1589,13 @@ do --element
 	
 	function Menu.element.crewHold(posFunc, player)
 		return Menu.element.new(posFunc, function(element)
+			love.graphics.setColor(0, 0, 0, 0.8)
+			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
+			
+			Font.setFont("clacon", 26)
+			love.graphics.setColor(1, 1, 1, 1)
 			love.graphics.printf("Crew: ", element.x1 + 2, element.y1 + 2, element.x2 - element.x1)
+			Font.setFont("clacon", 24)
 			local textWidth = (element.x2 - element.x1)/2 - 5
 			for i = 1, #player.inventory.crew do
 				local crew = player.inventory.crew[i]
@@ -1714,8 +1624,9 @@ do --element
 				love.graphics.setColor(0, 0, 0, 0.8)
 				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
 				
+				Font.setFont("clacon", 24)
 				local doomTextX = Misc.round(element.x1 + 0.5*(element.x2 - element.x1))
-				local doomTextY = Misc.round(element.y1 + 0.55*(element.y2 - element.y1))
+				local doomTextY = Misc.round(element.y1 + 0.76*(element.y2 - element.y1))
 				love.graphics.setColor(1, 1, 1, 1)
 				if bunker.dead then
 					love.graphics.printf("This bunker has collapsed", doomTextX, doomTextY, element.x2 - element.x1 - doomTextX - 5)
@@ -1727,7 +1638,7 @@ do --element
 					end
 					
 					local tradeTextX = Misc.round(element.x1 + 10)
-					local tradeTextY = Misc.round(element.y1 + 0.6*(element.y2 - element.y1))
+					local tradeTextY = Misc.round(element.y1 + 0.8*(element.y2 - element.y1))
 					love.graphics.setColor(1, 1, 1, 1)
 					love.graphics.printf("Trade Options: ", tradeTextX, tradeTextY, 150)
 					for i = 1, #bunker.validTrades do
@@ -1750,19 +1661,33 @@ do --element
 						love.graphics.printf(text, tradeTextX, tradeTextY + 20*i, element.x2 - element.x1 - tradeTextX - 5)
 					end
 				end
+				
+				local name = Text.get(player.parkedBunker.nameTag)
+				local description = Text.get(player.parkedBunker.descriptionTag)
+				
+				Font.setFont("clacon", 30)
+				love.graphics.setColor(1, 1, 1, 1)
+				love.graphics.printf(name, element.x1 + 20, element.y1 + 20, 400, "left")
+				
+				Text.print(description, 40*player.parkedBunker.parkRealTime, 24, element.x1 + 10, element.y1 + 55, element.x2 - element.x1 - 20, "left")
 			end
 		end)
 	end
 	
 	function Menu.element.actorHealth(posFunc, actor)
 		return Menu.element.new(posFunc, function(element)
-				love.graphics.setColor(0, 0, 0, 1)
-				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
-				
-				local width = (actor.health/actor.maxHealth)*(element.x2 - element.x1)
-				love.graphics.setColor(1, 0, 0, 1)
-				love.graphics.rectangle("fill", element.x1, element.y1, width, element.y2 - element.y1)
-			end)
+			love.graphics.setColor(0, 0, 0, 1)
+			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
+			
+			local width = (actor.health/actor.maxHealth)*(element.x2 - element.x1)
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("fill", element.x1, element.y1, width, element.y2 - element.y1)
+			
+			Font.setFont("clacon", 24)
+			love.graphics.setColor(1, 1, 1, 1)
+			local healthText = actor.health .. "/" .. actor.maxHealth
+			love.graphics.printf(healthText, element.x1, element.y1 - 3, element.x2 - element.x1, "center")
+		end)
 	end
 	
 	function Menu.element.playerFuel(posFunc, player)
@@ -1773,6 +1698,57 @@ do --element
 			local width = (player.fuel/player.maxFuel)*(element.x2 - element.x1)
 			love.graphics.setColor(0.5, 0.3, 0, 1)
 			love.graphics.rectangle("fill", element.x1, element.y1, width, element.y2 - element.y1)
+			
+			Font.setFont("clacon", 24)
+			love.graphics.setColor(1, 1, 1, 1)
+			local fuelText = player.fuel .. "/" .. player.maxFuel
+			if player.fuel == 0 then
+				fuelText = "OUT OF FUEL - MAX SPEED REDUCED"
+			end
+			love.graphics.printf(fuelText, element.x1, element.y1 - 3, element.x2 - element.x1, "center")
+		end)
+	end
+	
+	function Menu.element.playerStats(posFunc, player)
+		return Menu.element.new(posFunc, function(element)
+			Font.setFont("clacon", 24)
+			love.graphics.setColor(1, 1, 1, 1)
+			local statsText = 				 "Max Speed:    " .. Player.getMaxSpeed(player)
+			statsText = statsText .. "\n" .. "Turning Rate: " .. player.turnRate
+			statsText = statsText .. "\n" .. "Acceleration: " .. player.acceleration
+			statsText = statsText .. "\n" .. "Deceleration: " .. player.deceleration
+			love.graphics.printf(statsText, element.x1, element.y1, element.x2 - element.x1, "left")
+		end)
+	end
+	
+	function Menu.element.controlsHelp(posFunc, player)
+		return Menu.element.new(posFunc, function(element)
+			Font.setFont("clacon", 24)
+			love.graphics.setColor(1, 1, 1, 1)
+			local controlsText = 				   "m: Open Map"
+			controlsText = controlsText .. "\n" .. "h: View Crew"
+			controlsText = controlsText .. "\n" .. "l or RMB: Free Look"
+			controlsText = controlsText .. "\n" .. "? or /  : Open Help Screen"
+			love.graphics.printf(controlsText, element.x1, element.y1, element.x2 - element.x1, "left")
+		end)
+	end
+	
+	function Menu.element.helpScreen(posFunc, player)
+		return Menu.element.new(posFunc, function(element)
+			love.graphics.setColor(0, 0, 0, 0.9)
+			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
+			
+			local textWidth = (element.x2 - element.x1 - 20)/2
+			Font.setFont("clacon", 24)
+			love.graphics.setColor(1, 1, 1, 1)
+			local leftSideText = "Introduction:\nYou are a courier boat navigating a post-apocalyptic flooded city filled with monsters and dangerous debris. Your mission is to complete as many trade routes as possible between the various Bunker communities before returning to your starting base.\nYour boat accelerates as it moves, but be careful—you must slow down to avoid crashing into destructible terrain, which will cause damage. Enemies lurk in the waters, seeking to ensnare or destroy your ship. If your boat sinks, the game is over."
+			leftSideText = leftSideText .. "\n\nControls:\nKeypad / Click Direction Arrows – Move the boat\n+/- or Mouse Wheel – Accelerate / Decelerate\nM – View the Map\nL / Right Mouse Button – Free Look\nH - View Crew Hold\nN, B, V, C, X – Use various tools"
+			love.graphics.printf(leftSideText, element.x1 + 10, element.y1 + 10, textWidth, "left")
+			
+			local rightSideText = "Tools:\nNitro – Boosts speed beyond normal limits.\nDrill Beam – Destroys all terrain between the boat and the target.\nCannon – Blasts terrain and enemies in an area.\nBlink Teleporter – Instantly teleports the boat to the target location.\nIndestructibility – Temporarily makes the boat immune to damage."
+			rightSideText = rightSideText .. "\n\nTrade Goods:\nM = Medicine\nG = Gasoline\nP = Purifiers\nR = Roots\nV = Volatiles"
+			rightSideText = rightSideText .. "\n\nCrew Members:\nT (Trucker) – +1 Turn Speed\nE (Engineer) – +1 Acceleration\nM (Mathematician) – +1 Deceleration\nC (Carpenter) – +5 Max Health\nS (Stocker) – +1 Cargo Limit\nB (Brewer) – +20 Max Fuel\nN (Novelist) – No effect"
+			love.graphics.printf(rightSideText, element.x1 + 20 + textWidth, element.y1 + 10, textWidth, "left")
 		end)
 	end
 	
@@ -1793,7 +1769,7 @@ do --element
 	
 	function Menu.element.textScreen(posFunc)
 		local element = Menu.element.new(posFunc, function(element)
-			love.graphics.setColor(0, 0, 0, 0.8)
+			love.graphics.setColor(0, 0, 0, 0.9)
 			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
 			
 			Text.print(element.text, element.textProgress, 24, element.x1 + 20, element.y1 + 70, element.x2 - element.x1 - 40, "center")

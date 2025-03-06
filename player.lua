@@ -122,7 +122,7 @@ function Player.keyInput(player, world, key)
 			executeTurn = true
 			targetHeading = -math.pi/4
 		elseif Controls.checkControl(key, "accelerate", false) then
-			player.targetSpeed = math.min(player.targetSpeed + 1, player.maxSpeed)
+			player.targetSpeed = math.min(player.targetSpeed + 1, Player.getMaxSpeed(player))
 			Player.calculatePredictedSquares(player)
 		elseif Controls.checkControl(key, "decelerate", false) then
 			player.targetSpeed = math.max(player.targetSpeed - 1, math.max(player.minSpeed, 0))
@@ -260,9 +260,15 @@ function Player.clickInput(player, tilex, tiley, button)
 	return false
 end
 
+function Player.update(player, dt)
+	if player.parkedBunker then
+		player.parkedBunker.parkRealTime = player.parkedBunker.parkRealTime + dt
+	end
+end
+
 function Player.postTurnUpdate(player, world)
 	player.heading = math.atan2(player.actor.velY, player.actor.velX)
-	player.speed = math.max(player.minSpeed, math.min(Misc.round(Misc.orthogDistance(0, 0, player.actor.velX, player.actor.velY)), player.maxSpeed))
+	player.speed = math.max(player.minSpeed, math.min(Misc.round(Misc.orthogDistance(0, 0, player.actor.velX, player.actor.velY)), Player.getMaxSpeed(player)))
 	
 	player.parkedBunker = Bunker.getBunkerOnTile(world.bunkers, player.actor.tile)
 	if player.parkedBunker then
@@ -271,7 +277,7 @@ function Player.postTurnUpdate(player, world)
 			Actor.fullHeal(player.actor)
 		end
 	else
-		player.fuel = player.fuel - 1
+		player.fuel = math.max(player.fuel - 1, 0)
 	end
 	
 	for i = 1, #player.inventory.crew do
@@ -344,6 +350,14 @@ function Player.calculatePredictedSquares(player)
 	speedX = Misc.round(speedX)
 	speedY = Misc.round(speedY)
 	addPredictedSquare(Image.getImage("dot"), 0, {1, 1, 0, 1}, speedX, speedY, 3*math.pi, player.heading, false)
+end
+
+function Player.getMaxSpeed(player)
+	if player.fuel > 0 then
+		return player.maxSpeed
+	else
+		return 3
+	end
 end
 
 function Player.drawMovementPrediction(player, camera)
