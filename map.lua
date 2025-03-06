@@ -12,8 +12,8 @@ local yMin = 2
 local xMax = 3
 local yMax = 4
 function Map.new()
-	local cellWidth = 100
-	local cellHeight = 100
+	local cellWidth = 50
+	local cellHeight = 50
 	local mapCamera = Camera.new()
 	local waveCamera = Camera.new()
 	Camera.resize(mapCamera, 3*mapCamera.tileWidth*cellWidth, 3*mapCamera.tileHeight*cellHeight)

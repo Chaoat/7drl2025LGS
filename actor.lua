@@ -7,7 +7,7 @@ local Actor = {}
 local latestID = 0
 function Actor.new(letter, solidity, health)
 	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, activatedTools = {}, velX = 0, velY = 0, momentX = 0, momentY = 0, 
-				   solidity = solidity, health = health, maxHealth = health, letter = letter, id = latestID, dead = false}
+				   solidity = solidity, health = health, maxHealth = health, letter = letter, id = latestID, dead = false, destroy = false}
 	latestID = latestID + 1
 	return actor
 end
@@ -34,6 +34,11 @@ function Actor.kill(actor)
 	actor.dead = true
 	actor.letter.tint = {0.1, 0.1, 0.1, 1}
 	actor.solidity = 0
+end
+
+function Actor.destroy(actor)
+	Actor.kill(actor)
+	actor.destroy = true
 end
 
 function Actor.update(actor, dt)

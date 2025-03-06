@@ -8,6 +8,7 @@ local RandomGen = require "randomGen"
 local Map = require "map"
 local Minimap = require "minimap"
 local Controls = require "controls"
+local DebrisGen = require "debrisGen"
 
 local Game = {}
 
@@ -85,6 +86,8 @@ function Game.new()
 		}
 	)
 	
+	DebrisGen.generateDebris(game.world, game.player, 600, 400)
+	
 	local mapWidth, mapHeight = Map.getSize(game.world.map)
 	game.gridWidth = math.ceil(mapWidth/(game.world.map.cellWidth))
 	game.gridHeight = math.ceil(mapHeight/(game.world.map.cellHeight))
@@ -92,7 +95,7 @@ function Game.new()
 	for x = 0, game.gridWidth do
 		game.cellGrid[x] = {}
 		for y = 0, game.gridHeight do
-			game.cellGrid[x][y] = false
+			game.cellGrid[x][y] = {active = false, difficulty = 0}
 		end
 	end
 	
@@ -124,11 +127,43 @@ function Game.update(game, dt)
 	Camera.trackPlayer(game.mainCamera, game.player)
 end
 
+local function worldToGrid(game, wx, wy)
+	return math.floor(wx/game.world.map.cellWidth), math.floor(wy/game.world.map.cellHeight)
+end
+function Game.updateWorldDifficulty(game)
+	for i = 1, #game.world.bunkers do
+		local bunker = game.world.bunkers[i]
+		if bunker.affectWorldDifficultyThisTurn then
+			bunker.affectWorldDifficultyThisTurn = false
+			
+			if bunker.hasGiven then
+				for x = 1, game.gridWidth do
+					for y = 1, game.gridHeight do
+						game.cellGrid[x][y].difficulty = game.cellGrid[x][y].difficulty + 0.5
+					end
+				end
+			elseif bunker.dead then
+				local radius = 4
+				local increase = 3
+				local gridX, gridY = worldToGrid(game, bunker.centerX, bunker.centerY)
+				for x = 1, game.gridWidth do
+					for y = 1, game.gridHeight do
+						local dist = math.sqrt((gridX - x)^2 + (gridY - y)^2)
+						local increase = math.max(math.ceil(increase*(radius - dist)/radius), 0)
+						game.cellGrid[x][y].difficulty = game.cellGrid[x][y].difficulty + increase
+					end
+				end
+			end
+		end
+	end
+end
+
 function Game.keyInput(game, key)
 	if Player.keyInput(game.player, game.world, key) then
 		TurnCalculator.pass(game.turnCalculator)
 		Game.updatePlayerCellPos(game)
 		Minimap.redraw(game.minimap)
+		Game.updateWorldDifficulty(game)
 	elseif Controls.checkControl(key, "openMap", false) then
 		game.minimapElement.hidden = not game.minimapElement.hidden
 	end
@@ -151,13 +186,19 @@ function Game.updatePlayerCellPos(game)
 		for x = 0, game.gridWidth do
 			for y = 0, game.gridHeight do
 				local shouldBeActive = math.abs(x - cellX) <= 1 and math.abs(y - cellY) <= 1
-				local currentlyActive = game.cellGrid[x][y]
+				local currentlyActive = game.cellGrid[x][y].active
 				
+				local x1 = x*world.map.cellWidth
+				local y1 = y*world.map.cellHeight
+				local x2 = (x + 1)*world.map.cellWidth
+				local y2 = (y + 1)*world.map.cellHeight
 				if currentlyActive == false and shouldBeActive == true then
-					--RandomGen.fillAreaWithEnemies(world, 1, x*world.map.cellWidth, y*world.map.cellWidth, (x + 1)*world.map.cellHeight, (y + 1)*world.map.cellHeight)
+					RandomGen.generateEnemiesForArea(world, math.floor(game.cellGrid[x][y].difficulty), x1, y1, x2, y2)
+				elseif currentlyActive == true and shouldBeActive == false then
+					World.clearEnemiesInRegion(world, x1, y1, x2, y2)
 				end
 				
-				game.cellGrid[x][y] = shouldBeActive
+				game.cellGrid[x][y].active = shouldBeActive
 			end
 		end
 	end

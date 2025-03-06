@@ -33,10 +33,10 @@ do
 	
 	newCrewDef("Mathematician", Letter.newFromLetter("M", {1, 1, 1, 1}), 
 	function(player)
-		player.deceleration = player.acceleration + 1
+		player.deceleration = player.deceleration + 1
 	end, "+1 deceleration",
 	function(player)
-		player.deceleration = player.acceleration - 1
+		player.deceleration = player.deceleration - 1
 	end, "-1 deceleration")
 	
 	newCrewDef("Carpenter", Letter.newFromLetter("C", {1, 1, 1, 1}), 

@@ -10,14 +10,14 @@ do
 		cargoDefinitions[name] = definition
 	end
 	
-	newCargoDefinition("Steel", Letter.newFromLetter("S", {1, 0, 0, 1}, {0.5, 0.3, 0, 1}))
 	newCargoDefinition("Medicine", Letter.newFromLetter("M", {1, 0.5, 0.5, 1}, {0.5, 0, 0.5, 1}))
-	newCargoDefinition("Electronics", Letter.newFromLetter("E", {1, 1, 0.5, 1}, {0.4, 0.4, 0.4, 1}))
 	newCargoDefinition("Gasoline", Letter.newFromLetter("G", {0.3, 0.3, 0, 1}, {0.7, 0.7, 0.7, 1}))
 	newCargoDefinition("Purifiers", Letter.newFromLetter("P", {0.5, 0.7, 0.7, 1}, {0.3, 0.5, 0.3, 1}))
 	newCargoDefinition("Roots", Letter.newFromLetter("R", {0.3, 0.6, 0.3, 1}, {0.4, 0.2, 0.1, 1}))
 	newCargoDefinition("Volatiles", Letter.newFromLetter("V", {0.3, 0.3, 0.6, 1}, {0.6, 0, 0, 1}))
 	
+	newCargoDefinition("Electronics", Letter.newFromLetter("E", {1, 1, 0.5, 1}, {0.4, 0.4, 0.4, 1}))
+	newCargoDefinition("Steel", Letter.newFromLetter("S", {1, 0, 0, 1}, {0.5, 0.3, 0, 1}))
 	newCargoDefinition("Weapons", Letter.newFromLetter("W", {1, 1, 1, 1}, {0, 0, 0, 1}))
 	newCargoDefinition("Clothes", Letter.newFromLetter("C", {1, 1, 1, 1}, {0, 0, 0, 1}))
 	newCargoDefinition("Food", Letter.newFromLetter("F", {1, 1, 1, 1}, {0, 0, 0, 1}))

@@ -8,12 +8,35 @@ local Crew = require "crew"
 
 local RandomGen = {}
 
-local enemyTable = {
-	{"debris", 1},
-	{"blowFish", 1}
-}
+local mobTemplates = {}
+do
+	local function newMobTemplate(difficulty, mobs)
+		if mobTemplates[difficulty] == nil then
+			mobTemplates[difficulty] = {}
+		end
+		table.insert(mobTemplates[difficulty], mobs)
+	end
+	
+	newMobTemplate(0, {{"debris", 1}})
+	newMobTemplate(1, {{"debris", 2}})
+	newMobTemplate(2, {{"debris", 3}})
+	newMobTemplate(3, {{"debris", 4}})
+	newMobTemplate(4, {{"debris", 5}})
+	newMobTemplate(5, {{"debris", 6}})
+	newMobTemplate(6, {{"debris", 7}})
+	newMobTemplate(7, {{"debris", 8}})
+	newMobTemplate(8, {{"debris", 9}})
+	newMobTemplate(9, {{"debris", 10}})
+	newMobTemplate(10, {{"debris", 11}})
+	newMobTemplate(11, {{"debris", 12}})
+	newMobTemplate(12, {{"debris", 13}})
+	newMobTemplate(13, {{"debris", 14}})
+	newMobTemplate(14, {{"debris", 15}})
+	newMobTemplate(15, {{"debris", 16}})
+	newMobTemplate(16, {{"debris", 17}})
+end
 
-function RandomGen.fillAreaWithEnemies(world, difficulty, x1, y1, x2, y2)
+function RandomGen.generateEnemiesForArea(world, difficulty, x1, y1, x2, y2)
 	local validTiles = {}
 	for x = x1, x2 do
 		for y = y1, y2 do
@@ -29,24 +52,35 @@ function RandomGen.fillAreaWithEnemies(world, difficulty, x1, y1, x2, y2)
 		return
 	end
 	
-	local validEnemies = {}
-	for i = 1, #enemyTable do
-		local enemy = enemyTable[i]
-		
-		if enemy[2] <= difficulty then
-			table.insert(validEnemies, enemy)
+	local validMobs = {}
+	local difficultyMin = math.floor(difficulty/2)
+	for i = difficultyMin, difficulty do
+		if mobTemplates[i] then
+			for j = 1, #mobTemplates[i] do
+				table.insert(validMobs, mobTemplates[i][j])
+			end
 		end
 	end
 	
-	local area = (x2 - x1)*(y2 - y1)
-	enemyDensity = 70
+	if #validMobs == 0 then
+		return
+	end
 	
-	for i = 1, math.ceil(area/enemyDensity) do
-		local choice, index = Misc.randomFromList(validTiles)
+	local area = (x2 - x1)*(y2 - y1)
+	local nMobs = math.ceil(area/2500)
+	
+	local spawnArea = 5
+	for i = 1, nMobs do
+		local chosenTile, index = Misc.randomFromList(validTiles)
 		table.remove(validTiles, index)
 		
-		local enemyChoice = Misc.randomFromList(validEnemies)
-		EnemyProto.spawn(enemyChoice[1], world, choice.x, choice.y)
+		local mx1 = chosenTile.x - spawnArea
+		local my1 = chosenTile.y - spawnArea
+		local mx2 = chosenTile.x + spawnArea
+		local my2 = chosenTile.y + spawnArea
+		
+		local mobChoice = Misc.randomFromList(validMobs)
+		RandomGen.fillAreaWithEnemies(world, mobChoice, mx1, my1, mx2, my2)
 		
 		if #validTiles <= 0 then
 			return
@@ -54,11 +88,34 @@ function RandomGen.fillAreaWithEnemies(world, difficulty, x1, y1, x2, y2)
 	end
 end
 
+function RandomGen.fillAreaWithEnemies(world, mob, x1, y1, x2, y2)
+	local validTiles = {}
+	for x = x1, x2 do
+		for y = y1, y2 do
+			local tile = Map.getTile(world.map, x, y)
+			
+			if tile and tile.solidity == 0 then
+				table.insert(validTiles, tile)
+			end
+		end
+	end
+	
+	for i = 1, #mob do
+		for j = 1, mob[i][2] do
+			local choice, index = Misc.randomFromList(validTiles)
+			table.remove(validTiles, index)
+			EnemyProto.spawn(mob[i][1], world, choice.x, choice.y)
+			
+			if #validTiles <= 0 then
+				return
+			end
+		end
+	end
+end
+
 --17 bunkers
 
---"Steel"
 --"Medicine"
---"Electronics"
 --"Gasoline"
 --"Purifiers"
 --"Roots"
@@ -114,6 +171,7 @@ end
 --"Carpenter"
 --"Stocker"
 --"Brewer"
+--"Novelist"
 
 local function generatePossibleCrew()
 	return {

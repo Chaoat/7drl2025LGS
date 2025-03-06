@@ -80,6 +80,19 @@ function World.new()
 	return world
 end
 
+function World.clearEnemiesInRegion(world, x1, y1, x2, y2)
+	for x = x1, x2 do
+		for y = y1, y2 do
+			local tile = Map.getTile(world.map, x, y)
+			if tile then
+				for i = 1, #tile.actors do
+					Actor.destroy(tile.actors[i])
+				end
+			end
+		end
+	end
+end
+
 function World.tickAllEnemies(world, player)
 	for i = 1, #world.enemies do
 		local enemy = world.enemies[i]
@@ -107,6 +120,10 @@ function World.update(world, dt)
 	for i = #world.actors, 1, -1 do
 		local actor = world.actors[i]
 		Actor.update(actor, 4*dt)
+		
+		if actor.destroy then
+			table.remove(world.actors, i)
+		end
 	end
 	
 	Particle.updateCollection(world.overActorParticles, "overActor", dt)

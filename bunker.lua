@@ -14,6 +14,7 @@ local function newGiveTrade(good)
 		bunker.passenger.letter.tint = {0.2, 0.2, 0.2, 1}
 		Inventory.addCrew(player.inventory, bunker.passenger)
 		bunker.hasGiven = true
+		bunker.affectWorldDifficultyThisTurn = true
 		
 		Crew.tick(bunker.passenger, player)
 	end}
@@ -54,7 +55,7 @@ function Bunker.new(nameTag, descriptionTag, colour, goodsNeeded, goodsToGive, t
 	end
 	
 	local bunker = {nameTag = nameTag, descriptionTag = descriptionTag, colour = colour, goodsNeeded = goodsNeeded, goodsToGive = goodsToGive, validTrades = validTrades, rewardInventory = rewardInventory, passenger = passenger, 
-					timeTillDeath = doomsdayClock, dead = false, tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false, receivedFrom = nil}
+					timeTillDeath = doomsdayClock, dead = false, tileCoords = tileCoords, centerX = centerX, centerY = centerY, hasGiven = false, hasReceived = false, receivedFrom = nil, affectWorldDifficultyThisTurn = false}
 	
 	if passenger then
 		bunker.passenger.originLink = bunker
@@ -68,6 +69,7 @@ function Bunker.tick(bunker)
 		bunker.timeTillDeath = bunker.timeTillDeath - 1
 		if bunker.timeTillDeath <= 0 then
 			bunker.dead = true
+			bunker.affectWorldDifficultyThisTurn = true
 		end
 	end
 end

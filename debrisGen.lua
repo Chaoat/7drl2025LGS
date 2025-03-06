@@ -45,6 +45,53 @@ do
 	densityMapImage = densityMap:newImageData()
 end
 
+function DebrisGen.generateDebris(world, player, mapWidth, mapHeight)
+	local cellsAcross = math.floor(mapWidth/world.map.cellWidth)
+	local cellsDown = math.floor(mapHeight/world.map.cellHeight)
+	
+	local tileChoices = {}
+	for x = 0, cellsAcross do
+		for y = 0, cellsDown do
+			local x1 = x*world.map.cellWidth
+			local y1 = y*world.map.cellHeight
+			local x2 = (x + 1)*world.map.cellWidth
+			local y2 = (y + 1)*world.map.cellHeight
+			
+			if player.actor.x < x1 or player.actor.y < y1 or player.actor.x > x2 or player.actor.y > y2 then
+				local bunkerBlocked = false
+				
+				for i = 1, #world.bunkers do
+					local bunker = world.bunkers[i]
+					if bunker.centerX >= x1 and bunker.centerY >= y1 and bunker.centerX <= x2 and bunker.centerY <= y2 then
+						bunkerBlocked = true
+						break
+					end
+				end
+				
+				if not bunkerBlocked then
+					table.insert(tileChoices, {x1, y1, x2, y2})
+				end
+			end
+		end
+	end
+	
+	local area = (mapWidth*mapHeight)/(world.map.cellWidth*world.map.cellHeight)
+	local densities = {math.floor(area/4), math.floor(area/8), math.floor(area/12)}
+	print(math.floor(area/4))
+	print(math.floor(area/8))
+	print(math.floor(area/12))
+	print(math.floor(area/20))
+	
+	local bleed = 10
+	for d = 1, #densities do
+		for n = 1, densities[d] do
+			local tileChoice, tileI = Misc.randomFromList(tileChoices)
+			table.remove(tileChoices, tileI)
+			DebrisGen.fillArea(world, d, bleed, {tileChoice[1] - bleed, tileChoice[2] - bleed}, {tileChoice[3] + bleed, tileChoice[4] + bleed})
+		end
+	end
+end
+
 function DebrisGen.fillArea(world, density, edgeBleed, topCorn, botCorn)
 	local x1 = topCorn[1]
 	local y1 = topCorn[2]
