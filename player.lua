@@ -21,7 +21,7 @@ function Player.new(actor)
 	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), fuel = 100, maxFuel = 100, parkedBunker = nil, indestructible = false}
 	
 	Inventory.addTool(player.inventory, "nitro", 2)
-	Inventory.addTool(player.inventory, "blink", 2)
+	Inventory.addTool(player.inventory, "blink", 1)
 	
 	--Inventory.addCargo(player.inventory, "food", 1)
 	--Inventory.addCargo(player.inventory, "fresh water", 1)

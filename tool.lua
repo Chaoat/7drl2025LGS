@@ -70,13 +70,13 @@ do
 	--PLAYER TOOLS
 	newEffectToolProto("nitro", "nitroName", "nitroDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
 	function(tool, world, player)
-		player.minSpeed = player.minSpeed + 10
+		--player.minSpeed = player.minSpeed + 10
 		player.maxSpeed = player.maxSpeed + 10
 		player.targetSpeed = player.targetSpeed + 10
 		player.speed = player.speed + 10
 	end, 
 	function(tool, world, player)
-		player.minSpeed = player.minSpeed - 10
+		--player.minSpeed = player.minSpeed - 10
 		player.maxSpeed = player.maxSpeed - 10
 		player.targetSpeed = player.targetSpeed - 10
 	end,
@@ -105,20 +105,22 @@ do
 	newEffectToolProto("cannon", "cannonName", "cannonDescription", {0.6, 0.6, 0.6, 1}, 0, 15,
 	function(tool, world, player)
 		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
-		local radius = 3
+		local radius = 5
 		for xOff = -radius, radius do
 			for yOff = -radius, radius do
-				local x = tool.targetX + xOff
-				local y = tool.targetY + yOff
-				local tile = Map.getTile(world.map, x, y)
-				
-				if tile then
-					Tile.wreck(tile)
-					for i = 1, #tile.actors do
-						Actor.kill(tile.actors[i]))
-					end
+				if math.sqrt(xOff^2 + yOff^2) <= radius then
+					local x = tool.targetX + xOff
+					local y = tool.targetY + yOff
+					local tile = Map.getTile(world.map, x, y)
 					
-					Particle.queue(Particle.colourShiftBox(x, y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
+					if tile then
+						Tile.wreck(tile)
+						for i = 1, #tile.actors do
+							Actor.kill(tile.actors[i])
+						end
+						
+						Particle.queue(Particle.colourShiftBox(x, y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
+					end
 				end
 			end
 		end
@@ -156,10 +158,10 @@ do
 	--TODO make indestructible work with damage system
 	newEffectToolProto("indestructibility", "indestructibilityName", "indestructibilityDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
 	function(tool, world, player)
-		player.indestructible = true
+		player.actor.indestructible = true
 	end, 
 	function(tool, world, player)
-		player.indestructible = false
+		player.actor.indestructible = false
 	end,
 	nil,
 	function(world, player, targetX, targetY)
@@ -196,6 +198,18 @@ do
 	newEffectToolProto("towerBlast", "towerBlastName", "towerBlastDescription", {1, 1, 1, 1}, 0, 0,
 	function(tool, world, player)
 		local tiles = explodeAtPosition(world, tool.targetX, tool.targetY, 2, 2, 1)
+		for i = 1, #tiles do
+			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
+		end
+	end, 
+	nil,
+	nil,
+	nil,
+	{})
+	
+	newEffectToolProto("rocketExplosion", "", "", {1, 1, 1, 1}, 0, 0,
+	function(tool, world, player)
+		local tiles = explodeAtPosition(world, tool.targetX, tool.targetY, 6, 4, 2)
 		for i = 1, #tiles do
 			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
 		end

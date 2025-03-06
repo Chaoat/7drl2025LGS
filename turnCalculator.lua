@@ -37,6 +37,10 @@ function TurnCalculator.pass(turnCalculator)
 		actor.velY = actor.velY + actor.momentY
 		local numMoves = math.floor(math.max(math.abs(actor.velX), math.abs(actor.velY)))
 		
+		if actor.stationary then
+			numMoves = 0
+		end
+		
 		if numMoves > 0 then
 			local actorMove = {actor = actor, floatingX = actor.x, floatingY = actor.y, movesLeft = numMoves}
 			Misc.binaryInsert(actorMoves, actorMove, comparator)
@@ -127,9 +131,15 @@ function TurnCalculator.pass(turnCalculator)
 						Actor.changeSpeed(actorMove.actor, -collidingActor.solidity)
 						Actor.kill(collidingActor)
 					end
+					local oldX = actorMove.actor.x
+					local oldY = actorMove.actor.y
 					Tile.moveActor(targetTile, actorMove.actor)
 					actorMove.floatingX = newX
 					actorMove.floatingY = newY
+					
+					if actorMove.actor.parent and actorMove.actor.parent.proto.stepFunction then
+						actorMove.actor.parent.proto.stepFunction(actorMove.actor.parent, turnCalculator.world, turnCalculator.player, oldX, oldY)
+					end
 				end
 			end
 		end
@@ -137,7 +147,9 @@ function TurnCalculator.pass(turnCalculator)
 		
 		local speedChange = math.max(startingSpeed - endingSpeed, 0)
 		local damage = math.floor(speedChange/3)
-		Actor.damage(actorMove.actor, damage)
+		if not actorMove.actor.bouncy then
+			Actor.damage(actorMove.actor, damage)
+		end
 		
 		actorMove.movesLeft = actorMove.movesLeft - 1
 		if actorMove.actor.dead == false and actorMove.movesLeft > 0 then

@@ -11,6 +11,10 @@ function Score.update(game)
 			currentScore = currentScore - 50
 		end
 	end
+	
+	if game.player.actor.dead then
+		currentScore = currentScore - 300
+	end
 end
 
 function Score.get()

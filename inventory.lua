@@ -140,7 +140,7 @@ function Inventory.getToolCount(inventory, toolName)
 			return tool.count
 		end
 	end
-	return c0
+	return 0
 end
 
 

@@ -17,23 +17,41 @@ do
 		table.insert(mobTemplates[difficulty], mobs)
 	end
 	
-	newMobTemplate(0, {{"tower", 1}})
-	newMobTemplate(1, {{"debris", 2}})
-	newMobTemplate(2, {{"debris", 3}})
-	newMobTemplate(3, {{"debris", 4}})
-	newMobTemplate(4, {{"debris", 5}})
-	newMobTemplate(5, {{"debris", 6}})
-	newMobTemplate(6, {{"debris", 7}})
-	newMobTemplate(7, {{"debris", 8}})
-	newMobTemplate(8, {{"debris", 9}})
-	newMobTemplate(9, {{"debris", 10}})
-	newMobTemplate(10, {{"debris", 11}})
-	newMobTemplate(11, {{"debris", 12}})
-	newMobTemplate(12, {{"debris", 13}})
-	newMobTemplate(13, {{"debris", 14}})
-	newMobTemplate(14, {{"debris", 15}})
-	newMobTemplate(15, {{"debris", 16}})
-	newMobTemplate(16, {{"debris", 17}})
+	newMobTemplate(0, {
+	{"debris", 1}})
+	
+	newMobTemplate(1, {
+	{"debris", 3}})
+	
+	newMobTemplate(2, {
+	{"blowFish", 1}})
+	
+	newMobTemplate(3, {
+	{"blowFish", 3}})
+	
+	newMobTemplate(4, {
+	{"tower", 1}})
+	
+	newMobTemplate(5, {
+	{"tower", 1},
+	{"blowFish", 3}})
+	
+	newMobTemplate(6, {
+	{"rocket", 2}})
+	
+	newMobTemplate(7, {
+	{"rocket", 5}})
+	
+	newMobTemplate(8, {
+	{"spider", 1}})
+	
+	newMobTemplate(9, {
+	{"spider", 2},
+	{"rocket", 3}})
+	
+	newMobTemplate(10, {
+	{"spider", 3},
+	{"rocket", 3}})
 end
 
 function RandomGen.generateEnemiesForArea(world, difficulty, x1, y1, x2, y2)
@@ -206,6 +224,15 @@ local function generatePossibleTimers(nBunkers)
 	return timers
 end
 
+local toolChoices = {
+	{"nitro", 2},
+	{"blink", 1},
+	{"cannon", 3},
+	{"drill", 3},
+	{"indestructibility", 4},
+	{"Drift", 3},
+}
+
 function RandomGen.placeBunkers(world, locations)
 	local tradeCombos = {}
 	local valid = false
@@ -268,8 +295,10 @@ function RandomGen.placeBunkers(world, locations)
 			crew = Crew.new(chosenCrew, location[5])
 		end
 		
+		local chosenTool = Misc.randomFromList(toolChoices)
+		
 		World.addBunker(world, Bunker.new(location[5], "SouthStreetDescription", {1, 1, 0, 0.4}, chosenTrade[1], chosenTrade[2], 
-		Map.getTileCoordsInSquare(map, location[1], location[2], location[3], location[4]), Inventory.addTool(Inventory.new(), "blink", 2), crew, chosenTimer))
+		Map.getTileCoordsInSquare(map, location[1], location[2], location[3], location[4]), Inventory.addTool(Inventory.new(), chosenTool[1], chosenTool[2]), crew, chosenTimer))
 	end
 end
 

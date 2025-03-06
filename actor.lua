@@ -13,8 +13,8 @@ end
 
 local latestID = 0
 function Actor.new(letter, solidity, health)
-	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, activatedTools = {}, velX = 0, velY = 0, momentX = 0, momentY = 0, 
-				   solidity = solidity, health = health, maxHealth = health, letter = letter, id = latestID, dead = false, destroy = false, parent = nil}
+	local actor = {x = nil, y = nil, drawX = nil, drawY = nil, tile = nil, activatedTools = {}, velX = 0, velY = 0, momentX = 0, momentY = 0, stationary = false,
+				   solidity = solidity, health = health, maxHealth = health, letter = letter, id = latestID, dead = false, destroy = false, parent = nil, indestructible = false}
 	latestID = latestID + 1
 	return actor
 end
@@ -25,6 +25,10 @@ function Actor.changeMaxHealth(actor, change)
 end
 
 function Actor.damage(actor, damage)
+	if actor.indestructible then
+		return
+	end
+	
 	if actor.dead == false then
 		actor.health = actor.health - damage
 		if actor.health <= 0 then
@@ -87,8 +91,19 @@ function Actor.getSpeed(actor)
 	return Misc.orthogDistance(0, 0, actor.velX, actor.velY)
 end
 
-function Actor.predictPosition(actor)
-	return Misc.round(actor.x + actor.velX + actor.momentX), Misc.round(actor.y + actor.velY + actor.momentY)
+function Actor.predictPosition(actor, tilesAhead)
+	tilesAhead = tilesAhead or 0
+	
+	local xAdd = 0
+	local yAdd = 0
+	if tilesAhead ~= 0 then
+		local angle = math.atan2(actor.velY + actor.momentY, actor.velX + actor.momentX)
+		xAdd, yAdd = Misc.orthogPointFrom(0, 0, tilesAhead, angle)
+		xAdd = Misc.round(xAdd)
+		yAdd = Misc.round(yAdd)
+	end
+	
+	return Misc.round(actor.x + actor.velX + actor.momentX + xAdd), Misc.round(actor.y + actor.velY + actor.momentY + yAdd)
 end
 
 function Actor.changeSpeed(actor, val)
@@ -97,6 +112,13 @@ function Actor.changeSpeed(actor, val)
 	actor.velX, actor.velY = Misc.orthogPointFrom(0, 0, newSpeed, math.atan2(actor.velY, actor.velX))
 	actor.velX = Misc.round(actor.velX)
 	actor.velY = Misc.round(actor.velY)
+end
+
+function Actor.restrictSpeed(actor, restriction)
+	local speed = Actor.getSpeed(actor)
+	if speed > restriction then
+		Actor.changeSpeed(actor, restriction - speed)
+	end
 end
 
 function Actor.impulseActor(actor, xMoment, yMoment)

@@ -139,6 +139,7 @@ function Game.update(game, dt)
 	if game.textElement.hidden == true and game.player.controlMode == "reading" then
 		game.textElement.changeText(Text.get(game.player.readingTextID))
 		game.textElement.hidden = false
+		game.textElement.showScore = game.player.gameOver
 	elseif game.textElement.hidden == false and game.player.controlMode ~= "reading" then
 		game.textElement.hidden = true
 	end

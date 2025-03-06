@@ -83,16 +83,16 @@ local waveShader = love.graphics.newShader [[
 function Weather.draw(weather, camera)
 	local drawX, drawY = Camera.worldToDrawCoords(weather.map.cellCornerX, weather.map.cellCornerY, camera)
 	
-	waveShader:send("angle", math.pi/4)
-	waveShader:send("magnitude", 0)
+	--waveShader:send("angle", math.pi/4)
+	--waveShader:send("magnitude", 0)
 	--waveShader:send("frequency", 1)
-	waveShader:send("timer", GLOBALAnimationClock)
-	waveShader:send("tileSize", {weather.map.waveCamera.tileWidth, weather.map.waveCamera.tileHeight})
-	waveShader:send("waveMapSize", {weather.map.waveCamera.cameraWidth, weather.map.waveCamera.cameraHeight})
+	--waveShader:send("timer", GLOBALAnimationClock)
+	--waveShader:send("tileSize", {weather.map.waveCamera.tileWidth, weather.map.waveCamera.tileHeight})
+	--waveShader:send("waveMapSize", {weather.map.waveCamera.cameraWidth, weather.map.waveCamera.cameraHeight})
 	
-	love.graphics.setShader(waveShader)
+	--love.graphics.setShader(waveShader)
 	Camera.draw(drawX, drawY, weather.map.waveCamera)
-	love.graphics.setShader()
+	--love.graphics.setShader()
 end
 
 return Weather

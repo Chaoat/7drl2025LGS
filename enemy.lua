@@ -4,13 +4,14 @@ local Camera = require "camera"
 local Enemy = {}
 
 function Enemy.new(actor, proto)
-	local enemy = {actor = actor, proto = proto, aiState = {}}
+	local enemy = {actor = actor, proto = proto, aiState = {}, targettingTile = nil}
 	
 	for key, value in pairs(proto.startingState) do
 		enemy.aiState[key] = value
 	end
 	
 	actor.parent = enemy
+	
 	return enemy
 end
 

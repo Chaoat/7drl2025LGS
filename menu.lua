@@ -1796,12 +1796,17 @@ do --element
 			love.graphics.setColor(0, 0, 0, 0.8)
 			love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
 			
-			Text.print(element.text, element.textProgress, 24, element.x1 + 20, element.y1 + 20, element.x2 - element.x1 - 40, "center")
+			Text.print(element.text, element.textProgress, 24, element.x1 + 20, element.y1 + 70, element.x2 - element.x1 - 40, "center")
+			
+			if element.showScore then
+				love.graphics.printf("Final Score: " .. Score.get(), element.x1, element.y2 - 100, element.x2 - element.x1, "center")
+			end
 		end)
 		
 		element.text = ""
 		element.textProgress = 0
 		element.textLength = 0
+		element.showScore = false
 		element.changeText = function(newText)
 			element.text = newText
 			element.textProgress = 0

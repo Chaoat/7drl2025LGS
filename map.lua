@@ -232,6 +232,7 @@ function Map.redrawCells(map, playerX, playerY)
 	
 	local lastCanvas = love.graphics.getCanvas()
 	love.graphics.setCanvas(map.camera.canvas)
+	love.graphics.clear()
 	for i = math.max(map.bounds[xMin], map.cellWidth*(cellX - 1)), math.min(map.bounds[xMax], map.cellWidth*(cellX + 2)) do
 		for j = math.max(map.bounds[yMin], map.cellHeight*(cellY - 1)), math.min(map.bounds[yMax], map.cellHeight*(cellY + 2)) do
 			local tile = map.tiles[i][j]
@@ -243,6 +244,7 @@ function Map.redrawCells(map, playerX, playerY)
 	end
 	
 	love.graphics.setCanvas(map.waveCamera.canvas)
+	love.graphics.clear()
 	for i = math.max(map.bounds[xMin], map.cellWidth*(cellX - 1)), math.min(map.bounds[xMax], map.cellWidth*(cellX + 2)) do
 		for j = math.max(map.bounds[yMin], map.cellHeight*(cellY - 1)), math.min(map.bounds[yMax], map.cellHeight*(cellY + 2)) do
 			local tile = map.tiles[i][j]

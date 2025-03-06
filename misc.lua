@@ -41,6 +41,7 @@ end
 
 function Misc.orthogPointFrom(x, y, dist, angle)
 	local multAngle = (angle + math.pi/4)%(math.pi/2) - math.pi/4
+	
 	local distMultiple = 1/math.cos(multAngle)
 	
 	local returnX = x + distMultiple*dist*math.cos(angle)
