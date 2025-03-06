@@ -129,10 +129,18 @@ function Player.keyInput(player, world, key)
 			player.controlMode = "freeLook"
 			player.lookCursorX = player.actor.x
 			player.lookCursorY = player.actor.y
+		elseif Controls.checkControl(key, "activateDrift", false) then
+			executeTurn = useNamedTool(player, world, "drift")
+		elseif Controls.checkControl(key, "activateCannon", false) then
+			executeTurn = useNamedTool(player, world, "cannon")
+		elseif Controls.checkControl(key, "activateIndestructibility", false) then
+			executeTurn = useNamedTool(player, world, "indestructibility")
 		elseif Controls.checkControl(key, "activateNitro", false) then
 			executeTurn = useNamedTool(player, world, "nitro")
 		elseif Controls.checkControl(key, "activateBlink", false) then
 			executeTurn = useNamedTool(player, world, "blink")
+		elseif Controls.checkControl(key, "activateDrill", false) then
+			executeTurn = useNamedTool(player, world, "drill")
 		elseif Controls.checkControl(key, "tradeOption1", false) then
 			executeNthTrade(player, 1)
 		elseif Controls.checkControl(key, "tradeOption2", false) then

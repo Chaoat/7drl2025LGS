@@ -79,8 +79,12 @@ function Controls.loadDefaultControls()
 	
 	addControls("startLooking", {"l"})
 	
+	addControls("activateDrift", {"x"})
+	addControls("activateCannon", {"c"})
+	addControls("activateIndestructibility", {"v"})
 	addControls("activateNitro", {"n"})
 	addControls("activateBlink", {"b"})
+	addControls("activateDrill", {"m"})
 	addControls("activateTargettedTool", {"kpenter", "space", "return"})
 	
 	addControls("tradeOption1", {"1"})
