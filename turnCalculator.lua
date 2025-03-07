@@ -90,7 +90,9 @@ function TurnCalculator.pass(turnCalculator)
 					actorMove.movesLeft = actorMove.actor.velX
 				end
 			elseif actorMove.actor.solidity < targetTile.solidity then
-				Actor.kill(actorMove.actor)
+				if not actorMove.actor.bouncy then
+					Actor.kill(actorMove.actor)
+				end
 			else
 				if targetTile.solidity > 0 then
 					Actor.changeSpeed(actorMove.actor, -targetTile.solidity)

@@ -1718,8 +1718,8 @@ do --element
 		return Menu.element.new(posFunc, function(element)
 			Font.setFont("clacon", 24)
 			love.graphics.setColor(1, 1, 1, 1)
-			local statsText = "Velocity  x: " .. player.actor.velX .. " y: " .. player.actor.velY
-			statsText = statsText .. "\n" .. "Momentum  x: " .. player.actor.momentX .. " y: " .. player.actor.momentY
+			local statsText = "Head x: " .. player.actor.velX .. " y: " .. player.actor.velY
+			statsText = statsText .. "\n" .. "Mom  x: " .. player.actor.momentX .. " y: " .. player.actor.momentY
 			statsText = statsText .. "\n\n" .. "Max Speed:    " .. Player.getMaxSpeed(player)
 			statsText = statsText .. "\n" .. "Turning Rate: " .. player.turnRate
 			statsText = statsText .. "\n" .. "Acceleration: " .. player.acceleration
@@ -1732,7 +1732,8 @@ do --element
 		return Menu.element.new(posFunc, function(element)
 			Font.setFont("clacon", 24)
 			love.graphics.setColor(1, 1, 1, 1)
-			local controlsText = 				   "m: Open Map"
+			local controlsText = 				   "Enter: Use Selected Tool"
+			controlsText = controlsText .. "\n" .. "m: Open Map"
 			controlsText = controlsText .. "\n" .. "h: View Crew"
 			controlsText = controlsText .. "\n" .. "l or RMB: Free Look"
 			controlsText = controlsText .. "\n" .. "? or /  : Open Help Screen"

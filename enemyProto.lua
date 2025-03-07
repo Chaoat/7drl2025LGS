@@ -133,7 +133,7 @@ do
 	end,
 	EnemyProto.new("spider", "spiderName", "spiderDescription", 
 	{Letter.newFromLetter("M", {1, 0, 0, 1}, nil)}
-	, 10, 4, 
+	, 3, 4, 
 	function(enemy, world, player)
 		if Misc.orthogDistance(enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y) <= 20 then
 			local tX, tY = Actor.predictPosition(player.actor, 5)

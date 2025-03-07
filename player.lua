@@ -21,7 +21,7 @@ function Player.new(actor)
 	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 1, deceleration = 1, 
 	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), fuel = 100, maxFuel = 100, parkedBunker = nil, indestructible = false}
 	
-	Inventory.addTool(player.inventory, "indestructibility", 2)
+	Inventory.addTool(player.inventory, "nitro", 2)
 	Inventory.addTool(player.inventory, "blink", 1)
 	Inventory.addTool(player.inventory, "cannon", 3)
 	

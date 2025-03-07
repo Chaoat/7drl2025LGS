@@ -73,7 +73,13 @@ function Bunker.addWinTrade(bunker)
 	executeFunction = function(player, bunker)
 		player.controlMode = "reading"
 		player.gameOver = true
-		player.readingTextID = "badEndText"
+		if Score.get() < 500 then
+			player.readingTextID = "badEndText"
+		elseif Score.get() < 1000 then
+			player.readingTextID = "goodEndText"
+		else
+			player.readingTextID = "bestEndText"
+		end
 	end}
 	
 	table.insert(bunker.validTrades, trade)

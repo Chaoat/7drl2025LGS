@@ -43,10 +43,10 @@ local function generateInterface(game)
 	}
 	
 	Menu.screen.addElement(sideBar, Menu.element.verticalList(Menu.position.dynamicCenter(0.5, -200, 180, 180), true, nil, 0, false, toolElements, nil, false))
-	Menu.screen.addElement(sideBar, Menu.element.cargoHold(Menu.position.dynamicSize(10, -450, -10, -210), player))
+	Menu.screen.addElement(sideBar, Menu.element.cargoHold(Menu.position.dynamicSize(10, -400, -10, -210), player))
 	
-	Menu.screen.addElement(sideBar, Menu.element.actorHealth(Menu.position.dynamicSize(10, 10, -10, 25), player.actor))
-	Menu.screen.addElement(sideBar, Menu.element.playerFuel(Menu.position.dynamicSize(10, 30, -10, 45), player))
+	Menu.screen.addElement(sideBar, Menu.element.actorHealth(Menu.position.dynamicSize(10, 30, -10, 45), player.actor))
+	Menu.screen.addElement(sideBar, Menu.element.playerFuel(Menu.position.dynamicSize(10, 50, -10, 65), player))
 	
 	Menu.screen.addElement(sideBar, Menu.element.playerStats(Menu.position.dynamicSize(10, 100, -10, 250), player))
 	Menu.screen.addElement(sideBar, Menu.element.controlsHelp(Menu.position.dynamicSize(10, 250, -10, 400), player))
