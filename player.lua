@@ -264,6 +264,10 @@ function Player.update(player, dt)
 	if player.parkedBunker then
 		player.parkedBunker.parkRealTime = player.parkedBunker.parkRealTime + dt
 	end
+
+	if player.indestructible then
+		Particle.queue(Particle.colourShiftBox(player.actor.x, player.actor.y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.2), "water")
+    end
 end
 
 function Player.postTurnUpdate(player, world)
@@ -274,7 +278,7 @@ function Player.postTurnUpdate(player, world)
 	if player.parkedBunker then
 		if not player.parkedBunker.dead then
 			player.fuel = player.maxFuel
-			Actor.fullHeal(player.actor)
+			Actor.Heal(player.actor, 3)
 		end
 	else
 		player.fuel = math.max(player.fuel - 1, 0)

@@ -22,36 +22,67 @@ do
 	
 	newMobTemplate(1, {
 	{"debris", 3}})
+
+	newMobTemplate(2, {
+	{"debris", 5}})
 	
 	newMobTemplate(2, {
 	{"blowFish", 1}})
+
+	newMobTemplate(2, {
+	{"rocket", 1}})
 	
 	newMobTemplate(3, {
 	{"blowFish", 3}})
 	
-	newMobTemplate(4, {
+	newMobTemplate(3, {
 	{"tower", 1}})
+
+	newMobTemplate(3, {
+	{"rocket", 2}})
+
+	newMobTemplate(4, {
+	{"blowFish", 2},
+	{"rocket", 2}})
+
+	newMobTemplate(4, {
+	{"tower", 1},
+	{"rocket", 2}})
+
+	newMobTemplate(4, {
+	{"tower", 1},
+	{"debris", 6}})
+
+	newMobTemplate(5, {
+	{"tower", 2}})
+
+	newMobTemplate(5, {
+	{"spider", 1}})
 	
 	newMobTemplate(5, {
 	{"tower", 1},
 	{"blowFish", 3}})
 	
 	newMobTemplate(6, {
-	{"rocket", 2}})
+	{"rocket", 5}})
+
+	newMobTemplate(6, {
+	{"tower", 2},
+	{"spider", 1}})
 	
 	newMobTemplate(7, {
-	{"rocket", 5}})
+	{"blowFish", 9}})
 	
 	newMobTemplate(8, {
-	{"spider", 1}})
+	{"spider", 2}})
 	
 	newMobTemplate(9, {
 	{"spider", 2},
 	{"rocket", 3}})
 	
 	newMobTemplate(10, {
-	{"spider", 3},
-	{"rocket", 3}})
+	{"spider", 5},
+	{"rocket", 5}})
 end
 
 function RandomGen.generateEnemiesForArea(world, difficulty, x1, y1, x2, y2)

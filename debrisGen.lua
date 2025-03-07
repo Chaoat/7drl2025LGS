@@ -76,7 +76,7 @@ function DebrisGen.generateDebris(world, player, mapWidth, mapHeight)
 	end
 	
 	local area = (mapWidth*mapHeight)/(world.map.cellWidth*world.map.cellHeight)
-	local densities = {math.floor(area/4), math.floor(area/8), math.floor(area/12)}
+	local densities = {math.floor(area/3), math.floor(area/12), math.floor(area/18)}
 	
 	local bleed = 10
 	for d = 1, #densities do

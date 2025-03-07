@@ -111,7 +111,7 @@ do
 		end
 	end,
 	function(enemy, world, player)
-		if enemy.aiState.charging < 3 or (Misc.orthogDistance(enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y) <= 10 and Map.isLineClear(world.map, enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y)) then
+		if enemy.aiState.charging < 3 or (Misc.orthogDistance(enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y) <= 16 and Map.isLineClear(world.map, enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y)) then
 			enemy.aiState.charging = math.max(enemy.aiState.charging - 1, 0)
 		end
 	end, 

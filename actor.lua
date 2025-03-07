@@ -41,6 +41,10 @@ function Actor.fullHeal(actor)
 	actor.health = actor.maxHealth
 end
 
+function Actor.Heal(actor, heal)
+	actor.health = math.min(actor.health + heal, actor.maxHealth)
+end
+
 function Actor.toolEffectActive(actor, toolName)
 	for i = #actor.activatedTools, 1, -1 do
 		local tool = actor.activatedTools[i]
