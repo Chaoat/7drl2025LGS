@@ -1596,23 +1596,24 @@ do --element
 			Font.setFont("clacon", 26)
 			love.graphics.setColor(1, 1, 1, 1)
 			love.graphics.printf("Crew: ", element.x1 + 2, element.y1 + 2, element.x2 - element.x1)
-			Font.setFont("clacon", 24)
+			Font.setFont("clacon", 20)
+			local gap = 45
 			local textWidth = (element.x2 - element.x1)/2 - 5
 			for i = 1, #player.inventory.crew do
 				local crew = player.inventory.crew[i]
 				if crew.happiness == -1 then
 					love.graphics.setColor(1, 0, 0, 1)
-					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
-					love.graphics.printf(crew.crewDef.negEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + gap*(i - 1), textWidth)
+					love.graphics.printf(crew.crewDef.negEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + gap*(i - 1), textWidth)
 				elseif crew.happiness == 1 then
 					love.graphics.setColor(0, 1, 0, 1)
-					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
-					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + gap*(i - 1), textWidth)
+					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + gap*(i - 1), textWidth)
 				else
 					love.graphics.setColor(1, 1, 1, 1)
-					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + gap*(i - 1), textWidth)
 					love.graphics.setColor(0.5, 0.5, 0.5, 1)
-					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + gap*(i - 1), textWidth)
 				end
 			end
 		end)

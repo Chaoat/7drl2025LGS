@@ -102,8 +102,10 @@ function TurnCalculator.pass(turnCalculator)
 				--Actor collision
 				local collidingActor = nil
 				if actorMove.actor.solidity > 0 then
-					for i = 1, #targetTile.actors do
-						if targetTile.actors[i].solidity > 0 then
+					for i = #targetTile.actors, 1, -1 do
+						if targetTile.actors[i].destroy then
+							table.remove(targetTile.actors, i)
+						elseif targetTile.actors[i].solidity > 0 then
 							collidingActor = targetTile.actors[i]
 							break
 						end
@@ -127,7 +129,9 @@ function TurnCalculator.pass(turnCalculator)
 				elseif collidingActor and actorMove.actor.solidity < Actor.getSpeed(collidingActor) then
 					Actor.changeSpeed(collidingActor, -actorMove.actor.solidity)
 					reorderActorMove(collidingActor)
-					Actor.kill(actorMove.actor)
+					if not actorMove.actor.bouncy then
+						Actor.kill(actorMove.actor)
+					end
 				else
 					if collidingActor and collidingActor.solidity < Actor.getSpeed(actorMove.actor) then
 						Actor.changeSpeed(actorMove.actor, -collidingActor.solidity)

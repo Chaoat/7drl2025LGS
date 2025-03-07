@@ -23,7 +23,7 @@ function Player.new(actor)
 	
 	Inventory.addTool(player.inventory, "nitro", 2)
 	Inventory.addTool(player.inventory, "blink", 1)
-	Inventory.addTool(player.inventory, "cannon", 3)
+	Inventory.addTool(player.inventory, "cannon", 1)
 	
 	--Inventory.addCargo(player.inventory, "food", 1)
 	--Inventory.addCargo(player.inventory, "fresh water", 1)

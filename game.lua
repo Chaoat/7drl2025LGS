@@ -53,7 +53,7 @@ local function generateInterface(game)
 	
 	Menu.screen.addElement(screen, Menu.element.screen(Menu.position.dynamicSize(-200, 0, 1, 1), true, sideBar))
 	
-	local crewHold = Menu.element.crewHold(Menu.position.dynamicSize(-450, 0, -200, 0.6), player)
+	local crewHold = Menu.element.crewHold(Menu.position.dynamicSize(-450, 0, -200, 1), player)
 	crewHold.hidden = true
 	Menu.screen.addElement(screen, crewHold)
 	game.crewHoldElement = crewHold
@@ -260,12 +260,15 @@ end
 
 function Game.draw(game)
 	World.draw(game.world, game.mainCamera)
-	Player.drawMovementPrediction(game.player, game.mainCamera)
 	Player.drawCursor(game.player, game.mainCamera)
 	
 	Camera.draw(0, 0, game.mainCamera)
 	Camera.clear(game.mainCamera)
 	Map.draw(game.world.map, game.mainCamera)
+	
+	Player.drawMovementPrediction(game.player, game.mainCamera)
+	Camera.draw(0, 0, game.mainCamera)
+	Camera.clear(game.mainCamera)
 	
 	local width, height, flags = love.window.getMode()
 	Menu.draw(game.interface, 0, 0, width, height)

@@ -73,7 +73,7 @@ function Map.isLineClear(map, x1, y1, x2, y2)
 	local coords = Misc.orthogLineBetween(x1, y1, x2, y2)
 	for i = 1, #coords - 1 do
 		local tile = Map.getTile(map, coords[i][1], coords[i][2])
-		if tile and tile.solidity > 0 then
+		if tile and tile.solidity > 2 then
 			return false
 		end
 	end

@@ -64,7 +64,7 @@ do
 	textEntries["bunker14description"] = "The shattered facade of the once-grand shopping mall yawns before you, a concrete maw swallowing the ragged remnants of humanity. The faded shopfronts now house refugees from other cities, trying to scour together enough to make their dreams of a better world a possibility."
 
 	textEntries["bunker15"] = "Untouched Tower"
-	textEntries["bunker15description"] = "Your boat glides alongside a small office building that stands almost untouched by the devastation. The floodwaters lap gently against its base, but the reinforced glass and sturdy concrete show no signs of yielding. It’s a stark anomaly in this drowned cityscape, a relic of the old world stubbornly clinging to existence."
+	textEntries["bunker15description"] = "Your boat glides alongside a small office building that stands almost untouched by the devastation. The floodwaters lap gently against its base, but the reinforced glass and sturdy concrete show no signs of yielding. It's a stark anomaly in this drowned cityscape, a relic of the old world stubbornly clinging to existence."
 
 	textEntries["bunker16"] = "Southern Hideout"
 	textEntries["bunker16description"] = "The Bunker stands firm against the tide, its walls weathered but unbroken. Within, survivors barter, repair, and prepare for another day in the drowned world. Safe for now, but never secure."
