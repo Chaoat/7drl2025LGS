@@ -150,7 +150,7 @@ do
 	newEffectToolProto("drill", "drillName", "drillDescription", {0.6, 0.6, 0.6, 1}, 0, 30,
 	function(tool, world, player)
 		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
-		local tiles = Map.shape.line(world.Map, tool.targetX, tool.targetY, player.actor.x, player.actor.y)
+		local tiles = Map.shapes.line(world.Map, tool.targetX, tool.targetY, player.actor.x, player.actor.y)
 		for i= 1, #tiles do 
 			Tile.wreck(tiles[i])
 			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
