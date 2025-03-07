@@ -35,7 +35,7 @@ local function generateInterface(game)
 	
 	local toolElements = {
 	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "drill", "activateDrill"),
-	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "Drift", "activateDrift"),
+	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "drift", "activateDrift"),
 	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "cannon", "activateCannon"),
 	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "indestructibility", "activateIndestructibility"),
 	Menu.element.toolView(Menu.position.dynamicSize(0, 0, 1, 20), player, world, "blink", "activateBlink"),
