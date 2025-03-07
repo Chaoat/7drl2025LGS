@@ -175,7 +175,7 @@ function Game.updateWorldDifficulty(game)
 			if bunker.hasGiven then
 				for x = 1, game.gridWidth do
 					for y = 1, game.gridHeight do
-						game.cellGrid[x][y].difficulty = game.cellGrid[x][y].difficulty + 0.5
+						game.cellGrid[x][y].difficulty = game.cellGrid[x][y].difficulty + 0.75
 					end
 				end
 			elseif bunker.dead then
