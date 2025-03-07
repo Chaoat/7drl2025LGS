@@ -102,8 +102,7 @@ do
 	, 10, 2, 
 	function(enemy, world, player)
 		if enemy.aiState.charging == 0 then
-			local tX, tY = Actor.predictPosition(player.actor)
-			local xChange, yChange = Misc.orthogPointFrom(0, 0, 2, math.atan2(tY - enemy.actor.y, tX - enemy.actor.x))
+			local xChange, yChange = Misc.orthogPointFrom(0, 0, 2, enemy.aiState.angle)
 			xChange = Misc.round(xChange)
 			yChange = Misc.round(yChange)
 			enemy.actor.velX = enemy.actor.velX + xChange
@@ -111,14 +110,17 @@ do
 		end
 	end,
 	function(enemy, world, player)
-		if enemy.aiState.charging < 3 or (Misc.orthogDistance(enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y) <= 10 and Map.isLineClear(world.map, enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y)) then
+		if enemy.aiState.charging > 0 and (enemy.aiState.charging < 3 or (Misc.orthogDistance(enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y) <= 10 and Map.isLineClear(world.map, enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y))) then
 			enemy.aiState.charging = math.max(enemy.aiState.charging - 1, 0)
+			
+			local tX, tY = Actor.predictPosition(player.actor)
+			enemy.aiState.angle = math.atan2(tY - enemy.actor.y, tX - enemy.actor.x)
 		end
 	end, 
 	function(enemy, world, player)
 		Tool.activate("rocketExplosion", enemy.actor, world, player, enemy.actor.x, enemy.actor.y)
 	end, 
-	{charging = 3})
+	{charging = 3, angle = 0})
 
 	--spider
 	addCreationFunction(
