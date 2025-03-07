@@ -4,15 +4,17 @@ local Camera = require "camera"
 local Tile = {}
 
 local colourToSolidity = {}
+local colourToHeight = {}
 local function colourToColourKey(colour)
 	return 255*colour[1]*1000000 + 255*colour[2]*1000 + 255*colour[3]
 end
-local function newColourToSolidity(colour, solidity)
+local function newColourToSolidity(colour, solidity, height)
 	colour[1] = colour[1]/255
 	colour[2] = colour[2]/255
 	colour[3] = colour[3]/255
 	local key = colourToColourKey(colour)
 	colourToSolidity[key] = solidity
+	colourToHeight[key] = height or 0
 end
 
 do
@@ -23,12 +25,12 @@ do
 	newColourToSolidity({19, 64, 77}, 0)
 	newColourToSolidity({16, 59, 62}, 0)
 	--Vegetation Tiles
-	newColourToSolidity({200, 212, 139}, 1)
-	newColourToSolidity({168, 182, 95}, 1)
-	newColourToSolidity({133, 159, 87}, 1)
+	newColourToSolidity({200, 212, 139}, 1, 1)
+	newColourToSolidity({168, 182, 95}, 1, 1)
+	newColourToSolidity({133, 159, 87}, 1, 1)
 	--Tree Trunks are harder
-	newColourToSolidity({84, 111, 69}, 3)
-	newColourToSolidity({87, 94, 50}, 1)
+	newColourToSolidity({84, 111, 69}, 3, 1)
+	newColourToSolidity({87, 94, 50}, 1, 1)
 
 	--Debris Tiles
 	newColourToSolidity({241, 242, 246}, 2)
@@ -36,12 +38,12 @@ do
 	newColourToSolidity({185, 195, 207}, 2)
 	newColourToSolidity({241, 242, 246}, 2)
 	--Dirt Tiles
-	newColourToSolidity({131, 98, 57}, 2)
-	newColourToSolidity({92, 76, 36}, 3)
+	newColourToSolidity({131, 98, 57}, 2, 0)
+	newColourToSolidity({92, 76, 36}, 3, 1)
 	
 	--Outer Walls
-	newColourToSolidity({144, 151, 149}, 3)
-	newColourToSolidity({68, 68, 68}, 4)
+	newColourToSolidity({144, 151, 149}, 3, 2)
+	newColourToSolidity({68, 68, 68}, 4, 0)
 end
 
 local solidityTiers = {2, 4, 6, 8, 10}
@@ -51,7 +53,8 @@ function Tile.fromXP(xpCharacter)
 	local bCol = xpCharacter.bCol
 	
 	--local solidityTier = math.max(solidityCharacter.charCode - 48, 0)
-	local solidityTier = colourToSolidity[colourToColourKey(fCol)] or 0
+	local key = colourToColourKey(fCol)
+	local solidityTier = colourToSolidity[key] or 0
 	local solidity = 0
 	if solidityTier > 0 then
 		solidity = solidityTiers[solidityTier]
@@ -59,12 +62,13 @@ function Tile.fromXP(xpCharacter)
 	
 	local tags = {}
 	local tile = Tile.new(solidity, tags, Letter.new(charCode, fCol, bCol))
+	tile.height = colourToHeight[key]
 	
 	return tile, colourToSolidity[colourToColourKey(fCol)] == nil
 end
 
 function Tile.new(solidity, tags, letter)
-	local tile = {drawX = 0, drawY = 0, x = 0, y = 0, height = 3, actors = {}, letter = letter, solidity = solidity, isWater = (solidity == 0), tags = {}}
+	local tile = {drawX = 0, drawY = 0, x = 0, y = 0, height = 0, actors = {}, letter = letter, solidity = solidity, isWater = (solidity == 0), tags = {}}
 	for i = 1, #tags do
 		tile.tags[tags[i]] = true
 	end
@@ -74,6 +78,7 @@ end
 
 function Tile.wreck(tile)
 	tile.solidity = 0
+	tile.height = 0
 	tile.letter.charCode = string.byte(";")
 end
 

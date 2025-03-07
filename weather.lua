@@ -53,7 +53,7 @@ function Weather.draw(weather, camera)
 	
 	waveShader:send("tileSize", {weather.map.waveCamera.tileWidth, weather.map.waveCamera.tileHeight})
 	waveShader:send("waveMapSize", {weather.map.waveCamera.cameraWidth, weather.map.waveCamera.cameraHeight})
-	waveShader:send("maxDist", 4)
+	waveShader:send("maxDist", 3)
 	waveShader:send("timer", GLOBALAnimationClock%1)
 	
 	love.graphics.setShader(waveShader)

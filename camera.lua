@@ -48,7 +48,7 @@ function Camera.tallWorldToDrawCoords(viewX, viewY, worldX, worldY, height, came
 	
 	local angle = math.atan2(worldY - viewY, worldX - viewX)
 	local dist = math.sqrt((worldY - viewY)^2 + (worldX - viewX)^2)
-	local off = height*dist
+	local off = 0.5*height*dist
 	
 	drawX = drawX + off*math.cos(angle)
 	drawY = drawY + off*math.sin(angle)
