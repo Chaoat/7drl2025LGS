@@ -181,7 +181,7 @@ do
 	end,
 	{"deactivateWithDeath"})
 
-	newEffectToolProto("Drift", "driftName", "driftDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
+	newEffectToolProto("drift", "driftName", "driftDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
 	function(tool, world, player)
 		player.minSpeed = player.turnSpeed + 3
 	end, 

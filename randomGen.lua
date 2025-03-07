@@ -261,7 +261,7 @@ local toolChoices = {
 	{"cannon", 3},
 	{"drill", 3},
 	{"indestructibility", 4},
-	{"Drift", 3},
+	{"drift", 3},
 }
 
 function RandomGen.placeBunkers(world, locations)
