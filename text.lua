@@ -17,6 +17,60 @@ do
 	textEntries["drill"] = "Drill"
 	textEntries["indestructibility"] = "Invuln"
 	textEntries["drift"] = "Drift"
+
+	--Bunker TEXT
+	textEntries["bunker1"] = "South Street"
+	textEntries["bunker1description"] = "TODO"
+
+	textEntries["bunker2"] = "North West Cafe"
+	textEntries["bunker2description"] = "TODO"
+
+	textEntries["bunker3"] = "Collapsed Trade Tower"
+	textEntries["bunker3description"] = "The skeletal remains of the skyscraper loom above the waves, its steel ribs twisted and rusted from decades of neglect. What was once a beacon of commerce became a crumbling tomb, its lower floors swallowed by the sea, its upper levels tilting precariously against the wind.\nYet, against all odds, the tower once again breathes with purpose. The old offices, stripped of luxury, now serve as makeshift markets, where scavengers barter over wares.\nThe world may have collapsed, but commerce endures. It always does."
+
+	textEntries["bunker4"] = "Warehouse Depot"
+	textEntries["bunker4description"] = "TODO"
+
+	textEntries["bunker5"] = "Destroyed Warehouse"
+	textEntries["bunker5description"] = "TODO"
+
+	textEntries["bunker6"] = "Mountain Cabin"
+	textEntries["bunker6description"] = "TODO"
+
+	textEntries["bunker7"] = "North Central Plaza"
+	textEntries["bunker7description"] = "TODO"
+
+	textEntries["bunker8"] = "Central Offices"
+	textEntries["bunker8description"] = "TODO"
+
+	textEntries["bunker9"] = "Mountain Hotel"
+	textEntries["bunker9description"] = "TODO"
+
+	textEntries["bunker10"] = "State Library"
+	textEntries["bunker10description"] = "TODO"
+
+	textEntries["bunker11"] = "Warehouse Gatehouse"
+	textEntries["bunker11description"] = "TODO"
+
+	textEntries["bunker12"] = "Survivor Trade Hub"
+	textEntries["bunker12description"] = "TODO"
+
+	textEntries["bunker13"] = "Stadium"
+	textEntries["bunker13description"] = ""
+
+	textEntries["bunker14"] = "North East Mall"
+	textEntries["bunker14description"] = ""
+
+	textEntries["bunker15"] = "Untouched Tower"
+	textEntries["bunker15description"] = ""
+
+	textEntries["bunker16"] = "Southern Hideout"
+	textEntries["bunker16description"] = ""
+
+	textEntries["bunker17"] = "Outskirts Lookout"
+	textEntries["bunker17description"] = ""
+
+	textEntries["bunkerCollapsedDescription"] = "The Bunker stands silent. Only the wind answers your arrival, whistling through empty corridors and shattered gates.\nWhat drove them away? Monsters, famine, mutiny? You cannot say.\nHad you arrived sooner, perhaps things would be different. Perhaps this place would still have voices to greet you.\n\nNothing useful remains, you feel you best depart quickly."
 end
 
 function Text.get(entryName)

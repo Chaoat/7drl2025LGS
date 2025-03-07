@@ -42,7 +42,8 @@ do
 	newColourToSolidity({92, 76, 36}, 3, 1)
 	
 	--Outer Walls
-	newColourToSolidity({144, 151, 149}, 3, 2)
+	newColourToSolidity({144, 151, 149}, 3, 0)
+	newColourToSolidity({143, 149, 147}, 3, 2) --Inner Walls are 2 high
 	newColourToSolidity({68, 68, 68}, 4, 0)
 end
 
