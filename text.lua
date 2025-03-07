@@ -19,7 +19,7 @@ do
 	textEntries["bunker2description"] = "TODO"
 
 	textEntries["bunker3"] = "Collapsed Trade Tower"
-	textEntries["bunker3description"] = "TODO"
+	textEntries["bunker3description"] = "The skeletal remains of the skyscraper loom above the waves, its steel ribs twisted and rusted from decades of neglect. What was once a beacon of commerce became a crumbling tomb, its lower floors swallowed by the sea, its upper levels tilting precariously against the wind.\nYet, against all odds, the tower once again breathes with purpose. The old offices, stripped of luxury, now serve as makeshift markets, where scavengers barter over wares.\nThe world may have collapsed, but commerce endures. It always does."
 
 	textEntries["bunker4"] = "Warehouse Depot"
 	textEntries["bunker4description"] = "TODO"
@@ -62,6 +62,8 @@ do
 
 	textEntries["bunker17"] = "Outskirts Lookout"
 	textEntries["bunker17description"] = ""
+
+	textEntries["bunkerCollapsedDescription"] = "The Bunker stands silent. Only the wind answers your arrival, whistling through empty corridors and shattered gates.\nWhat drove them away? Monsters, famine, mutiny? You cannot say.\nHad you arrived sooner, perhaps things would be different. Perhaps this place would still have voices to greet you.\n\nNothing useful remains, you feel you best depart quickly."
 end
 
 function Text.get(entryName)
