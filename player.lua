@@ -266,7 +266,7 @@ function Player.update(player, dt)
 	end
 
 	if player.indestructible then
-		Particle.queue(Particle.colourShiftBox(player.actor.x, player.actor.y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.2), "water")
+		Particle.queue(Particle.colourShiftBox(player.actor.x, player.actor.y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.2), "overActor")
     end
 end
 

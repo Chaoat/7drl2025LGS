@@ -245,8 +245,8 @@ local function generatePossibleCrew()
 end
 
 local function generatePossibleTimers(nBunkers)
-	local minTime = 300
-	local increment = 50
+	local minTime = 100
+	local increment = 60
 	local timers = {}
 	for i = 1, nBunkers do
 		table.insert(timers, minTime + i*increment)

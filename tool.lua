@@ -72,12 +72,14 @@ do
 	function(tool, world, player)
 		--player.minSpeed = player.minSpeed + 10
 		player.maxSpeed = player.maxSpeed + 10
+		player.acceleration = player.acceleration + 5
 		player.targetSpeed = player.targetSpeed + 10
 		player.speed = player.speed + 10
 	end, 
 	function(tool, world, player)
 		--player.minSpeed = player.minSpeed - 10
 		player.maxSpeed = player.maxSpeed - 10
+		player.acceleration = player.acceleration - 5
 		player.targetSpeed = math.max(player.targetSpeed - 10, 0)
 	end,
 	nil,
@@ -88,8 +90,11 @@ do
 	
 	newEffectToolProto("blink", "blinkName", "blinkDescription", {0.6, 0.6, 0.6, 1}, 0, 5,
 	function(tool, world, player)
+		Particle.queue(Particle.colourShiftBox(player.actor.x, player.actor.y, {1, 1, 1, 1}, {0, 0.4, 0.6, 0}, 0.4), "overActor")
 		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
 		Tile.moveActor(tile, player.actor, true)
+		
+		Particle.queue(Particle.colourShiftBox(tool.targetX, tool.targetY, {1, 1, 1, 1}, {0, 0.4, 0.6, 0}, 0.4), "overActor")
 	end, 
 	nil,
 	nil,
@@ -148,6 +153,7 @@ do
 		local tiles = Map.shape.line(world.Map, tool.targetX, tool.targetY, player.actor.x, player.actor.y)
 		for i= 1, #tiles do 
 			Tile.wreck(tiles[i])
+			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
 		end
 	end, 
 	nil,
