@@ -22,11 +22,34 @@ end
 
 function Particle.new(x, y, drawFunc)
 	--drawFunc(particle, drawX, drawY, tileWidth, tileHeight)
-	local particle = {x = x, y = y, dead = false, drawFunc = drawFunc}
+	local roundedX = Misc.round(x)
+	local roundedY = Misc.round(y)
+	
+	local particle = {x = roundedX, y = roundedY, floatingX = x - roundedX, floatingY = y - roundedY, dead = false, drawFunc = drawFunc}
 	return particle
 end
 
 function Particle.update(particle, dt)
+	if particle.velX then
+		particle.floatingX = particle.floatingX + particle.velX*dt
+		if particle.floatingX ~= 0 then
+			local moves = math.floor(math.abs(particle.floatingX))
+			local diff = moves*(particle.floatingX/math.abs(particle.floatingX))
+			particle.floatingX = particle.floatingX - diff
+			particle.x = particle.x + diff
+		end
+	end
+	
+	if particle.velY then
+		particle.floatingY = particle.floatingY + particle.velY*dt
+		if particle.floatingX ~= 0 then
+			local moves = math.floor(math.abs(particle.floatingY))
+			local diff = moves*(particle.floatingY/math.abs(particle.floatingY))
+			particle.floatingY = particle.floatingY - diff
+			particle.y = particle.y + diff
+		end
+	end
+	
 	if particle.timeLeft then
 		particle.timeLeft = particle.timeLeft - dt
 		
@@ -45,6 +68,12 @@ function Particle.updateCollection(collection, layer, dt)
 			table.remove(collection, i)
 		end
 	end
+end
+
+function Particle.setVelocity(particle, velX, velY)
+	particle.velX = velX
+	particle.velY = velY
+	return particle
 end
 
 function Particle.draw(particle, camera)

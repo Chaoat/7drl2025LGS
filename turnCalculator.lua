@@ -147,7 +147,7 @@ function TurnCalculator.pass(turnCalculator)
 		
 		local speedChange = math.max(startingSpeed - endingSpeed, 0)
 		local damage = math.floor(speedChange/3)
-		if not actorMove.actor.bouncy then
+		if damage > 0 and not actorMove.actor.bouncy then
 			Actor.damage(actorMove.actor, damage)
 		end
 		

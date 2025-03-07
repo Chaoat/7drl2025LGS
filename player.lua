@@ -8,6 +8,7 @@ local Inventory = require "inventory"
 local Tool = require "tool"
 local Bunker = require "bunker"
 local Crew = require "crew"
+local Particle = require "particle"
 
 local Player = {}
 
@@ -20,7 +21,7 @@ function Player.new(actor)
 	heading = 0, speed = 0, targetSpeed = 0, minSpeed = 0, maxSpeed = 10, turnRate = 2, acceleration = 1, deceleration = 1, 
 	predictedSquares = {}, activeTools = {}, inventory = Inventory.new(), fuel = 100, maxFuel = 100, parkedBunker = nil, indestructible = false}
 	
-	Inventory.addTool(player.inventory, "nitro", 2)
+	Inventory.addTool(player.inventory, "indestructibility", 2)
 	Inventory.addTool(player.inventory, "blink", 1)
 	Inventory.addTool(player.inventory, "cannon", 3)
 	
@@ -265,7 +266,7 @@ function Player.update(player, dt)
 		player.parkedBunker.parkRealTime = player.parkedBunker.parkRealTime + dt
 	end
 
-	if player.indestructible then
+	if player.actor.indestructible then
 		Particle.queue(Particle.colourShiftBox(player.actor.x, player.actor.y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.2), "overActor")
     end
 end
@@ -298,7 +299,9 @@ end
 function Player.calculatePredictedSquares(player)
 	player.predictedSquares = {}
 	local function addPredictedSquare(arrowImage, arrowAngle, arrowTint, x, y, priority, targetHeading, clickable)
-		local predictedSquare = {arrowImage = arrowImage, arrowAngle = arrowAngle, arrowTint = arrowTint, x = x + player.actor.momentX, y = y + player.actor.momentY, priority = priority, targetHeading = targetHeading, clickable = true}
+		x = x + player.actor.momentX
+		y = y + player.actor.momentY
+		local predictedSquare = {arrowImage = arrowImage, arrowAngle = arrowAngle, arrowTint = arrowTint, x = x, y = y, priority = priority, targetHeading = targetHeading, clickable = clickable}
 		
 		local discard = false
 		for i = 1, #player.predictedSquares do
@@ -346,7 +349,7 @@ function Player.calculatePredictedSquares(player)
 			arrowX = Misc.round(arrowX)
 			arrowY = Misc.round(arrowY)
 			
-			addPredictedSquare(arrowImage, arrowAngle, {1, 1, 1, 1}, arrowX, arrowY, priority, targetHeading, clickable)
+			addPredictedSquare(arrowImage, arrowAngle, {1, 1, 1, 1}, arrowX, arrowY, priority, targetHeading, true)
 		end
 	end
 	
@@ -370,21 +373,27 @@ function Player.drawMovementPrediction(player, camera)
 		for i = 1, #coords do
 			Camera.drawTo(player, coords[i][1], coords[i][2], camera, 
 			function(player, drawX, drawY, tileWidth, tileHeight)
-				love.graphics.setColor(1, 0, 0, 0.6)
+				local bright = math.sin(7*GLOBALAnimationClock - i)
+				love.graphics.setColor(1, 1, bright, 0.6)
 				love.graphics.rectangle("fill", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
 			end)
 		end
 		
 		Camera.drawTo({}, player.actor.x + player.actor.momentX, player.actor.y + player.actor.momentY, camera, 
 		function(square, drawX, drawY, tileWidth, tileHeight)
-			Letter.draw(Letter.newFromLetter("@", {1, 0, 0, 1}), drawX, drawY, tileWidth, tileHeight)
+			Letter.draw(Letter.newFromLetter("@", {1, 1, 0, 1}), drawX, drawY, tileWidth, tileHeight)
 		end)
 	end
 	
 	for i = 1, #player.predictedSquares do
 		local predictedSquare = player.predictedSquares[i]
-		Camera.drawTo({image = predictedSquare.arrowImage, angle = predictedSquare.arrowAngle, tint = predictedSquare.arrowTint}, predictedSquare.x, predictedSquare.y, camera, 
+		Camera.drawTo({image = predictedSquare.arrowImage, angle = predictedSquare.arrowAngle, tint = predictedSquare.arrowTint, clickable = predictedSquare.clickable}, predictedSquare.x, predictedSquare.y, camera, 
 		function(arrow, drawX, drawY, tileWidth, tileHeight)
+			local bright = math.abs(math.sin(7*GLOBALAnimationClock - i))
+			if arrow.clickable then
+				love.graphics.setColor(bright, 1, bright, 0.6)
+				love.graphics.rectangle("fill", drawX - tileWidth/2, drawY - tileHeight/2, tileWidth, tileHeight)
+			end
 			love.graphics.setColor(arrow.tint)
 			Image.drawImageScreenSpace(arrow.image, drawX, drawY, arrow.angle, 0.5, 0.5, tileWidth/arrow.image.width, tileHeight/arrow.image.height)
 		end)

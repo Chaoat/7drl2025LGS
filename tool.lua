@@ -71,16 +71,16 @@ do
 	newEffectToolProto("nitro", "nitroName", "nitroDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
 	function(tool, world, player)
 		--player.minSpeed = player.minSpeed + 10
-		player.maxSpeed = player.maxSpeed + 10
+		player.maxSpeed = player.maxSpeed + 6
 		player.acceleration = player.acceleration + 5
-		player.targetSpeed = player.targetSpeed + 10
-		player.speed = player.speed + 10
+		player.targetSpeed = player.targetSpeed + 6
+		player.speed = player.speed + 6
 	end, 
 	function(tool, world, player)
 		--player.minSpeed = player.minSpeed - 10
-		player.maxSpeed = player.maxSpeed - 10
+		player.maxSpeed = player.maxSpeed - 6
 		player.acceleration = player.acceleration - 5
-		player.targetSpeed = math.max(player.targetSpeed - 10, 0)
+		player.targetSpeed = math.max(player.targetSpeed - 6, 0)
 	end,
 	nil,
 	function(world, player, targetX, targetY)

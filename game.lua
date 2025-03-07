@@ -265,6 +265,7 @@ function Game.draw(game)
 	
 	Camera.draw(0, 0, game.mainCamera)
 	Camera.clear(game.mainCamera)
+	Map.draw(game.world.map, game.mainCamera)
 	
 	local width, height, flags = love.window.getMode()
 	Menu.draw(game.interface, 0, 0, width, height)

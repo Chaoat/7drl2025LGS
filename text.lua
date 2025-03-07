@@ -10,6 +10,13 @@ do
 	
 	textEntries["GenesisName"] = "The Serendipity"
 	textEntries["GenesisDescription"] = "The flag ship of your trading company lies nestled into the hollowed out insides of the old office block, shielded from the deadly day time rays. Your overseer stands on the deck, gazing down upon you and the vessel so kindly lent to you for your mission, your first mission as captain, and your first mission in these strange waters.\n\nForced into dock for repairs, your company only plans to stay here a scant few hours, more than enough time to visit the locals and see what delivery and mercantile services you can offer them, perhaps even pick up some bright eyed recruits along the way.\n\nStepping into your vessel, perfectly suited to this kind of mission, with plasteel ramming plows and an engine roaring louder than a typhoon, you salute your overseer and give the command to cast off."
+	
+	textEntries["nitro"] = "Nitro"
+	textEntries["blink"] = "Blink"
+	textEntries["cannon"] = "Cannon"
+	textEntries["drill"] = "Drill"
+	textEntries["indestructibility"] = "Invuln"
+	textEntries["drift"] = "Drift"
 end
 
 function Text.get(entryName)
