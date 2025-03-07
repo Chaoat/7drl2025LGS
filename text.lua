@@ -10,6 +10,58 @@ do
 	
 	textEntries["GenesisName"] = "The Serendipity"
 	textEntries["GenesisDescription"] = "The flag ship of your trading company lies nestled into the hollowed out insides of the old office block, shielded from the deadly day time rays. Your overseer stands on the deck, gazing down upon you and the vessel so kindly lent to you for your mission, your first mission as captain, and your first mission in these strange waters.\n\nForced into dock for repairs, your company only plans to stay here a scant few hours, more than enough time to visit the locals and see what delivery and mercantile services you can offer them, perhaps even pick up some bright eyed recruits along the way.\n\nStepping into your vessel, perfectly suited to this kind of mission, with plasteel ramming plows and an engine roaring louder than a typhoon, you salute your overseer and give the command to cast off."
+
+	--Bunker TEXT
+	textEntries["bunker1"] = "South Street"
+	textEntries["bunker1description"] = "TODO"
+
+	textEntries["bunker2"] = "North West Cafe"
+	textEntries["bunker2description"] = "TODO"
+
+	textEntries["bunker3"] = "Collapsed Trade Tower"
+	textEntries["bunker3description"] = "TODO"
+
+	textEntries["bunker4"] = "Warehouse Depot"
+	textEntries["bunker4description"] = "TODO"
+
+	textEntries["bunker5"] = "Destroyed Warehouse"
+	textEntries["bunker5description"] = "TODO"
+
+	textEntries["bunker6"] = "Mountain Cabin"
+	textEntries["bunker6description"] = "TODO"
+
+	textEntries["bunker7"] = "North Central Plaza"
+	textEntries["bunker7description"] = "TODO"
+
+	textEntries["bunker8"] = "Central Offices"
+	textEntries["bunker8description"] = "TODO"
+
+	textEntries["bunker9"] = "Mountain Hotel"
+	textEntries["bunker9description"] = "TODO"
+
+	textEntries["bunker10"] = "State Library"
+	textEntries["bunker10description"] = "TODO"
+
+	textEntries["bunker11"] = "Warehouse Gatehouse"
+	textEntries["bunker11description"] = "TODO"
+
+	textEntries["bunker12"] = "Survivor Trade Hub"
+	textEntries["bunker12description"] = "TODO"
+
+	textEntries["bunker13"] = "Stadium"
+	textEntries["bunker13description"] = ""
+
+	textEntries["bunker14"] = "North East Mall"
+	textEntries["bunker14description"] = ""
+
+	textEntries["bunker15"] = "Untouched Tower"
+	textEntries["bunker15description"] = ""
+
+	textEntries["bunker16"] = "Southern Hideout"
+	textEntries["bunker16description"] = ""
+
+	textEntries["bunker17"] = "Outskirts Lookout"
+	textEntries["bunker17description"] = ""
 end
 
 function Text.get(entryName)
