@@ -27,6 +27,8 @@ end
 
 function Minimap.redrawOverlay(minimap)
 	love.graphics.setCanvas(minimap.overlayCanvas)
+	love.graphics.clear()
+	
 	for i = 1, #minimap.world.bunkers do
 		local bunker = minimap.world.bunkers[i]
 		local mapX, mapY = Minimap.worldToMap(minimap, bunker.centerX, bunker.centerY)

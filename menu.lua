@@ -1566,12 +1566,13 @@ do --element
 				love.graphics.rectangle("fill", element.x1, element.y1, element.x2 - element.x1, element.y2 - element.y1)
 				
 				local activatingKey = Controls.getKeyForControl(toolControlName, 1)
-				local text = activatingKey .. ": " .. toolName .. " - " .. count
+				local text = activatingKey .. ": " .. Text.get(toolName) .. " - " .. count
 				
 				love.graphics.setColor(0.7, 0.7, 0.7, 1)
 				if Tool.canActivateProto(toolName, world, player, nil, nil) then
 					love.graphics.setColor(1, 1, 1, 1)
 				end
+				
 				Font.setFont("clacon", 24)
 				love.graphics.printf(text, element.x1 + 2, element.y1 + 2, element.x2 - element.x1)
 			end
@@ -1601,15 +1602,15 @@ do --element
 				local crew = player.inventory.crew[i]
 				if crew.happiness == -1 then
 					love.graphics.setColor(1, 0, 0, 1)
-					love.graphics.printf(crew.class .. "\n" .. crew.origin, element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
 					love.graphics.printf(crew.crewDef.negEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
 				elseif crew.happiness == 1 then
 					love.graphics.setColor(0, 1, 0, 1)
-					love.graphics.printf(crew.class .. "\n" .. crew.origin, element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
 					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
 				else
 					love.graphics.setColor(1, 1, 1, 1)
-					love.graphics.printf(crew.class .. "\n" .. crew.origin, element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
+					love.graphics.printf(crew.class .. "\n" .. Text.get(crew.origin), element.x1 + 2, element.y1 + 18 + 32*(i - 1), textWidth)
 					love.graphics.setColor(0.5, 0.5, 0.5, 1)
 					love.graphics.printf(crew.crewDef.posEffectDescription, element.x1 + 2 + textWidth + 10, element.y1 + 18 + 32*(i - 1), textWidth)
 				end
@@ -1665,6 +1666,10 @@ do --element
 				local name = Text.get(player.parkedBunker.nameTag)
 				local description = Text.get(player.parkedBunker.descriptionTag)
 				
+				if bunker.dead then
+					description = Text.get("bunkerCollapsedDescription")
+				end
+				
 				Font.setFont("clacon", 30)
 				love.graphics.setColor(1, 1, 1, 1)
 				love.graphics.printf(name, element.x1 + 20, element.y1 + 20, 400, "left")
@@ -1713,7 +1718,9 @@ do --element
 		return Menu.element.new(posFunc, function(element)
 			Font.setFont("clacon", 24)
 			love.graphics.setColor(1, 1, 1, 1)
-			local statsText = 				 "Max Speed:    " .. Player.getMaxSpeed(player)
+			local statsText = "Head x: " .. player.actor.velX .. " y: " .. player.actor.velY
+			statsText = statsText .. "\n" .. "Mom  x: " .. player.actor.momentX .. " y: " .. player.actor.momentY
+			statsText = statsText .. "\n\n" .. "Max Speed:    " .. Player.getMaxSpeed(player)
 			statsText = statsText .. "\n" .. "Turning Rate: " .. player.turnRate
 			statsText = statsText .. "\n" .. "Acceleration: " .. player.acceleration
 			statsText = statsText .. "\n" .. "Deceleration: " .. player.deceleration
@@ -1725,7 +1732,8 @@ do --element
 		return Menu.element.new(posFunc, function(element)
 			Font.setFont("clacon", 24)
 			love.graphics.setColor(1, 1, 1, 1)
-			local controlsText = 				   "m: Open Map"
+			local controlsText = 				   "Enter: Use Selected Tool"
+			controlsText = controlsText .. "\n" .. "m: Open Map"
 			controlsText = controlsText .. "\n" .. "h: View Crew"
 			controlsText = controlsText .. "\n" .. "l or RMB: Free Look"
 			controlsText = controlsText .. "\n" .. "? or /  : Open Help Screen"

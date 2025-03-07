@@ -83,6 +83,10 @@ do
 	newMobTemplate(8, {
 	{"spider", 2}})
 	
+	newMobTemplate(8, {
+	{"tower", 4},
+	{"debris", 10}})
+	
 	newMobTemplate(9, {
 	{"spider", 2},
 	{"rocket", 3}})

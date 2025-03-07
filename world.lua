@@ -145,7 +145,6 @@ end
 function World.draw(world, camera)
 	Weather.draw(world.weather, camera)
 	Particle.drawCollection(world.waterParticles, camera)
-	Map.draw(world.map, camera)
 	
 	for i = 1, #world.bunkers do
 		Bunker.drawRegion(world.bunkers[i], camera)
