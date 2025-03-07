@@ -147,14 +147,20 @@ do
 	end,
 	{"targetted"})
 
-	newEffectToolProto("drill", "drillName", "drillDescription", {0.6, 0.6, 0.6, 1}, 0, 30,
+	newEffectToolProto("drill", "drillName", "drillDescription", {0.6, 0.6, 0.6, 1}, 0, 20,
 	function(tool, world, player)
 		local tile = Map.getTile(world.map, tool.targetX, tool.targetY)
-		local tiles = Map.shapes.line(world.Map, tool.targetX, tool.targetY, player.actor.x, player.actor.y)
+		local tiles = Map.shapes.thickLine(world.map, tool.targetX, tool.targetY, player.actor.x, player.actor.y, 1)
 		for i= 1, #tiles do 
-			Tile.wreck(tiles[i])
-			Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0.6, 0.4, 0, 0}, 0.4), "overActor")
+			if tiles[i].solidity ~= 0 then
+				Tile.wreck(tiles[i])
+				Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 0, 0, 1}, {0, 0, 0, 0}, 0.8), "overActor")
+			else
+				Particle.queue(Particle.colourShiftBox(tiles[i].x, tiles[i].y, {1, 1, 1, 1}, {0, 0, 0, 0}, 0.8), "overActor")
+			end
 		end
+		
+		Map.redrawCells(world.map, player.actor.x, player.actor.y)
 	end, 
 	nil,
 	nil,
@@ -183,10 +189,10 @@ do
 
 	newEffectToolProto("drift", "driftName", "driftDescription", {0.6, 0.6, 0.6, 1}, 10, 0,
 	function(tool, world, player)
-		player.minSpeed = player.turnSpeed + 3
+		player.turnRate = player.turnRate + 3
 	end, 
 	function(tool, world, player)
-		player.minSpeed = player.turnSpeed - 3
+		player.turnRate = player.turnRate - 3
 	end,
 	nil,
 	function(world, player, targetX, targetY)

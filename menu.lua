@@ -1764,6 +1764,7 @@ do --element
 			--print((element.y2 - element.y1) .. ":" .. height)
 			love.graphics.setColor(1, 1, 1, 1)
 			love.graphics.draw(minimap.canvas, element.x1, element.y1, 0)
+			love.graphics.draw(minimap.overlayCanvas, element.x1, element.y1, 0)
 		end)
 	end
 	

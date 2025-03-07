@@ -12,10 +12,11 @@ function Minimap.new(world)
 	
 	local mapWidth, mapHeight = Map.getSize(world.map)
 	local canvas = love.graphics.newCanvas(scale*mapWidth + 2*margin, scale*mapHeight + 2*margin)
-	local drawCanvas = love.graphics.newCanvas(scale*mapWidth + 2*margin, scale*mapHeight + 2*margin)
+	local overlayCanvas = love.graphics.newCanvas(scale*mapWidth + 2*margin, scale*mapHeight + 2*margin)
 	
-	local minimap = {world = world, canvas = canvas, drawCanvas = drawCanvas, scale = scale, margin = margin}
+	local minimap = {world = world, canvas = canvas, overlayCanvas = overlayCanvas, scale = scale, margin = margin}
 	Minimap.redraw(minimap)
+	Minimap.redrawOverlay(minimap)
 	
 	return minimap
 end
@@ -24,24 +25,8 @@ function Minimap.worldToMap(minimap, worldX, worldY)
 	return minimap.scale*(worldX - minimap.world.map.bounds[1]) + minimap.margin, minimap.scale*(worldY - minimap.world.map.bounds[2]) + minimap.margin
 end
 
-function Minimap.redraw(minimap)
-	love.graphics.setCanvas(minimap.canvas)
-	love.graphics.clear()
-	
-	local map = minimap.world.map
-	for x = map.bounds[1] + 20, map.bounds[3] - 20 do
-		for y = map.bounds[2] + 20, map.bounds[4] - 20 do
-			local tile = Map.getTile(map, x, y)
-			if tile.solidity > 0 then
-				love.graphics.setColor(0.6, 0.6, 0.6, 1)
-				
-				local x1, y1 = Minimap.worldToMap(minimap, tile.x - 0.5, tile.y - 0.5)
-				local x2, y2 = Minimap.worldToMap(minimap, tile.x + 0.5, tile.y + 0.5)
-				love.graphics.rectangle("fill", x1, y1, x2 - x1, y2 - y1)
-			end
-		end
-	end
-	
+function Minimap.redrawOverlay(minimap)
+	love.graphics.setCanvas(minimap.overlayCanvas)
 	for i = 1, #minimap.world.bunkers do
 		local bunker = minimap.world.bunkers[i]
 		local mapX, mapY = Minimap.worldToMap(minimap, bunker.centerX, bunker.centerY)
@@ -109,7 +94,26 @@ function Minimap.redraw(minimap)
 			love.graphics.line(endX, endY, endX + arrowHeadLength*math.cos(angle - arrowHeadAngle), endY + arrowHeadLength*math.sin(angle - arrowHeadAngle))
 		end
 	end
+	love.graphics.setCanvas()
+end
+
+function Minimap.redraw(minimap)
+	love.graphics.setCanvas(minimap.canvas)
+	love.graphics.clear()
 	
+	local map = minimap.world.map
+	for x = map.bounds[1] + 20, map.bounds[3] - 20 do
+		for y = map.bounds[2] + 20, map.bounds[4] - 20 do
+			local tile = Map.getTile(map, x, y)
+			if tile.solidity > 0 then
+				love.graphics.setColor(0.6, 0.6, 0.6, 1)
+				
+				local x1, y1 = Minimap.worldToMap(minimap, tile.x - 0.5, tile.y - 0.5)
+				local x2, y2 = Minimap.worldToMap(minimap, tile.x + 0.5, tile.y + 0.5)
+				love.graphics.rectangle("fill", x1, y1, x2 - x1, y2 - y1)
+			end
+		end
+	end
 	love.graphics.setCanvas()
 end
 

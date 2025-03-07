@@ -208,10 +208,38 @@ do --shapes
 	
 	function Map.shapes.line(map, x1, y1, x2, y2)
 		local tiles = {}
-		local coords = Misc.plotLine(x1, y1, x2, y2)
+		local coords = Misc.orthogLineBetween(x1, y1, x2, y2)
 		
 		for i = 1, #coords do
 			table.insert(tiles, Map.getTile(map, coords[i][1], coords[i][2]))
+		end
+		
+		return tiles
+	end
+	
+	function Map.shapes.thickLine(map, x1, y1, x2, y2, thickness)
+		local tiles = {}
+		local coords = Misc.orthogLineBetween(x1, y1, x2, y2)
+		
+		for i = 1, #coords do
+			table.insert(tiles, Map.getTile(map, coords[i][1], coords[i][2]))
+		end
+		
+		local angle = math.atan2(y2 - y1, x2 - x1)
+		for i = 1, thickness do
+			local rX1, rY1 = Misc.orthogPointFrom(x1, y1, i, angle + math.pi/4)
+			local lX1, lY1 = Misc.orthogPointFrom(x1, y1, i, angle - math.pi/4)
+			local rX2, rY2 = Misc.orthogPointFrom(x2, y2, i, angle + 3*math.pi/4)
+			local lX2, lY2 = Misc.orthogPointFrom(x2, y2, i, angle - 3*math.pi/4)
+			
+			coords = Misc.orthogLineBetween(rX1, rY1, rX2, rY2)
+			for j = 1, #coords do
+				table.insert(tiles, Map.getTile(map, coords[j][1], coords[j][2]))
+			end
+			coords = Misc.orthogLineBetween(lX1, lY1, lX2, lY2)
+			for j = 1, #coords do
+				table.insert(tiles, Map.getTile(map, coords[j][1], coords[j][2]))
+			end
 		end
 		
 		return tiles
@@ -220,6 +248,8 @@ end
 
 function Map.redrawCells(map, playerX, playerY)
 	Camera.clear(map.camera)
+	local tileWidth = map.camera.tileWidth
+	local tileHeight = map.camera.tileHeight
 	
 	local cellX = math.floor(playerX/map.cellWidth)
 	local cellY = math.floor(playerY/map.cellHeight)
@@ -236,9 +266,11 @@ function Map.redrawCells(map, playerX, playerY)
 	for i = math.max(map.bounds[xMin], map.cellWidth*(cellX - 1)), math.min(map.bounds[xMax], map.cellWidth*(cellX + 2)) do
 		for j = math.max(map.bounds[yMin], map.cellHeight*(cellY - 1)), math.min(map.bounds[yMax], map.cellHeight*(cellY + 2)) do
 			local tile = map.tiles[i][j]
-			if tile.solidity > 0 then
-				local drawX, drawY = Camera.worldToDrawCoords(tile.drawX, tile.drawY, map.camera)
-				Letter.draw(tile.letter, drawX, drawY, map.camera.tileWidth, map.camera.tileHeight)
+			if tile.isWater == false then
+				for h = 0, tile.height do
+					local drawX, drawY = Camera.tallWorldToDrawCoords(playerX, playerY, tile.drawX, tile.drawY, h, map.camera)
+					Letter.draw(tile.letter, drawX, drawY, map.camera.tileWidth, map.camera.tileHeight)
+				end
 			end
 		end
 	end
@@ -248,9 +280,12 @@ function Map.redrawCells(map, playerX, playerY)
 	for i = math.max(map.bounds[xMin], map.cellWidth*(cellX - 1)), math.min(map.bounds[xMax], map.cellWidth*(cellX + 2)) do
 		for j = math.max(map.bounds[yMin], map.cellHeight*(cellY - 1)), math.min(map.bounds[yMax], map.cellHeight*(cellY + 2)) do
 			local tile = map.tiles[i][j]
-			if tile.solidity == 0 then
-				local drawX, drawY = Camera.worldToDrawCoords(tile.drawX, tile.drawY, map.camera)
+			local drawX, drawY = Camera.worldToDrawCoords(tile.drawX, tile.drawY, map.camera)
+			if tile.isWater == true then
 				Letter.draw(tile.letter, drawX, drawY, map.camera.tileWidth, map.camera.tileHeight)
+			elseif tile.solidity > 0 then
+				love.graphics.setColor(0, 0, 0, 1)
+				love.graphics.rectangle("fill", drawX - map.camera.tileWidth/2, drawY - map.camera.tileHeight/2, map.camera.tileWidth, map.camera.tileHeight)
 			end
 		end
 	end

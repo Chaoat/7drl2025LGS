@@ -8,10 +8,12 @@ GLOBALStallClock = false
 
 local rootGame = nil
 function love.load()
+	love.keyboard.setKeyRepeat(true)
 	math.randomseed(os.clock())
 	rootGame = Game.new()
 end
 
+local timeTillRepeat = 0
 local doProfile = false
 local profileTimer = 0
 function love.update(dt)
@@ -20,6 +22,7 @@ function love.update(dt)
 		GLOBALStallClock = false
 	end
 	
+	timeTillRepeat = timeTillRepeat - dt
 	GLOBALAnimationClock = GLOBALAnimationClock + dt
 	Game.update(rootGame, dt)
 	
@@ -49,13 +52,16 @@ function love.update(dt)
 	end
 end
 
-function love.keypressed(key)
-	Game.keyInput(rootGame, key)
-	
-	if Controls.checkControl(key, "debug", false) then
-		GlobalDebugFlag = not GlobalDebugFlag
-	elseif Controls.checkControl(key, "profile", false) then
-		doProfile = true
+function love.keypressed(key, code, isrepeat)
+	if isrepeat == false or timeTillRepeat <= 0 then
+		Game.keyInput(rootGame, key)
+		
+		if Controls.checkControl(key, "debug", false) then
+			GlobalDebugFlag = not GlobalDebugFlag
+		elseif Controls.checkControl(key, "profile", false) then
+			doProfile = true
+		end
+		timeTillRepeat = 0.05
 	end
 end
 

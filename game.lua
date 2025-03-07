@@ -198,7 +198,7 @@ function Game.keyInput(game, key)
 	if Player.keyInput(game.player, game.world, key) then
 		TurnCalculator.pass(game.turnCalculator)
 		Game.updatePlayerCellPos(game)
-		Minimap.redraw(game.minimap)
+		Minimap.redrawOverlay(game.minimap)
 		Game.updateWorldDifficulty(game)
 		Score.update(game)
 	elseif Controls.checkControl(key, "openMap", false) then
@@ -251,7 +251,7 @@ function Game.mouseInput(game, screenx, screeny, button)
 		if Player.clickInput(game.player, tilex, tiley, button) then
 			TurnCalculator.pass(game.turnCalculator)
 			Game.updatePlayerCellPos(game)
-			Minimap.redraw(game.minimap)
+			Minimap.redrawOverlay(game.minimap)
 			Game.updateWorldDifficulty(game)
 			Score.update(game)
 		end

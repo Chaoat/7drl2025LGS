@@ -1,4 +1,5 @@
 local Camera = require "camera"
+local Misc = require "misc"
 
 local Weather = {}
 
@@ -7,92 +8,57 @@ function Weather.new(map)
 	return weather
 end
 local waveShader = love.graphics.newShader [[
-	extern float angle;
-	extern float magnitude;
-	//extern float frequency;
-	extern float timer;
-	//
 	extern vec2 tileSize;
 	extern vec2 waveMapSize;
+	extern int maxDist;
+	extern float timer;
+	
+	float PI = 3.141592;
 	
 	vec4 effect(vec4 colour, Image image, vec2 texture_coords, vec2 pixel_coords)
     {
-		//float angle = 0.3;
-		//float magnitude = 0;
-		//float frequency = 1;
-		//
-		//vec2 tileCoords = vec2((texture_coords.x*waveMapSize.x)/tileSize.x, (texture_coords.y*waveMapSize.y)/tileSize.y);
-		//float mag = sqrt(pow(tileCoords.x, 2) + pow(tileCoords.y, 2));
-		//float coordsAngle = atan(tileCoords.y, tileCoords.x);
-		//float proj = mag*cos((angle - coordsAngle));
-		//
-		//float waveSize = magnitude*cos(frequency*(proj + timer));
-		//
-		//vec2 tileShift = vec2(waveSize*cos(angle),
-		//					  waveSize*sin(angle));
-		//
-		////vec2 texCoords = vec2(ceil((pixShift.x + texture_coords.x*waveMapSize.x)/tileCoords.x)*tileCoords.x/waveMapSize.x, 
-		////					  ceil((pixShift.y + texture_coords.y*waveMapSize.y)/tileCoords.y)*tileCoords.y/waveMapSize.y);
-		//
-		//tileCoords = tileCoords + tileShift;
-		//
-		////vec2 texShift = vec2(ceil(tileCoords.x),
-		////					 ceil(tileCoords.y));
-		////
-		////vec2 texCoords = vec2(texture_coords.x + texShift.x,
-		////					  texture_coords.y + texShift.y);
-		//
-		//texCoords = vec2(tileCoords)
-		//
-		//colour[0] = waveSize;
-		//colour[2] = timer;
-		//
-		//vec4 pixel = colour*Texel(image, texCoords);
+		vec4 pix = Texel(image, texture_coords);
+		if (pix[3] == 0 || pix == vec4(0, 0, 0, 1))
+		{
+			return vec4(0, 0, 0, 0);
+		}
+	
+		vec2 texTileSize = vec2(tileSize.x/waveMapSize.x, tileSize.y/waveMapSize.y);
 		
-		//float angle = 0.4;
-		//float magnitude = 1;
+		float dist = maxDist + 1.0f;
+		for (int x = -maxDist; x <= maxDist; x++)
+		{
+			for (int y = -maxDist; y <= maxDist; y++)
+			{
+				vec4 oPix = Texel(image, texture_coords + vec2(x*texTileSize.x, y*texTileSize.y));
+				if (oPix == vec4(0, 0, 0, 1))
+				{
+					dist = floor(min(dist, max(abs(x), abs(y))));
+				}
+			}
+		}
 		
-		vec2 tileCoords = vec2((texture_coords.x*waveMapSize.x)/tileSize.x, (texture_coords.y*waveMapSize.y)/tileSize.y);
+		float distFactor = dist/maxDist;
+		float bloom = 0.5*sin(pow(mod(timer + distFactor, 1), 0.8) * PI);
 		
-		float mag = sqrt(pow(tileCoords.x, 2) + pow(tileCoords.y, 2));
-		float coordsAngle = atan(tileCoords.y, tileCoords.x);
-		float proj = mag*cos((angle - coordsAngle));
+		float distMult = 1.0f - dist/(maxDist + 1.0f);
+		float distAddition = 0.3f*distMult;
 		
-		float capMag = magnitude*cos(proj + timer);
-		vec2 capCoords = vec2(ceil(tileCoords.x + capMag*cos(angle)),
-							  ceil(tileCoords.y + capMag*sin(angle)));
-							  
-		mag = sqrt(pow(capCoords.x, 2) + pow(capCoords.y, 2));
-		coordsAngle = atan(capCoords.y, capCoords.x);
-		proj = mag*cos((angle - coordsAngle));
-		
-		float waveSize = magnitude*cos(proj);
-		
-		tileCoords.x = tileCoords.x + waveSize*cos(angle);
-		tileCoords.y = tileCoords.y + waveSize*sin(angle);
-		
-		vec2 texCoords = vec2((tileCoords.x*tileSize.x)/waveMapSize.x, (tileCoords.y*tileSize.y)/waveMapSize.y);
-		vec4 pixel = colour*Texel(image, texCoords);
-		
-		pixel = pixel + 0.2*waveSize*vec4(1, 1, 1, 0);
-		
-		return pixel;
+		return (pix + (distAddition + bloom*distMult)*vec4(1, 1, 1, 1));
 	}
 ]]
 
 function Weather.draw(weather, camera)
 	local drawX, drawY = Camera.worldToDrawCoords(weather.map.cellCornerX, weather.map.cellCornerY, camera)
 	
-	--waveShader:send("angle", math.pi/4)
-	--waveShader:send("magnitude", 0)
-	--waveShader:send("frequency", 1)
-	--waveShader:send("timer", GLOBALAnimationClock)
-	--waveShader:send("tileSize", {weather.map.waveCamera.tileWidth, weather.map.waveCamera.tileHeight})
-	--waveShader:send("waveMapSize", {weather.map.waveCamera.cameraWidth, weather.map.waveCamera.cameraHeight})
+	waveShader:send("tileSize", {weather.map.waveCamera.tileWidth, weather.map.waveCamera.tileHeight})
+	waveShader:send("waveMapSize", {weather.map.waveCamera.cameraWidth, weather.map.waveCamera.cameraHeight})
+	waveShader:send("maxDist", 4)
+	waveShader:send("timer", GLOBALAnimationClock%1)
 	
-	--love.graphics.setShader(waveShader)
-	Camera.draw(drawX, drawY, weather.map.waveCamera)
-	--love.graphics.setShader()
+	love.graphics.setShader(waveShader)
+	Camera.draw(Misc.round(drawX), Misc.round(drawY), weather.map.waveCamera)
+	love.graphics.setShader()
 end
 
 return Weather

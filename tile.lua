@@ -64,8 +64,7 @@ function Tile.fromXP(xpCharacter)
 end
 
 function Tile.new(solidity, tags, letter)
-	local tile = {drawX = 0, drawY = 0, x = 0, y = 0, actors = {}, letter = letter, solidity = solidity, tags = {}}
-	
+	local tile = {drawX = 0, drawY = 0, x = 0, y = 0, height = 3, actors = {}, letter = letter, solidity = solidity, isWater = (solidity == 0), tags = {}}
 	for i = 1, #tags do
 		tile.tags[tags[i]] = true
 	end

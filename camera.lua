@@ -18,7 +18,7 @@ end
 function Camera.trackPlayer(camera, player)
 	if player.controlMode == "movement" then
 		Camera.move(camera, player.actor.drawX, player.actor.drawY)
-	elseif player.controlMode == "freeLook" then
+	elseif player.controlMode == "freeLook" or player.controlMode == "targetting" then
 		Camera.move(camera, player.lookCursorX, player.lookCursorY)
 	end
 end
@@ -39,6 +39,20 @@ end
 function Camera.worldToDrawCoords(worldX, worldY, camera)
 	local drawX = (worldX - camera.worldX)*camera.tileWidth + camera.cameraWidth/2
 	local drawY = (worldY - camera.worldY)*camera.tileHeight + camera.cameraHeight/2
+	return drawX, drawY
+end
+
+function Camera.tallWorldToDrawCoords(viewX, viewY, worldX, worldY, height, camera)
+	local drawX = (worldX - camera.worldX)*camera.tileWidth + camera.cameraWidth/2
+	local drawY = (worldY - camera.worldY)*camera.tileHeight + camera.cameraHeight/2
+	
+	local angle = math.atan2(worldY - viewY, worldX - viewX)
+	local dist = math.sqrt((worldY - viewY)^2 + (worldX - viewX)^2)
+	local off = height*dist
+	
+	drawX = drawX + off*math.cos(angle)
+	drawY = drawY + off*math.sin(angle)
+	
 	return drawX, drawY
 end
 
