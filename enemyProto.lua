@@ -87,7 +87,7 @@ do
 			Tool.activate("towerBlast", enemy.actor, world, player, enemy.targettingTile[1], enemy.targettingTile[2])
 			enemy.aiState.reload = 2
 			enemy.targettingTile = nil
-		elseif Misc.orthogDistance(enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y) <= 15 and enemy.aiState.reload == 1 then
+		elseif Misc.orthogDistance(enemy.actor.x, enemy.actor.y, player.actor.x, player.actor.y) <= 20 and enemy.aiState.reload == 1 then
 			local tX, tY = Actor.predictPosition(player.actor)
 			enemy.targettingTile = {tX, tY}
 		else

@@ -52,13 +52,17 @@ do
 	newMobTemplate(4, {
 	{"tower", 1},
 	{"debris", 6}})
+	
+	newMobTemplate(4, {
+	{"spider", 1}})
+
+	newMobTemplate(5, {
+	{"spider", 2},
+	{"rocket", 1}})
 
 	newMobTemplate(5, {
 	{"tower", 2}})
 
-	newMobTemplate(5, {
-	{"spider", 1}})
-	
 	newMobTemplate(5, {
 	{"tower", 1},
 	{"blowFish", 3}})
@@ -69,6 +73,9 @@ do
 	newMobTemplate(6, {
 	{"tower", 2},
 	{"spider", 1}})
+
+	newMobTemplate(7, {
+	{"rocket", 8}})
 	
 	newMobTemplate(7, {
 	{"blowFish", 9}})
